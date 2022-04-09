@@ -6,6 +6,9 @@
 # How does this work
  This uses pcap to dump the packets, upload the packets to my server, my server analyzes them and returns a combat log. You can then input that combat log into ACT.
  
+# Support
+ Please submit an issue on the github repo, or join the discord @ https://discord.gg/MedRDjEwHZ
+ 
 # Setup
 1. Download the "Lost Ark Logger" packet logger @ https://github.com/shalzuth/LostArkLogger/releases/download/v0.0.0.1/LostArkLogger.exe
 2. Download Lost Ark ACT plugin @ https://github.com/shalzuth/LostArkLogger/releases/download/v0.0.0.1/LostArk_ACT_Plugin.dll
