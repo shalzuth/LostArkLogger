@@ -10,7 +10,7 @@
 1. Download the "Lost Ark Logger" packet logger @ https://github.com/shalzuth/LostArkLogger/releases/download/v0.0.0.1/LostArkLogger.exe
 2. Download Lost Ark ACT plugin @ https://github.com/shalzuth/LostArkLogger/releases/download/v0.0.0.1/LostArk_ACT_Plugin.dll
 3. Download & install ACT @ https://advancedcombattracker.com/download.php
-4. Maybe download and install npcap? https://npcap.com/#download
+4. Download and install npcap @ https://npcap.com/#download
 
 # ACT Setup
 1. Install ACT normally.
