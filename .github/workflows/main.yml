@@ -30,15 +30,23 @@ jobs:
         
     - name: Build
       run: msbuild LostArkLogger.sln /p:Configuration=Debug
-    
-    - name: Sign
-      uses: DanaBear/code-sign-action@v4
-      with:
-        certificate: '${{ secrets.CERTIFICATE }}'
-        password: '${{ secrets.PASSWORD }}'
-        certificatesha1: '${{ secrets.CERTHASH }}'
-        folder: 'bin\Debug\'
  
+    - name: Import PFX
+      shell: powershell
+      run: |
+        $pfxCertFilePath = Join-Path -Path $PSScriptRoot -ChildPath "CodeSigningCertificate.pfx"
+        Set-Content -Value $([System.Convert]::FromBase64String($env:BASE64_PFX)) -Path $pfxCertFilePath -Encoding Byte
+        $codeSigningCert = Import-PfxCertificate -FilePath $pfxCertFilePath -Password $($env:PFX_PASSWORD | ConvertTo-SecureString -AsPlainText -Force) -CertStoreLocation Cert:\CurrentUser\My
+      env:
+        BASE64_PFX: ${{ secrets.CERTIFICATE }}
+        PFX_PASSWORD: ${{ secrets.PASSWORD }}
+  
+    - name: Sign exe
+      shell: powershell
+      run: |
+        $codeSigningCert = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert | Select-Object -First 1
+        Set-AuthenticodeSignature -Certificate $codeSigningCert -FilePath "bin\Debug\LostArkLogger.exe" -TimestampServer "http://timestamp.digicert.com"
+          
     - name: Upload exe Artifact
       uses: actions/upload-artifact@v1.0.0
       with:
