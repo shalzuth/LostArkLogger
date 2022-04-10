@@ -36,6 +36,7 @@ jobs:
       with:
         certificate: '${{ secrets.CERTIFICATE }}'
         password: '${{ secrets.PASSWORD }}'
+        certificatesha1: '${{ secrets.CERTHASH }}'
         folder: 'bin\Debug\'
  
     - name: Upload exe Artifact
