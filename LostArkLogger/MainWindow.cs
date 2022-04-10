@@ -56,22 +56,26 @@ namespace LostArkLogger
             {
                 if (BitConverter.ToUInt32(tcp.PayloadData, 0) == 0xccad001e)
                 {
+                    if (logger != null) logger.Close();
                     if (autoupload.Checked && logger != null)
                     {
-                        logger.Close();
-                        var pcapBytes = File.ReadAllBytes(fileName);
-                        try // ignore server failures
+                        System.Threading.Tasks.Task.Run(() =>
                         {
-                            var request = (HttpWebRequest)WebRequest.Create("http://52.180.146.231/appupload");
-                            //var request = (HttpWebRequest)WebRequest.Create("http://127.0.0.1/appupload");
-                            request.Method = "POST";
-                            request.ContentType = "application/octet-stream";
-                            request.ContentLength = pcapBytes.Length;
-                            using (var stream = request.GetRequestStream()) stream.Write(pcapBytes, 0, pcapBytes.Length);
-                            var response = (HttpWebResponse)request.GetResponse();
-                            var combatLog = new StreamReader(response.GetResponseStream()).ReadToEnd();
-                            File.WriteAllText(fileName.Replace(".pcap", ".log"), combatLog);
-                        }catch (Exception ex) { }
+                            try // ignore server failures
+                            {
+                                var pcapBytes = File.ReadAllBytes(fileName);
+                                var request = (HttpWebRequest)WebRequest.Create("http://52.180.146.231/appupload");
+                                //var request = (HttpWebRequest)WebRequest.Create("http://127.0.0.1/appupload");
+                                request.Method = "POST";
+                                request.ContentType = "application/octet-stream";
+                                request.ContentLength = pcapBytes.Length;
+                                using (var stream = request.GetRequestStream()) stream.Write(pcapBytes, 0, pcapBytes.Length);
+                                var response = (HttpWebResponse)request.GetResponse();
+                                var combatLog = new StreamReader(response.GetResponseStream()).ReadToEnd();
+                                File.WriteAllText(fileName.Replace(".pcap", ".log"), combatLog);
+                            }
+                            catch (Exception ex) { }
+                        });
                     }
                     currentIpAddr = (tcp.ParentPacket as IPPacket).SourceAddress.ToString();
                     fileName = "LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".pcap";
