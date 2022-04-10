@@ -44,8 +44,8 @@ jobs:
         path: bin\Debug\LostArkLogger.exe
         
     - name: Add to releases
-       uses: softprops/action-gh-release@v1
-       with:
-         files: |
-           bin\Debug\LostArkLogger.exe
-           big\Debug\LostArk_ACT_Plugin.dll
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          bin\Debug\LostArkLogger.exe
+          big\Debug\LostArk_ACT_Plugin.dll
