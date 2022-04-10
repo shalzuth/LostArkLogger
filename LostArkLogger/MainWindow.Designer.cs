@@ -77,6 +77,7 @@
             // autoupload
             // 
             this.autoupload.AutoSize = true;
+            this.autoupload.Enabled = false;
             this.autoupload.Location = new System.Drawing.Point(12, 66);
             this.autoupload.Name = "autoupload";
             this.autoupload.Size = new System.Drawing.Size(83, 17);
