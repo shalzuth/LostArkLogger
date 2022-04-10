@@ -35,4 +35,4 @@ jobs:
       uses: actions/upload-artifact@v1.0.0
       with:
         name: LostArkLogger
-        path: bin\Debug\
+        path: LostArkLogger\bin\Debug\
