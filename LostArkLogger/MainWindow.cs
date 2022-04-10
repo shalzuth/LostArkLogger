@@ -23,15 +23,33 @@ namespace LostArkLogger
             foreach (PcapDevice dev in devices) deviceList.Items.Add(dev.Description);
             deviceList.SelectedItem = activeDevice.Description;
         }
+        private void deviceList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            device?.StopCapture();
+            device?.Close();
+
+            device = LibPcapLiveDeviceList.Instance.First(i => i.Description == deviceList.SelectedItem.ToString());
+            device.Open();
+            device.Filter = "tcp port 6040";
+            device.OnPacketArrival += Device_OnPacketArrival;
+            device.StartCapture();
+        }
         int loggedPacketCount = 0;
         string currentIpAddr = "";
         string fileName;
+        void ProcessPacket(Byte[] data)
+        {
+            var packetWithTimestamp = BitConverter.GetBytes(DateTime.UtcNow.ToBinary()).ToArray().Concat(data);
+            logger.Write(packetWithTimestamp.ToArray());
+            loggedPacketCount++;
+            loggedPacketCountLabel.Text = "Logged Packets : " + loggedPacketCount;
+        }
+        TcpReconstruction tcpReconstruction;
         void Device_OnPacketArrival(object s, PacketCapture e)
         {
             var p = Packet.ParsePacket(e.GetPacket().LinkLayerType, e.GetPacket().Data);
             var tcp = p.Extract<TcpPacket>();
-            //if ((tcp.Flags & 8) != 8) return; // weird ack
-            if (tcp.PayloadData.Length < 6) return;
+            if (tcp.PayloadData.Length == 0) return;
 
             if ((tcp.ParentPacket as IPPacket).SourceAddress.ToString() != currentIpAddr)
             {
@@ -41,46 +59,35 @@ namespace LostArkLogger
                     {
                         logger.Close();
                         var pcapBytes = File.ReadAllBytes(fileName);
-                        var request = (HttpWebRequest)WebRequest.Create("http://52.180.146.231/appupload");
-                        //var request = (HttpWebRequest)WebRequest.Create("http://127.0.0.1/appupload");
-                        request.Method = "POST";
-                        request.ContentType = "application/octet-stream";
-                        request.ContentLength = pcapBytes.Length;
-                        using (var stream = request.GetRequestStream()) stream.Write(pcapBytes, 0, pcapBytes.Length);
-                        var response = (HttpWebResponse)request.GetResponse();
-                        var combatLog = new StreamReader(response.GetResponseStream()).ReadToEnd();
-                        File.WriteAllText(fileName.Replace(".pcap", ".log"), combatLog);
+                        try // ignore server failures
+                        {
+                            var request = (HttpWebRequest)WebRequest.Create("http://52.180.146.231/appupload");
+                            //var request = (HttpWebRequest)WebRequest.Create("http://127.0.0.1/appupload");
+                            request.Method = "POST";
+                            request.ContentType = "application/octet-stream";
+                            request.ContentLength = pcapBytes.Length;
+                            using (var stream = request.GetRequestStream()) stream.Write(pcapBytes, 0, pcapBytes.Length);
+                            var response = (HttpWebResponse)request.GetResponse();
+                            var combatLog = new StreamReader(response.GetResponseStream()).ReadToEnd();
+                            File.WriteAllText(fileName.Replace(".pcap", ".log"), combatLog);
+                        }catch (Exception ex) { }
                     }
                     currentIpAddr = (tcp.ParentPacket as IPPacket).SourceAddress.ToString();
                     fileName = "LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".pcap";
                     logger = new CaptureFileWriterDevice(fileName, FileMode.Create);
                     logger.Open();
                     loggedPacketCount = 0;
+                    tcpReconstruction = new TcpReconstruction(ProcessPacket);
                 }
                 else return;
             }
-            var packetWithTimestamp = BitConverter.GetBytes(DateTime.UtcNow.ToBinary()).ToArray().Concat(tcp.PayloadData);
-            logger.Write(packetWithTimestamp.ToArray());
-            loggedPacketCount++;
-            loggedPacketCountLabel.Text = "Logged Packets : " + loggedPacketCount;
+            tcpReconstruction.ReassemblePacket(tcp);
         }
         private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             logger?.Close();
             device?.StopCapture();
             device?.Close();
-        }
-
-        private void deviceList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            device?.StopCapture();
-            device?.Close();
-
-            device = LibPcapLiveDeviceList.Instance.First(i=>i.Description == deviceList.SelectedItem.ToString());
-            device.Open();
-            device.Filter = "tcp port 6040";
-            device.OnPacketArrival += Device_OnPacketArrival;
-            device.StartCapture();
         }
 
         private void weblink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
