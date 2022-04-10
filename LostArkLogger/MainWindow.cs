@@ -57,7 +57,7 @@ namespace LostArkLogger
                 if (BitConverter.ToUInt32(tcp.PayloadData, 0) == 0xccad001e)
                 {
                     if (logger != null) logger.Close();
-                    /*if (autoupload.Checked && logger != null)
+                    if (autoupload.Checked && logger != null)
                     {
                         System.Threading.Tasks.Task.Run(() =>
                         {
@@ -76,7 +76,7 @@ namespace LostArkLogger
                             }
                             catch (Exception ex) { }
                         });
-                    }*/
+                    }
                     currentIpAddr = (tcp.ParentPacket as IPPacket).SourceAddress.ToString();
                     fileName = "LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".pcap";
                     logger = new CaptureFileWriterDevice(fileName, FileMode.Create);
@@ -97,7 +97,7 @@ namespace LostArkLogger
 
         private void weblink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            //System.Diagnostics.Process.Start("https://github.com/shalzuth/LostArkLogger");
+            System.Diagnostics.Process.Start("https://github.com/shalzuth/LostArkLogger");
         }
     }
 }
