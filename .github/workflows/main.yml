@@ -20,6 +20,14 @@ jobs:
     - name: Restore NuGet Packages
       run: nuget restore LostArkLogger.sln
  
+    - name: Download ACT
+      shell: powershell
+      run: Invoke-WebRequest -Uri "https://advancedcombattracker.com/download.php?id=57" -OutFile "ACT.zip"    
+
+    - name: Unzip ACT
+      shell: cmd
+      run: 7z x -y ACT.zip
+        
     - name: Build
       run: msbuild LostArkLogger.sln /p:Configuration=Debug
  
