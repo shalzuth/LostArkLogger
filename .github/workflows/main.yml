@@ -10,9 +10,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
       name: Checkout Code
-     
-    - name: Setup MSBuild Path
-      uses: warrenbuckley/Setup-MSBuild@v1
+      
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
        
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v1.0.2
@@ -20,7 +20,7 @@ jobs:
     - name: Restore NuGet Packages
       run: nuget restore LostArkLogger.sln
  
-    - name: Build and Publish Web App
+    - name: Build
       run: msbuild LostArkLogger.sln /p:Configuration=Debug
  
     - name: Upload Artifact
