@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -37,7 +38,7 @@ namespace LostArkLogger
         int loggedPacketCount = 0;
         string currentIpAddr = "";
         string fileName;
-        void ProcessPacket(Byte[] data)
+        void ProcessPacket(List<Byte> data)
         {
             var packetWithTimestamp = BitConverter.GetBytes(DateTime.UtcNow.ToBinary()).ToArray().Concat(data);
             logger.Write(packetWithTimestamp.ToArray());

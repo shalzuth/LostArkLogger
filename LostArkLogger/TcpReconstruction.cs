@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Text;
 
@@ -12,69 +13,33 @@ namespace LostArkLogger
     // session. We will try and handle duplicates, TCP fragments, and out
     // of order packets in a smart way.
 
-    /// <summary>
-    /// A class that represent a node in a linked list that holds partial Tcp session
-    /// fragments
-    /// </summary>
-    internal class TcpFrag
-    {
-        public ulong seq = 0;
-        public ulong len = 0;
-        public ulong data_len = 0;
-        public byte[] data = null;
-        public TcpFrag next = null;
-    };
-
     public class TcpReconstruction
     {
+        /// <summary>
+        /// A class that represent a node in a linked list that holds partial Tcp session
+        /// fragments
+        /// </summary>
+        internal class TcpFrag
+        {
+            public ulong seq = 0;
+            public ulong len = 0;
+            public ulong data_len = 0;
+            public byte[] data = null;
+            public TcpFrag next = null;
+        }
+
         // frags - Holds two linked list of the session data, one for each direction    
         // seq - Holds the last sequence number for each direction
         TcpFrag[] frags = new TcpFrag[2];
         ulong[] seq = new ulong[2];
         long[] src_addr = new long[2];
         uint[] src_port = new uint[2];
-        uint[] tcp_port = new uint[2];
-        uint[] bytes_written = new uint[2];
-        bool incomplete_tcp_stream = false;
-        bool closed = false;
-        byte[] data = new byte[] { };
-        public byte[] Data
-        {
-            get { return this.data; }
-            private set { }
-        }
-        public bool IncompleteStream
-        {
-            get { return incomplete_tcp_stream; }
-        }
-        public bool EmptyStream { get; private set; } = true;
-
-        internal List<PacketDotNet.TcpPacket> packets;
-
-        public delegate void TcpPacketPayload(Byte[] data);
-        public TcpReconstruction()
-        {
-            reset_tcp_reassembly();
-            this.packets = new List<PacketDotNet.TcpPacket>();
-        }
-
+        List<Byte> data = new List<Byte>();
+        public delegate void TcpPacketPayload(List<Byte> data);
         TcpPacketPayload OnTcpPayload;
         public TcpReconstruction(TcpPacketPayload onTcpPayload)
         {
-            reset_tcp_reassembly();
             OnTcpPayload = onTcpPayload;
-        }
-
-        /// <summary>
-        /// Cleans up the class and frees resources
-        /// </summary>
-        public void Close()
-        {
-            if (!closed)
-            {
-                reset_tcp_reassembly();
-                closed = true;
-            }
         }
 
         /// <summary>
@@ -84,10 +49,9 @@ namespace LostArkLogger
         public void ReassemblePacket(PacketDotNet.TcpPacket tcpPacket)
         {
             // if the paylod length is zero bail out
-            ulong length = (ulong)(tcpPacket.Bytes.Length - tcpPacket.HeaderData.Length);
-            if (length == 0) return;
+            var length = tcpPacket.Bytes.Length - tcpPacket.HeaderData.Length;
 
-            reassemble_tcp((ulong)tcpPacket.SequenceNumber, length, tcpPacket.PayloadData, (ulong)tcpPacket.PayloadData.Length, tcpPacket.Synchronize,
+            ReassembleTcp((ulong)tcpPacket.SequenceNumber, (ulong)length, tcpPacket.PayloadData, (ulong)tcpPacket.PayloadData.Length, tcpPacket.Synchronize,
                 BitConverter.ToUInt32((tcpPacket.ParentPacket as PacketDotNet.IPv4Packet).SourceAddress.GetAddressBytes(), 0),
                 BitConverter.ToUInt32((tcpPacket.ParentPacket as PacketDotNet.IPv4Packet).DestinationAddress.GetAddressBytes(), 0),
                 (uint)tcpPacket.SourcePort, (uint)tcpPacket.DestinationPort, tcpPacket);
@@ -100,29 +64,15 @@ namespace LostArkLogger
         /// <param name="data"></param>
         private void write_packet_data(int index, byte[] i_data, PacketDotNet.TcpPacket tcpPacket)
         {
-            // Add packet to packets list.
-            //this.packets.Add(tcpPacket);
             // ignore empty packets.
             if (i_data.Length == 0) return;
-
-            data = Combine(this.data, i_data);
-            bytes_written[index] += (uint)i_data.Length;
-            EmptyStream = false;
+            data.AddRange(i_data);
             if (tcpPacket.Push)
             {
                 OnTcpPayload(data);
-                data = new byte[0];
+                data.Clear();
             }
         }
-
-        public static byte[] Combine(byte[] first, byte[] second)
-        {
-            byte[] ret = new byte[first.Length + second.Length];
-            Buffer.BlockCopy(first, 0, ret, 0, first.Length);
-            Buffer.BlockCopy(second, 0, ret, first.Length, second.Length);
-            return ret;
-        }
-
         /// <summary>
         /// Reconstructs the tcp session
         /// </summary>
@@ -135,9 +85,7 @@ namespace LostArkLogger
         /// <param name="net_dst">The destination ip address</param>
         /// <param name="srcport">The source port</param>
         /// <param name="dstport">The destination port</param>
-        private void reassemble_tcp(ulong sequence, ulong length, byte[] data,
-                       ulong data_length, bool synflag, long net_src,
-                       long net_dst, uint srcport, uint dstport, PacketDotNet.TcpPacket tcpPacket)
+        private void ReassembleTcp(ulong sequence, ulong length, byte[] data, ulong data_length, bool synflag, long net_src, long net_dst, uint srcport, uint dstport, PacketDotNet.TcpPacket tcpPacket)
         {
             long srcx, dstx;
             int src_index, j;
@@ -173,8 +121,6 @@ namespace LostArkLogger
             }
 
             if (src_index < 0) throw new Exception("ERROR in reassemble_tcp: Too many addresses!");
-
-            if (data_length < length) incomplete_tcp_stream = true;
             /* now that we have filed away the srcs, lets get the sequence number stuff
             figured out */
             if (first)
@@ -210,7 +156,6 @@ namespace LostArkLogger
                     {
                         data = null;
                         data_length = 0;
-                        incomplete_tcp_stream = true;
                     }
                     else
                     {
@@ -278,32 +223,6 @@ namespace LostArkLogger
                 current = current.next;
             }
             return false;
-        }
-
-        // cleans the linked list
-        void reset_tcp_reassembly()
-        {
-            TcpFrag current, next;
-            int i;
-            EmptyStream = true;
-            incomplete_tcp_stream = false;
-            for (i = 0; i < 2; i++)
-            {
-                seq[i] = 0;
-                src_addr[i] = 0;
-                src_port[i] = 0;
-                tcp_port[i] = 0;
-                bytes_written[i] = 0;
-                current = frags[i];
-                while (current != null)
-                {
-                    next = current.next;
-                    current.data = null;
-                    current = null;
-                    current = next;
-                }
-                frags[i] = null;
-            }
         }
     }
 }

@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("LostArkLogger")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Tool to log Lost Ark Packets")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("shalzuth")]
 [assembly: AssemblyProduct("LostArkLogger")]
-[assembly: AssemblyCopyright("Copyright ©  2022")]
+[assembly: AssemblyCopyright("Copyright © 2022, shalzuth")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("b0808a8b-3adc-4bb1-8927-5bcb9a519131")]
+[assembly: Guid("b0808a8b-3adc-4bb1-8927-5BCB9A519132")]
 
 // Version information for an assembly consists of the following four values:
 //
