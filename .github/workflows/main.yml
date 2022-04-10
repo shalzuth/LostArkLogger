@@ -31,8 +31,21 @@ jobs:
     - name: Build
       run: msbuild LostArkLogger.sln /p:Configuration=Debug
  
-    - name: Upload Artifact
+    - name: Upload exe Artifact
       uses: actions/upload-artifact@v1.0.0
       with:
-        name: LostArkLogger
-        path: bin\Debug\
+        name: LostArk_ACT_Plugin.dll
+        path: bin\Debug\LostArk_ACT_Plugin.dll
+        
+    - name: Upload dll Artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: LostArkLogger.exe
+        path: bin\Debug\LostArkLogger.exe
+        
+    - name: Add to releases
+       uses: softprops/action-gh-release@v1
+       with:
+         files: |
+           bin\Debug\LostArkLogger.exe
+           big\Debug\LostArk_ACT_Plugin.dll
