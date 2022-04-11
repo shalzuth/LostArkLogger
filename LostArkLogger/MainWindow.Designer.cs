@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.deviceList = new System.Windows.Forms.ComboBox();
             this.deviceLabel = new System.Windows.Forms.Label();
             this.loggedPacketCountLabel = new System.Windows.Forms.Label();
@@ -95,6 +96,7 @@
             this.Controls.Add(this.deviceLabel);
             this.Controls.Add(this.deviceList);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MainWindow";
             this.Text = "Lost Ark Logger";

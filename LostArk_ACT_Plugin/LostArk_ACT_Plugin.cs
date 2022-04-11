@@ -114,20 +114,9 @@ namespace MLParsing_Plugin
             var pl = new ParsedLine(logInfo);
             ProcessAction(pl);
         }
-        bool setEncounter = false;
         private void ProcessAction(ParsedLine l)
         {
             l.logInfo.detectedType = Color.Gray.ToArgb();
-            // i don't understand encounters in ACT, someone please help.
-            /*if (!ActGlobals.oFormActMain.InCombat)
-            {
-                if (setEncounter == false)
-                {
-                    setEncounter = true;
-                }
-                else ActGlobals.oFormActMain.InCombat = true;
-            }
-            */
             if (ActGlobals.oFormActMain.SetEncounter(l.logInfo.detectedTime, l.attacker, l.victim))
                 ActGlobals.oFormActMain.AddCombatAction((int)SwingTypeEnum.Melee, l.critical, "", l.attacker, l.ability, l.damage, l.logInfo.detectedTime, l.ts, l.victim, "");
         }

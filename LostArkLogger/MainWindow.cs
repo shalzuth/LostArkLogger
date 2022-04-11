@@ -23,6 +23,7 @@ namespace LostArkLogger
             var activeDevice = NetworkInterface.GetAllNetworkInterfaces().First(n => n.OperationalStatus == OperationalStatus.Up && n.NetworkInterfaceType != NetworkInterfaceType.Loopback);
             foreach (PcapDevice dev in devices) deviceList.Items.Add(dev.Description);
             deviceList.SelectedItem = activeDevice.Description;
+            //UploadFile(@"LostArk_2022-04-11-13-51-52.pcap");
         }
         private void deviceList_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -38,30 +39,57 @@ namespace LostArkLogger
         int loggedPacketCount = 0;
         string currentIpAddr = "";
         string fileName;
+        bool combatFound = false;
         void ProcessPacket(List<Byte> data)
         {
+            if (BitConverter.ToUInt16(data.ToArray(), 2) == 0xc966) combatFound = true;
             var packetWithTimestamp = BitConverter.GetBytes(DateTime.UtcNow.ToBinary()).ToArray().Concat(data);
             logger.Write(packetWithTimestamp.ToArray());
             loggedPacketCount++;
             loggedPacketCountLabel.Text = "Logged Packets : " + loggedPacketCount;
+            if (BitConverter.ToUInt16(data.ToArray(), 2) == 0xc735) EndCapture();
         }
         TcpReconstruction tcpReconstruction;
         String baseUrl = "http://lostark.shalzuth.com/";
         //String baseUrl = "http://127.0.0.1/";
         void UploadFile(String fileName)
         {
-            var pcapBytes = File.ReadAllBytes(fileName);
-            var request = (HttpWebRequest)WebRequest.Create(baseUrl + "appupload2c");
-            //var request = (HttpWebRequest)WebRequest.Create("http://127.0.0.1/appupload");
-            request.Method = "POST";
-            request.ContentType = "application/octet-stream";
-            request.ContentLength = pcapBytes.Length;
-            using (var stream = request.GetRequestStream()) stream.Write(pcapBytes, 0, pcapBytes.Length);
-            var response = (HttpWebResponse)request.GetResponse();
-            var logGuid = new StreamReader(response.GetResponseStream()).ReadToEnd();
-            System.Diagnostics.Process.Start(baseUrl + "log/" + logGuid);
-            var combatLog = new WebClient().DownloadString(baseUrl + "download/" + logGuid);
-            File.WriteAllText(fileName.Replace(".pcap", ".log"), combatLog);
+            System.Threading.Tasks.Task.Run(() =>
+            {
+                try // ignore server failures
+                {
+                    var pcapBytes = File.ReadAllBytes(fileName);
+                    var request = (HttpWebRequest)WebRequest.Create(baseUrl + "appupload2c");
+                    //var request = (HttpWebRequest)WebRequest.Create("http://127.0.0.1/appupload");
+                    request.Method = "POST";
+                    request.ContentType = "application/octet-stream";
+                    request.ContentLength = pcapBytes.Length;
+                    using (var stream = request.GetRequestStream()) stream.Write(pcapBytes, 0, pcapBytes.Length);
+                    var response = (HttpWebResponse)request.GetResponse();
+                    var logGuid = new StreamReader(response.GetResponseStream()).ReadToEnd();
+                    System.Diagnostics.Process.Start(baseUrl + "log/" + logGuid);
+                    var combatLog = new WebClient().DownloadString(baseUrl + "download/" + logGuid);
+                    File.WriteAllText(fileName.Replace(".pcap", ".log"), combatLog);
+                    // remove old pcap and/or text??
+                }
+                catch (Exception ex) { }
+            });
+        }
+        void EndCapture()
+        {
+            if (logger != null)
+            {
+
+                logger.Close();
+                logger = null;
+                if (!combatFound) File.Delete(fileName);
+            }
+            if (combatFound && autoupload.Checked)
+            {
+                UploadFile(fileName);
+                combatFound = false;
+            }
+            currentIpAddr = "";
         }
         void Device_OnPacketArrival(object s, PacketCapture e)
         {
@@ -73,19 +101,7 @@ namespace LostArkLogger
             {
                 if (BitConverter.ToUInt32(tcp.PayloadData, 0) == 0xccad001e)
                 {
-                    if (logger != null) logger.Close();
-                    if (autoupload.Checked && logger != null)
-                    {
-                        var oldFileName = fileName;
-                        System.Threading.Tasks.Task.Run(() =>
-                        {
-                            try // ignore server failures
-                            {
-                                UploadFile(oldFileName);
-                            }
-                            catch (Exception ex) { }
-                        });
-                    }
+                    EndCapture();
                     currentIpAddr = (tcp.ParentPacket as IPPacket).SourceAddress.ToString();
                     fileName = "LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".pcap";
                     logger = new CaptureFileWriterDevice(fileName, FileMode.Create);
