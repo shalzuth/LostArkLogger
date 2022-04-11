@@ -1,6 +1,9 @@
 name: Build App
  
-on: [push]
+on:
+  push:
+    tags:
+      - '*'
  
 jobs:
   build:

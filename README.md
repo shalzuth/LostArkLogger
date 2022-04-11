@@ -10,8 +10,8 @@
  Please submit an issue on the github repo, or join the discord @ https://discord.gg/MedRDjEwHZ
  
 # Setup
-1. Download the "Lost Ark Logger" packet logger @ https://github.com/shalzuth/LostArkLogger/releases/download/v0.0.0.1/LostArkLogger.exe
-2. Download Lost Ark ACT plugin @ https://github.com/shalzuth/LostArkLogger/releases/download/v0.0.0.1/LostArk_ACT_Plugin.dll
+1. Download the "Lost Ark Logger" packet logger @ https://github.com/shalzuth/LostArkLogger/releases/latest/download/LostArkLogger.exe
+2. Download Lost Ark ACT plugin @ https://github.com/shalzuth/LostArkLogger/releases/latest/download/LostArk_ACT_Plugin.dll
 3. Download & install ACT @ https://advancedcombattracker.com/download.php
 4. Download and install npcap @ https://npcap.com/#download
 
@@ -41,5 +41,5 @@
 8. ???
 
 # WARNING
-This is not endorsed by Smilegate or AGS. Usage of this tool isn't defined by Smilegate or AGS. I do not save your data or log it unless you submit a bug report.
- 
+This is not endorsed by Smilegate or AGS. Usage of this tool isn't defined by Smilegate or AGS. I do not save your data or log it unless you submit a bug report. Having said that, the .pcap generated can potentially contain sensitive information (specifically, a one-time use token)
+  
