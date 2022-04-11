@@ -65,4 +65,4 @@ jobs:
       with:
         files: |
           bin\Debug\LostArkLogger.exe
-          big\Debug\LostArk_ACT_Plugin.dll
+          bin\Debug\LostArk_ACT_Plugin.dll
