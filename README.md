@@ -22,8 +22,8 @@
 # Guide
 1. Before entering a dungeon, launch "Lost Ark Logger". Ensure the network interface device is correct as the one that you use for internet access.
 2. While in the dungeon, "Lost Ark Logger" will log packets - there's a packet log counter, ensure that it is increasing. The log file will be in the same location as "Lost Ark Logger"
-3. After you leave the dungeon, "Lost Ark Logger" uploads the packet dump to the server and downloads the combat log (if the auto-upload box is checked). This combat log will be in the same location as "Lost Ark Logger". If this fails, you can upload the log at http://52.180.146.231/upload
-4. In ACT, import the combat log.
+3. After you leave the dungeon, "Lost Ark Logger" uploads the packet dump to the server and downloads the combat log (if the auto-upload box is checked). This combat log will be in the same location as "Lost Ark Logger". If this fails, you can upload the log at http://lostark.shalzuth.com/upload
+4. In ACT, import the combat log. NOTE - You might need to close&open ACT between imports.
 5. In ACT, change to the "Main" tab and begin your analysis.
 
 # Known issues
@@ -41,5 +41,5 @@
 8. ???
 
 # WARNING
-This is not endorsed by Smilegate or AGS. Usage of this tool isn't defined by Smilegate or AGS. I do not save your data or log it unless you submit a bug report. Having said that, the .pcap generated can potentially contain sensitive information (specifically, a one-time use token)
+This is not endorsed by Smilegate or AGS. Usage of this tool isn't defined by Smilegate or AGS. I do not save your personal identifiable data. Having said that, the .pcap generated can potentially contain sensitive information (specifically, a one-time use token)
   

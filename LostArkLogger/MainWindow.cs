@@ -46,6 +46,23 @@ namespace LostArkLogger
             loggedPacketCountLabel.Text = "Logged Packets : " + loggedPacketCount;
         }
         TcpReconstruction tcpReconstruction;
+        String baseUrl = "http://lostark.shalzuth.com/";
+        //String baseUrl = "http://127.0.0.1/";
+        void UploadFile(String fileName)
+        {
+            var pcapBytes = File.ReadAllBytes(fileName);
+            var request = (HttpWebRequest)WebRequest.Create(baseUrl + "appupload2c");
+            //var request = (HttpWebRequest)WebRequest.Create("http://127.0.0.1/appupload");
+            request.Method = "POST";
+            request.ContentType = "application/octet-stream";
+            request.ContentLength = pcapBytes.Length;
+            using (var stream = request.GetRequestStream()) stream.Write(pcapBytes, 0, pcapBytes.Length);
+            var response = (HttpWebResponse)request.GetResponse();
+            var logGuid = new StreamReader(response.GetResponseStream()).ReadToEnd();
+            System.Diagnostics.Process.Start(baseUrl + "log/" + logGuid);
+            var combatLog = new WebClient().DownloadString(baseUrl + "download/" + logGuid);
+            File.WriteAllText(fileName.Replace(".pcap", ".log"), combatLog);
+        }
         void Device_OnPacketArrival(object s, PacketCapture e)
         {
             var p = Packet.ParsePacket(e.GetPacket().LinkLayerType, e.GetPacket().Data);
@@ -59,20 +76,12 @@ namespace LostArkLogger
                     if (logger != null) logger.Close();
                     if (autoupload.Checked && logger != null)
                     {
+                        var oldFileName = fileName;
                         System.Threading.Tasks.Task.Run(() =>
                         {
                             try // ignore server failures
                             {
-                                var pcapBytes = File.ReadAllBytes(fileName);
-                                var request = (HttpWebRequest)WebRequest.Create("http://52.180.146.231/appupload");
-                                //var request = (HttpWebRequest)WebRequest.Create("http://127.0.0.1/appupload");
-                                request.Method = "POST";
-                                request.ContentType = "application/octet-stream";
-                                request.ContentLength = pcapBytes.Length;
-                                using (var stream = request.GetRequestStream()) stream.Write(pcapBytes, 0, pcapBytes.Length);
-                                var response = (HttpWebResponse)request.GetResponse();
-                                var combatLog = new StreamReader(response.GetResponseStream()).ReadToEnd();
-                                File.WriteAllText(fileName.Replace(".pcap", ".log"), combatLog);
+                                UploadFile(oldFileName);
                             }
                             catch (Exception ex) { }
                         });
