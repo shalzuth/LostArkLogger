@@ -23,7 +23,6 @@ namespace LostArkLogger
             var activeDevice = NetworkInterface.GetAllNetworkInterfaces().First(n => n.OperationalStatus == OperationalStatus.Up && n.NetworkInterfaceType != NetworkInterfaceType.Loopback);
             foreach (PcapDevice dev in devices) deviceList.Items.Add(dev.Description);
             deviceList.SelectedItem = activeDevice.Description;
-            //UploadFile(@"LostArk_2022-04-11-13-51-52.pcap");
         }
         private void deviceList_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -47,7 +46,6 @@ namespace LostArkLogger
             logger.Write(packetWithTimestamp.ToArray());
             loggedPacketCount++;
             loggedPacketCountLabel.Text = "Logged Packets : " + loggedPacketCount;
-            if (BitConverter.ToUInt16(data.ToArray(), 2) == 0xc735) EndCapture();
         }
         TcpReconstruction tcpReconstruction;
         String baseUrl = "http://lostark.shalzuth.com/";
@@ -99,7 +97,7 @@ namespace LostArkLogger
 
             if ((tcp.ParentPacket as IPPacket).SourceAddress.ToString() != currentIpAddr)
             {
-                if (BitConverter.ToUInt32(tcp.PayloadData, 0) == 0xccad001e)
+                if (tcp.PayloadData.Length > 4 && BitConverter.ToUInt32(tcp.PayloadData, 0) == 0xccad001e)
                 {
                     EndCapture();
                     currentIpAddr = (tcp.ParentPacket as IPPacket).SourceAddress.ToString();
