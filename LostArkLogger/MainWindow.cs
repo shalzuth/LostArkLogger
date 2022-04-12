@@ -19,6 +19,8 @@ namespace LostArkLogger
         {
             Control.CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
+            if (!Directory.Exists("pcaps")) Directory.CreateDirectory("pcaps");
+            if (!Directory.Exists("logs")) Directory.CreateDirectory("logs");
             var devices = CaptureDeviceList.Instance;
             var activeDevice = NetworkInterface.GetAllNetworkInterfaces().First(n => n.OperationalStatus == OperationalStatus.Up && n.NetworkInterfaceType != NetworkInterfaceType.Loopback);
             foreach (PcapDevice dev in devices) deviceList.Items.Add(dev.Description);
@@ -67,7 +69,7 @@ namespace LostArkLogger
                     var logGuid = new StreamReader(response.GetResponseStream()).ReadToEnd();
                     System.Diagnostics.Process.Start(baseUrl + "log/" + logGuid);
                     var combatLog = new WebClient().DownloadString(baseUrl + "download/" + logGuid);
-                    File.WriteAllText(fileName.Replace(".pcap", ".log"), combatLog);
+                    File.WriteAllText("logs\\" + logGuid + ".log", combatLog);
                     // remove old pcap and/or text??
                 }
                 catch (Exception ex) { }
@@ -101,7 +103,7 @@ namespace LostArkLogger
                 {
                     EndCapture();
                     currentIpAddr = (tcp.ParentPacket as IPPacket).SourceAddress.ToString();
-                    fileName = "LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".pcap";
+                    fileName = "pcaps\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".pcap";
                     logger = new CaptureFileWriterDevice(fileName, FileMode.Create);
                     logger.Open();
                     loggedPacketCount = 0;
@@ -121,6 +123,11 @@ namespace LostArkLogger
         private void weblink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             System.Diagnostics.Process.Start("https://github.com/shalzuth/LostArkLogger");
+        }
+
+        private void endRunButton_Click(object sender, EventArgs e)
+        {
+            EndCapture();
         }
     }
 }

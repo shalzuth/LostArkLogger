@@ -34,6 +34,7 @@
             this.loggedPacketCountLabel = new System.Windows.Forms.Label();
             this.weblink = new System.Windows.Forms.LinkLabel();
             this.autoupload = new System.Windows.Forms.CheckBox();
+            this.endRunButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // deviceList
@@ -85,11 +86,22 @@
             this.autoupload.Text = "Auto-upload";
             this.autoupload.UseVisualStyleBackColor = true;
             // 
+            // endRunButton
+            // 
+            this.endRunButton.Location = new System.Drawing.Point(111, 62);
+            this.endRunButton.Name = "endRunButton";
+            this.endRunButton.Size = new System.Drawing.Size(75, 23);
+            this.endRunButton.TabIndex = 6;
+            this.endRunButton.Text = "End Run";
+            this.endRunButton.UseVisualStyleBackColor = true;
+            this.endRunButton.Click += new System.EventHandler(this.endRunButton_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(297, 92);
+            this.Controls.Add(this.endRunButton);
             this.Controls.Add(this.autoupload);
             this.Controls.Add(this.weblink);
             this.Controls.Add(this.loggedPacketCountLabel);
@@ -113,6 +125,7 @@
         private System.Windows.Forms.Label loggedPacketCountLabel;
         private System.Windows.Forms.LinkLabel weblink;
         private System.Windows.Forms.CheckBox autoupload;
+        private System.Windows.Forms.Button endRunButton;
     }
 }
 
