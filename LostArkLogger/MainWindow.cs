@@ -43,7 +43,7 @@ namespace LostArkLogger
         bool combatFound = false;
         void ProcessPacket(List<Byte> data)
         {
-            if (BitConverter.ToUInt16(data.ToArray(), 2) == 0xc966) combatFound = true;
+            if (BitConverter.ToUInt16(data.ToArray(), 2) == 0xacdb) combatFound = true;
             var packetWithTimestamp = BitConverter.GetBytes(DateTime.UtcNow.ToBinary()).ToArray().Concat(data);
             logger.Write(packetWithTimestamp.ToArray());
             loggedPacketCount++;
@@ -99,7 +99,7 @@ namespace LostArkLogger
 
             if ((tcp.ParentPacket as IPPacket).SourceAddress.ToString() != currentIpAddr)
             {
-                if (tcp.PayloadData.Length > 4 && BitConverter.ToUInt32(tcp.PayloadData, 0) == 0xccad001e)
+                if (tcp.PayloadData.Length > 4 && BitConverter.ToUInt32(tcp.PayloadData, 0) == 0x1e50001e)
                 {
                     EndCapture();
                     currentIpAddr = (tcp.ParentPacket as IPPacket).SourceAddress.ToString();
