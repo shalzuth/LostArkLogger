@@ -29,32 +29,11 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            this.deviceList = new System.Windows.Forms.ComboBox();
-            this.deviceLabel = new System.Windows.Forms.Label();
             this.loggedPacketCountLabel = new System.Windows.Forms.Label();
             this.weblink = new System.Windows.Forms.LinkLabel();
             this.autoupload = new System.Windows.Forms.CheckBox();
             this.endRunButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // deviceList
-            // 
-            this.deviceList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.deviceList.FormattingEnabled = true;
-            this.deviceList.Location = new System.Drawing.Point(60, 16);
-            this.deviceList.Name = "deviceList";
-            this.deviceList.Size = new System.Drawing.Size(225, 21);
-            this.deviceList.TabIndex = 0;
-            this.deviceList.SelectedIndexChanged += new System.EventHandler(this.deviceList_SelectedIndexChanged);
-            // 
-            // deviceLabel
-            // 
-            this.deviceLabel.AutoSize = true;
-            this.deviceLabel.Location = new System.Drawing.Point(13, 19);
-            this.deviceLabel.Name = "deviceLabel";
-            this.deviceLabel.Size = new System.Drawing.Size(41, 13);
-            this.deviceLabel.TabIndex = 1;
-            this.deviceLabel.Text = "Device";
             // 
             // loggedPacketCountLabel
             // 
@@ -105,8 +84,6 @@
             this.Controls.Add(this.autoupload);
             this.Controls.Add(this.weblink);
             this.Controls.Add(this.loggedPacketCountLabel);
-            this.Controls.Add(this.deviceLabel);
-            this.Controls.Add(this.deviceList);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -119,9 +96,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.ComboBox deviceList;
-        private System.Windows.Forms.Label deviceLabel;
         private System.Windows.Forms.Label loggedPacketCountLabel;
         private System.Windows.Forms.LinkLabel weblink;
         private System.Windows.Forms.CheckBox autoupload;

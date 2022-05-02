@@ -52,8 +52,8 @@ namespace LostArkLogger
             var length = tcpPacket.Bytes.Length - tcpPacket.HeaderData.Length;
 
             ReassembleTcp((ulong)tcpPacket.SequenceNumber, (ulong)length, tcpPacket.PayloadData, (ulong)tcpPacket.PayloadData.Length, tcpPacket.Synchronize,
-                BitConverter.ToUInt32((tcpPacket.ParentPacket as PacketDotNet.IPv4Packet).SourceAddress.GetAddressBytes(), 0),
-                BitConverter.ToUInt32((tcpPacket.ParentPacket as PacketDotNet.IPv4Packet).DestinationAddress.GetAddressBytes(), 0),
+                0, // wtf hack BitConverter.ToUInt32((tcpPacket.ParentPacket as PacketDotNet.IPv4Packet).SourceAddress.GetAddressBytes(), 0),
+                1, // wtf hack BitConverter.ToUInt32((tcpPacket.ParentPacket as PacketDotNet.IPv4Packet).DestinationAddress.GetAddressBytes(), 0),
                 (uint)tcpPacket.SourcePort, (uint)tcpPacket.DestinationPort, tcpPacket);
         }
 
