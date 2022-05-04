@@ -62,7 +62,7 @@ namespace LostArkLogger
         string fileName;
         bool combatFound = false;
         Byte[] fragmentedPacket = new Byte[0];
-        Byte[] XorTable = Convert.FromBase64String("lhs9nuO0tqJVKLVNYzeXhClXrz44CESmP/HiNeeIfO6kLCEiwJEPkE7G9uEA0mv+AV0ET2aUgka30RFvL229aQbV9bvI+JtFcxRLHMKTlWFcs3Qtz0BCFaOAuF4uq3oK140JeyAfB6pIwR3e97o7jJIQvhmnyo6JnDFD3DDqEw7/hRc2zYflUXhU5J1QpW6B9DN9TIa8AypWEtZ++iNJ78vD/Dx16cRost8W05kYmOgmauuLOVrzxUry0INHU4rOcXfM8PlgKzpYYiSaC+DYZ/u5/VlSrqGgZDTUW92tv2wC2agncrDHBdvmDSUeMrGs7XCpeX9BGsmfZezaX48Mdg==");
+        Byte[] XorTable = Convert.FromBase64String("HEmbc66I4wGqJ51SDaxtjQv8sHDek7Wrkhc2XwQuscBcQYyPmJ48i3+W3WwmlD7UtmHuh/JLcRtCWlX368npTVsRmZW/fsf+e3rLJA7FtGe8a1A3A9B9RBq4yiCDBuqtakPsgXwHJRg0R5yQ+pfiCLnaafUjE86pImWndG87iYRTzwkZdQzWSDjVpPMt4MS3kbIpeP2iPaX0TJ/5YuHlaErSHShXTk/D2zUV5gVyVr7XWUWgZsLfhlGAo806OWQsH3nnEAAe8Paa0Rb78bsSM/gK713tY4W96LMvD8HY3CpGxqYUYDEwMoIhim66r45YdyvkdgLI2aheVD9A0/+hzA==");
         void Xor(byte[] data, int seed, byte[] xorKey)
         {
             for (int i = 0; i < data.Length; i++) data[i] = (byte)(data[i] ^ xorKey[seed++ % xorKey.Length]);
@@ -112,7 +112,7 @@ namespace LostArkLogger
         void ProcessPacket(List<Byte> data)
         {
             var packets = data.ToArray();
-            if (BitConverter.ToUInt16(data.ToArray(), 2) == 0xacdb) combatFound = true;
+            if (BitConverter.ToUInt16(data.ToArray(), 2) == OpCodes.PKTCombatStatusNotify) combatFound = true;
             var packetWithTimestamp = BitConverter.GetBytes(DateTime.UtcNow.ToBinary()).ToArray().Concat(data);
             loggedPacketCount++;
             loggedPacketCountLabel.Text = "Logged Packets : " + loggedPacketCount;
