@@ -1,13 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
 using System.Windows.Forms;
-using System.Net.NetworkInformation;
-using System.Runtime.InteropServices;
 
 namespace LostArkLogger
 {
@@ -15,7 +7,7 @@ namespace LostArkLogger
     {
         Sniffer sniffer;
         Overlay overlay;
-        public MainWindow()
+        public MainWindow(bool use_npcap = false)
         {
             Control.CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
@@ -25,6 +17,16 @@ namespace LostArkLogger
             overlay.Show();
             sniffer = new Sniffer(this);
             overlay.AddSniffer(sniffer);
+        }
+
+        public void InitNpcap()
+        {
+            sniffer.InitializeNPcap();
+        }
+
+        public void InitNetsh()
+        {
+            sniffer.InitializeNetSh();
         }
 
         private void weblink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

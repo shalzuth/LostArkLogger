@@ -26,13 +26,16 @@ namespace LostArkLogger
             sniffer.addDamageEvent = AddDamageEvent;
             sniffer.newZone = NewZone;
         }
+
+        ConcurrentBag<LogInfo> Events = new ConcurrentBag<LogInfo>();
+
         public void NewZone()
         {
             Events = new ConcurrentBag<LogInfo>();
             Damages.Clear();
             Invalidate();
         }
-        ConcurrentBag<LogInfo> Events = new ConcurrentBag<LogInfo>();
+
         public ConcurrentDictionary<String, UInt64> Damages = new ConcurrentDictionary<string, ulong>();
         Font font = new Font("Helvetica", 10);
         void AddDamageEvent(LogInfo log)
@@ -47,8 +50,8 @@ namespace LostArkLogger
         Brush black = new SolidBrush(Color.White);
         void InitPens()
         {
-            String[] colors = {"#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac", "#b77322", "#16d620", "#b91383", "#f4359e", "#9c5935", "#a9c413", "#2a778d", "#668d1c", "#bea413", "#0c5922", "#743411" };
-            foreach(var color in colors) brushes.Add(new SolidBrush(ColorTranslator.FromHtml(color)));
+            String[] colors = { "#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac", "#b77322", "#16d620", "#b91383", "#f4359e", "#9c5935", "#a9c413", "#2a778d", "#668d1c", "#bea413", "#0c5922", "#743411" };
+            foreach (var color in colors) brushes.Add(new SolidBrush(ColorTranslator.FromHtml(color)));
         }
         int maxWidth = Screen.PrimaryScreen.Bounds.Width / 6;
         string FormatNumber(UInt64 n) // https://stackoverflow.com/questions/30180672/string-format-numbers-to-millions-thousands-with-rounding
@@ -70,7 +73,7 @@ namespace LostArkLogger
             e.Graphics.DrawString("DPS Meter", font, black, 5, 0);
             if (Damages.Count == 0) return;
             var maxDamage = Damages.Max(b => b.Value);
-            var totalDamage = Damages.Values.Sum(b=>(Single)b);
+            var totalDamage = Damages.Values.Sum(b => (Single)b);
             var orderedDamages = Damages.OrderByDescending(b => b.Value);
             for (var i = 0; i < Damages.Count && i < 8; i++)
             {

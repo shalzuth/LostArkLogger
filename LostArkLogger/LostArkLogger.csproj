@@ -51,8 +51,8 @@
     <Reference Include="PacketDotNet, Version=1.3.0.0, Culture=neutral, PublicKeyToken=451414c7667b2a58, processorArchitecture=MSIL">
       <HintPath>..\packages\PacketDotNet.1.3.0\lib\net45\PacketDotNet.dll</HintPath>
     </Reference>
-    <Reference Include="SharpPcap, Version=6.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpPcap.6.1.0\lib\netstandard2.0\SharpPcap.dll</HintPath>
+    <Reference Include="SharpPcap, Version=6.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpPcap.6.2.0\lib\netstandard2.0\SharpPcap.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
