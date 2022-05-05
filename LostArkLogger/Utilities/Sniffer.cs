@@ -70,8 +70,11 @@ namespace LostArkLogger
                     fragmentedPacket = packets.ToArray();
                     return;
                 }
-                if (packetSize == 0) return;
-                if (packets[5] != 1 || 6 > packets.Length || packetSize < 7) return;
+                if (packets[5] != 1 || 6 > packets.Length || packetSize < 7)
+                {
+                    fragmentedPacket = new Byte[0];
+                    return;
+                }
                 var payload = packets.Skip(6).Take(packetSize - 6).ToArray();
                 Xor.Cipher(payload, (UInt16)opcode);
                 if (packets[4] == 3) payload = Oodle.Decompress(payload).Skip(16).ToArray();
