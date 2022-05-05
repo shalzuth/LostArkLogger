@@ -13,33 +13,20 @@ using System.Runtime.InteropServices;
 
 namespace LostArkLogger
 {
-    internal class Sniffer : IDisposable
+    internal class Parser : IDisposable
     {
-        Socket socket;
-        Byte[] packetBuffer = new Byte[0x10000];
+        Machina.TCPNetworkMonitor tcp;
         MainWindow main;
         public Action newZone;
         public Action<LogInfo> addDamageEvent;
-        public Sniffer(MainWindow m)
+        public Parser(MainWindow m)
         {
             main = m;
-            if (!Directory.Exists("logs")) Directory.CreateDirectory("logs");
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
-            socket.Bind(new IPEndPoint(GetLocalIPAddress(), 6040));
-            socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.HeaderIncluded, true);
-            socket.IOControl(IOControlCode.ReceiveAll, BitConverter.GetBytes(1), BitConverter.GetBytes(0));
-            socket.BeginReceive(packetBuffer, 0, packetBuffer.Length, SocketFlags.None, new AsyncCallback(OnReceive), null);
-            Task.Run(() =>
-            {
-                while (!packetQueue.IsCompleted)
-                {
-                    if (packetQueue.TryTake(out Byte[] packet))
-                    {
-                        Device_OnPacketArrival(packet);
-                    }
-                }
-            });
-            
+            var tcp = new Machina.TCPNetworkMonitor();
+            tcp.Config.WindowName = "LOST ARK (64-bit, DX11) v.2.2.3.1";
+            tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
+            tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival(connection, data);
+            tcp.Start();            
         }
         public Dictionary<UInt64, UInt64> ProjectileOwner = new Dictionary<UInt64, UInt64>();
         public Dictionary<UInt64, String> IdToName = new Dictionary<UInt64, String>();
@@ -137,50 +124,6 @@ namespace LostArkLogger
                 packets = packets.Skip(packetSize).ToArray();
             }
         }
-        public static IPAddress GetLocalIPAddress()
-        {
-            try
-            {
-                var tempSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-                var ipEndpoint = new IPEndPoint(IPAddress.Parse("8.8.8.8"), 6040).Serialize();
-                var optionIn = new Byte[ipEndpoint.Size];
-                for (int i = 0; i < ipEndpoint.Size; i++) optionIn[i] = ipEndpoint[i];
-                var optionOut = new Byte[optionIn.Length];
-                tempSocket.IOControl(IOControlCode.RoutingInterfaceQuery, optionIn, optionOut);
-                tempSocket.Close();
-                return new IPAddress(optionOut.Skip(4).Take(4).ToArray());
-            }
-            catch
-            {
-                var host = Dns.GetHostEntry(Dns.GetHostName());
-                //var activeDevice = NetworkInterface.GetAllNetworkInterfaces().First(n => n.OperationalStatus == OperationalStatus.Up && n.NetworkInterfaceType != NetworkInterfaceType.Loopback);
-                //var activeDeviceIpProp = activeDevice.GetIPProperties().UnicastAddresses.Select(a => a.Address.AddressFamily == AddressFamily.InterNetwork);
-                var ipAddress = host.AddressList.FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
-                return ipAddress;
-            }
-        }
-        TcpReconstruction tcpReconstruction;
-        BlockingCollection<Byte[]> packetQueue = new BlockingCollection<Byte[]>();
-        Byte[] fragmentedRead = new Byte[0];
-        private void OnReceive(IAsyncResult ar)
-        {
-            try
-            {
-                var bytesRead = socket?.EndReceive(ar);
-                if (bytesRead > 0)
-                {
-                    var packets = new Byte[(int)bytesRead];
-                    Array.Copy(packetBuffer, packets, (int)bytesRead);
-                    packetQueue.Add(packets);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            packetBuffer = new Byte[packetBuffer.Length];
-            socket?.BeginReceive(packetBuffer, 0, packetBuffer.Length, SocketFlags.None, new AsyncCallback(OnReceive), ar);
-        }
         UInt32 currentIpAddr = 0xdeadbeef;
         string fileName;
         int loggedPacketCount = 0;
@@ -188,33 +131,27 @@ namespace LostArkLogger
         {
             if (main.logEnabled.Checked) File.AppendAllText(fileName, s + "\n");
         }
-        void Device_OnPacketArrival(Byte[] bytes)
+        void Device_OnPacketArrival(Machina.Infrastructure.TCPConnection connection, byte[] bytes)
         {
-            if ((ProtocolType)bytes[9] == ProtocolType.Tcp)
+            if (connection.RemotePort != 6040) return;
+            var srcAddr = connection.RemoteIP;
+            if (srcAddr != currentIpAddr)
             {
-                var tcp = new PacketDotNet.TcpPacket(new PacketDotNet.Utils.ByteArraySegment(bytes.Skip(20).ToArray()));
-                if (tcp.SourcePort != 6040) return; // this filter should be moved up before parsing to TcpPacket for performance
-                var srcAddr = BitConverter.ToUInt32(bytes, 12);
-                if (srcAddr != currentIpAddr)
+                if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && (OpCodes)BitConverter.ToUInt16(bytes, 2) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
                 {
-                    if (currentIpAddr == 0xdeadbeef || (tcp.PayloadData.Length > 4 && (OpCodes)BitConverter.ToUInt16(tcp.PayloadData, 2) == OpCodes.PKTAuthTokenResult && tcp.PayloadData[0] == 0x1e))
-                    {
-                        newZone?.Invoke();
-                        currentIpAddr = srcAddr;
-                        fileName = "logs\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
-                        loggedPacketCount = 0;
-                        tcpReconstruction = new TcpReconstruction(ProcessPacket);
-                    }
-                    else return;
+                    newZone?.Invoke();
+                    currentIpAddr = srcAddr;
+                    fileName = "logs\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
+                    loggedPacketCount = 0;
                 }
-                tcpReconstruction.ReassemblePacket(tcp);
+                else return;
             }
+            ProcessPacket(bytes.ToList());
         }
 
         public void Dispose()
         {
-            socket.Close();
-            socket = null;
+            tcp.Stop();
         }
     }
 }

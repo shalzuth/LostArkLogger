@@ -22,7 +22,7 @@ namespace LostArkLogger
             Control.CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
         }
-        internal void AddSniffer(Sniffer s)
+        internal void AddSniffer(Parser s)
         {
             sniffer = s;
             sniffer.addDamageEvent = AddDamageEvent;
@@ -45,7 +45,7 @@ namespace LostArkLogger
             Damages[log.Source] += log.Damage;
             Invalidate();
         }
-        internal Sniffer sniffer;
+        internal Parser sniffer;
         List<Brush> brushes = new List<Brush>();
         Brush black = new SolidBrush(Color.White);
         void InitPens()
