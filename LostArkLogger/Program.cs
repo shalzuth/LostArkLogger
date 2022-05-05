@@ -23,17 +23,35 @@ namespace LostArkLogger
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new MainWindow());
 		}
+		public enum FirewallProfiles
+		{
+			Domain = NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_DOMAIN,
+			Private = NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_PRIVATE,
+			Public = NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_PUBLIC,
+			All = NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_ALL
+		}
 		static Boolean CheckFirewall()
 		{
-			var ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
+
+		var ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
 			var ipLocalEndPoint = new IPEndPoint(ipAddress, 12345);
 			var t = new TcpListener(ipLocalEndPoint);
 			t.Start();
 			t.Stop();
 			var firewallPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
+			// is the firewall disabled for all active profiles?
+			Func<NET_FW_PROFILE_TYPE2_, INetFwPolicy2, bool> isEnabled = (type, policy) => { return (((int)type & policy.CurrentProfileTypes) != 0) && policy.FirewallEnabled[type]; };
+			if (!isEnabled(NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_PUBLIC, firewallPolicy) &&
+				!isEnabled(NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_PRIVATE, firewallPolicy) &&
+				!isEnabled(NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_DOMAIN, firewallPolicy) &&
+				!isEnabled(NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_ALL, firewallPolicy)
+				)
+				return true;
+			// does our rule exist?
 			foreach (INetFwRule firewallRule in firewallPolicy.Rules)
 				if (firewallRule.Name != null && firewallRule.ApplicationName?.Equals(Process.GetCurrentProcess().MainModule.FileName, StringComparison.OrdinalIgnoreCase) == true)
 					if ((firewallRule.Profiles & (int)NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_PUBLIC) > 0 && firewallRule.Action == NET_FW_ACTION_.NET_FW_ACTION_ALLOW) return true;
+
 			MessageBox.Show("This program needs to be added to Firewall!");
 			return false;
 		}
