@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace LostArkLogger
 {
@@ -58,7 +59,9 @@ namespace LostArkLogger
             for(var i = 0; i < Damages.Count && i < 8; i++) {
                 var playerDmg = orderedDamages.ElementAt(i);
                 var formattedDmg = overlay.FormatNumber(playerDmg.Value) + " (" + (100f * playerDmg.Value / totalDamage).ToString("#.0") + "%)";
-                var playerName = (playerDmg.Key.Length <= 6 ? playerDmg.Key : playerDmg.Key.Substring(0, 6) + ".");
+                var playerName = playerDmg.Key;
+                playerName = Regex.Replace(playerName, @"\(.*\)", "");
+                playerName = (playerName.Length <= 6 ? playerName : playerName.Substring(0, 6) + ".");
                 logMsg += playerName + " " + formattedDmg;
                 if(i < Damages.Count - 1) logMsg += ", ";
             }

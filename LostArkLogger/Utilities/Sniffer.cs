@@ -91,7 +91,7 @@ namespace LostArkLogger
                     var pc = new PKTNewPC(payload);
                     var pcClass = Npc.GetPcClass(pc.ClassId);
                     if (!NameToClass.ContainsKey(pc.Name)) NameToClass[pc.Name] = pcClass + (NameToClass.ContainsValue(pcClass) ? (" - " + Guid.NewGuid().ToString().Substring(0, 4)) : "");
-                    IdToName[pc.PlayerId] = pc.Name; // + " (" + pcClass + ")";
+                    IdToName[pc.PlayerId] = pc.Name + " (" + pcClass + ")";
                 }
                 else if (opcode == OpCodes.PKTInitEnv)
                 {
@@ -117,7 +117,7 @@ namespace LostArkLogger
                             if (sourceName == "You" && Skill.GetClassFromSkill(damage.SkillId) != "UnknownClass")
                             {
                                 var myClass = Skill.GetClassFromSkill(damage.SkillId);
-                                if(myClass != "UnknownClass") sourceName = IdToName[ownerId] = "You"; // (" + myClass + ")";
+                                if(myClass != "UnknownClass") sourceName = IdToName[ownerId] = "You (" + myClass + ")";
                             }
                             //var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = sourceName.Contains("("), Destination = destinationName, SkillName = skillName, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
                             var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = true, Destination = destinationName, SkillName = skillName, Damage = dmgEvent.Damage, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
