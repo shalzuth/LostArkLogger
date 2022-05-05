@@ -12,6 +12,8 @@ namespace LostArkLogger
     {
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
+        private DateTime startCombatTime = DateTime.Now;
+
         [DllImport("user32.dll")] static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [DllImport("user32.dll")] static extern bool ReleaseCapture();
         public Overlay()
@@ -37,6 +39,7 @@ namespace LostArkLogger
         Font font = new Font("Helvetica", 10);
         void AddDamageEvent(LogInfo log)
         {
+            if(Damages.Count == 0) startCombatTime = DateTime.Now;
             Events.Add(log);
             if (!Damages.ContainsKey(log.Source)) Damages[log.Source] = 0;
             Damages[log.Source] += log.Damage;
@@ -74,11 +77,13 @@ namespace LostArkLogger
             var orderedDamages = Damages.OrderByDescending(b => b.Value);
             for (var i = 0; i < Damages.Count && i < 8; i++)
             {
+                var elapsed = (DateTime.Now - startCombatTime).TotalSeconds;
                 var playerDmg = orderedDamages.ElementAt(i);
                 var barWidth = ((Single)playerDmg.Value / maxDamage) * maxWidth;
                 if (barWidth < 0.1f) continue;
                 e.Graphics.FillRectangle(brushes[i], 0, (i + 1) * 20, barWidth, 20);
-                var formattedDmg = FormatNumber(playerDmg.Value) + " (" + (100f * playerDmg.Value / totalDamage).ToString("#.0") + "%)";
+                var dps = FormatNumber((ulong)(playerDmg.Value / elapsed));
+                var formattedDmg = FormatNumber(playerDmg.Value) + " (" + dps + ", " + (100f * playerDmg.Value / totalDamage).ToString("#.0") + "%)";
                 e.Graphics.DrawString(playerDmg.Key, font, black, 5, (i + 1) * 20);
                 var edge = e.Graphics.MeasureString(formattedDmg, font);
                 e.Graphics.DrawString(formattedDmg, font, black, maxWidth - edge.Width, (i + 1) * 20);
