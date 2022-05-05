@@ -46,10 +46,14 @@ namespace LostArkLogger
 					!isEnabled(NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_ALL, firewallPolicy)
 					)
 					return true;
-				// does our rule exist?
+				// does our rule exist? we can't accept only public as that does not imply private, and we don't know what profile your NIC is using
 				foreach (INetFwRule firewallRule in firewallPolicy.Rules)
 					if (firewallRule.Name != null && firewallRule.ApplicationName?.Equals(Process.GetCurrentProcess().MainModule.FileName, StringComparison.OrdinalIgnoreCase) == true)
-						if ((firewallRule.Profiles & (int)NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_PUBLIC) > 0 && firewallRule.Action == NET_FW_ACTION_.NET_FW_ACTION_ALLOW) return true;
+						if (firewallRule.Action == NET_FW_ACTION_.NET_FW_ACTION_ALLOW && (
+								(firewallRule.Profiles & (int)NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_PUBLIC) > 0 &&
+								(firewallRule.Profiles & (int)NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_PRIVATE) > 0
+							))
+							return true;
 				// ask the user to allow us
 				if (attempts == 0)
 				{
@@ -62,7 +66,7 @@ namespace LostArkLogger
 				}
 				else
 				{
-					MessageBox.Show("LostArkLogger is still blocked by your firewall! exiting - check #support on discord");
+					MessageBox.Show("LostArkLogger is still blocked by your firewall! exiting - check #support pins on discord");
 					break;
 				}
 				attempts++;
