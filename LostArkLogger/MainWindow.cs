@@ -13,17 +13,18 @@ namespace LostArkLogger
 {
     public partial class MainWindow : Form
     {
-        Sniffer sniffer;
+        Parser sniffer;
         Overlay overlay;
         public MainWindow()
         {
             Control.CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
             Oodle.Init();
+            if (!Directory.Exists("logs")) Directory.CreateDirectory("logs");
             overlay = new Overlay();
             overlay.sniffer = sniffer;
             overlay.Show();
-            sniffer = new Sniffer(this);
+            sniffer = new Parser(this);
             overlay.AddSniffer(sniffer);
         }
 

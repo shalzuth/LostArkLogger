@@ -13,13 +13,13 @@ using System.Runtime.InteropServices;
 
 namespace LostArkLogger
 {
-    internal class Sniffer : IDisposable
+    internal class Parser : IDisposable
     {
         Machina.TCPNetworkMonitor tcp;
         MainWindow main;
         public Action newZone;
         public Action<LogInfo> addDamageEvent;
-        public Sniffer(MainWindow m)
+        public Parser(MainWindow m)
         {
             main = m;
             var tcp = new Machina.TCPNetworkMonitor();

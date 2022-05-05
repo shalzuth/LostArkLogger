@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostArk_ACT_Plugin", "LostA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MachinaNetFramework", "MachinaNetFramework\MachinaNetFramework.csproj", "{E463D199-BA11-4B7A-A342-DD1916F8C771}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Machina", "..\machina-master\Machina\Machina.csproj", "{40CF97DF-C1EC-4774-A12F-7E156E69AAFC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{E463D199-BA11-4B7A-A342-DD1916F8C771}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E463D199-BA11-4B7A-A342-DD1916F8C771}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E463D199-BA11-4B7A-A342-DD1916F8C771}.Release|Any CPU.Build.0 = Release|Any CPU
-		{40CF97DF-C1EC-4774-A12F-7E156E69AAFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{40CF97DF-C1EC-4774-A12F-7E156E69AAFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{40CF97DF-C1EC-4774-A12F-7E156E69AAFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{40CF97DF-C1EC-4774-A12F-7E156E69AAFC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
