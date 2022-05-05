@@ -34,6 +34,7 @@
             this.overlayEnabled = new System.Windows.Forms.CheckBox();
             this.logEnabled = new System.Windows.Forms.CheckBox();
             this.clearButton = new System.Windows.Forms.Button();
+            this.CopyBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // loggedPacketCountLabel
@@ -92,11 +93,22 @@
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
+            // CopyBtn
+            // 
+            this.CopyBtn.Location = new System.Drawing.Point(135, 25);
+            this.CopyBtn.Name = "CopyBtn";
+            this.CopyBtn.Size = new System.Drawing.Size(75, 23);
+            this.CopyBtn.TabIndex = 8;
+            this.CopyBtn.Text = "Copy";
+            this.CopyBtn.UseVisualStyleBackColor = true;
+            this.CopyBtn.Click += new System.EventHandler(this.CopyBtn_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(222, 84);
+            this.ClientSize = new System.Drawing.Size(222, 78);
+            this.Controls.Add(this.CopyBtn);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.logEnabled);
             this.Controls.Add(this.overlayEnabled);
@@ -119,6 +131,7 @@
         private System.Windows.Forms.CheckBox overlayEnabled;
         public System.Windows.Forms.CheckBox logEnabled;
         private System.Windows.Forms.Button clearButton;
+        private System.Windows.Forms.Button CopyBtn;
     }
 }
 

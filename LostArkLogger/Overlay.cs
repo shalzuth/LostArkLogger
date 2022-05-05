@@ -51,7 +51,7 @@ namespace LostArkLogger
             foreach(var color in colors) brushes.Add(new SolidBrush(ColorTranslator.FromHtml(color)));
         }
         int maxWidth = Screen.PrimaryScreen.Bounds.Width / 6;
-        string FormatNumber(UInt64 n) // https://stackoverflow.com/questions/30180672/string-format-numbers-to-millions-thousands-with-rounding
+        public string FormatNumber(UInt64 n) // https://stackoverflow.com/questions/30180672/string-format-numbers-to-millions-thousands-with-rounding
         {
             if (n < 1000) return n.ToString();
             if (n < 10000) return String.Format("{0:#,.##}K", n - 5);

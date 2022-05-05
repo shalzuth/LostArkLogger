@@ -47,5 +47,24 @@ namespace LostArkLogger
             overlay.Damages.Clear();
             overlay.Invalidate();
         }
+        private void CopyBtn_Click(object sender, EventArgs e) {
+            var Damages = overlay.Damages;
+
+            if(Damages.Count == 0) return;
+            var totalDamage = Damages.Values.Sum(b => (Single)b);
+            var orderedDamages = Damages.OrderByDescending(b => b.Value);
+            string logMsg = "LostArkLogger ";
+
+            for(var i = 0; i < Damages.Count && i < 8; i++) {
+                var playerDmg = orderedDamages.ElementAt(i);
+                var formattedDmg = overlay.FormatNumber(playerDmg.Value) + " (" + (100f * playerDmg.Value / totalDamage).ToString("#.0") + "%)";
+                var playerName = (playerDmg.Key.Length <= 6 ? playerDmg.Key : playerDmg.Key.Substring(0, 6) + ".");
+                logMsg += playerName + " " + formattedDmg;
+                if(i < Damages.Count - 1) logMsg += ", ";
+            }
+
+            System.Windows.Forms.Clipboard.SetText(logMsg);
+            Console.WriteLine(logMsg);
+        }
     }
 }
