@@ -23,17 +23,9 @@ namespace LostArkLogger
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new MainWindow());
 		}
-		public enum FirewallProfiles
-		{
-			Domain = NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_DOMAIN,
-			Private = NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_PRIVATE,
-			Public = NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_PUBLIC,
-			All = NET_FW_PROFILE_TYPE2_.NET_FW_PROFILE2_ALL
-		}
 		static Boolean CheckFirewall()
 		{
-
-		var ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
+			var ipAddress = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0];
 			var ipLocalEndPoint = new IPEndPoint(ipAddress, 12345);
 			var t = new TcpListener(ipLocalEndPoint);
 			t.Start();
