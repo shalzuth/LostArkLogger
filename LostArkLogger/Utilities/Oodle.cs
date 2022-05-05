@@ -24,12 +24,15 @@ namespace LostArkLogger
                     File.Copy(@"C:\Program Files (x86)\Steam\steamapps\common\Lost Ark\Binaries\Win64\oo2net_9_win64.dll", "oo2net_9_win64.dll");
                     continue;
                 }
-                var steamPath = Path.Combine(Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam").GetValue("SteamPath").ToString(), "steamapps");
-                var oodleDll = steamPath + @"\common\Lost Ark\Binaries\Win64\oo2net_9_win64.dll";
-                if (File.Exists(oodleDll))
+                var installLocation = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 1599340")?.GetValue("InstallLocation");
+                if (installLocation != null)
                 {
-                    File.Copy(oodleDll, "oo2net_9_win64.dll");
-                    continue;
+                    var oodleDll = Path.Combine(installLocation.ToString(), "Binaries", "Win64", "oo2net_9_win64.dll");
+                    if (File.Exists(oodleDll))
+                    {
+                        File.Copy(oodleDll, "oo2net_9_win64.dll");
+                        continue;
+                    }
                 }
                 if (MessageBox.Show("please copy oo2net_9_win64 from LostArk\\Binaries\\Win64 directory to current directory", "Missing DLL") != DialogResult.OK) return;
             }
