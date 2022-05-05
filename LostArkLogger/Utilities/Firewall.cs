@@ -53,7 +53,7 @@ namespace LostArkLogger
             firewallRule.Direction = NET_FW_RULE_DIRECTION_.NET_FW_RULE_DIR_IN;
             firewallRule.InterfaceTypes = "All";
             firewallRule.Protocol = 6;
-            firewallRule.RemotePorts = "6040";
+            //firewallRule.RemotePorts = "6040";
             firewallRule.ApplicationName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
             firewallRule.Enabled = true;
             firewallPolicy.Rules.Add(firewallRule);

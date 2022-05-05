@@ -1,35 +1,22 @@
 # Lost Ark Logger
- This project enables you to research and analyze combat actions by parsing packets and using Advanced Combat Tracker (ACT)
+ This project enables you to research and analyze combat actions by parsing packets
  
 ![Imgur Image](https://i.imgur.com/WrGNiOE.png)
  
 # How does this work
- This uses pcap to dump the packets, upload the packets to my server, my server analyzes them and returns a combat log. You can then input that combat log into ACT.
+ This uses raw sockets to read packets and parses data out of them. This does not interact with the game or any other resources, it is only reading the raw packets received to your PC.
  
 # Support
  Please submit an issue on the github repo, or join the discord @ https://discord.gg/MedRDjEwHZ
  
 # Setup
 1. Download the "Lost Ark Logger" packet logger @ https://github.com/shalzuth/LostArkLogger/releases/latest/download/LostArkLogger.exe
-2. Download Lost Ark ACT plugin @ https://github.com/shalzuth/LostArkLogger/releases/latest/download/LostArk_ACT_Plugin.dll
-3. Download & install ACT @ https://advancedcombattracker.com/download.php
-4. Download and install npcap @ https://npcap.com/#download
-
-# ACT Setup
-1. Install ACT normally.
-2. Add the "Lost Ark ACT Plugin" downloaded earlier on the plugins tab.
+2. Optional - Download Lost Ark ACT plugin @ https://github.com/shalzuth/LostArkLogger/releases/latest/download/LostArk_ACT_Plugin.dll
+3. Optional - Download & install ACT @ https://advancedcombattracker.com/download.php
 
 # Guide
-1. Before entering a dungeon, launch "Lost Ark Logger". Ensure the network interface device is correct as the one that you use for internet access.
-2. While in the dungeon, "Lost Ark Logger" will log packets - there's a packet log counter, ensure that it is increasing. The log file will be in the same location as "Lost Ark Logger"
-3. After you leave the dungeon, "Lost Ark Logger" uploads the packet dump to the server and downloads the combat log (if the auto-upload box is checked). This combat log will be in the same location as "Lost Ark Logger". If this fails, you can upload the log at http://lostark.shalzuth.com/upload
-4. In ACT, import the combat log. NOTE - You might need to close&open ACT between imports.
-5. In ACT, change to the "Main" tab and begin your analysis.
-
-# Known issues
-1. Packet logger probably has bugs
-2. Server probably doesn't always return a valid combat log. Also very unstable at the moment, it's a work in progress. It probably will go down often in these early stages.
-3. ACT plugin is slow (not sure why), timestamps are wrong, and could be more useful. LOOKING FOR HELP TO IMPROVE. The source and sample logs are here, feel free to make it better and pull request.
+1. Before entering a dungeon, launch "Lost Ark Logger".
+2. While in the dungeon, "Lost Ark Logger" will log packets - there's a packet log counter, ensure that it is increasing. The log file will be in the same location as "Lost Ark Logger". If the overlay shows weird names that are 8 characters long, you didn't open LostArkLogger.exe before a load screen.
 
 # Todo
 1. Missed skills
