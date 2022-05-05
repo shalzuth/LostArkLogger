@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
@@ -23,10 +25,21 @@ namespace LostArkLogger
             main = m;
             if (!Directory.Exists("logs")) Directory.CreateDirectory("logs");
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
-            socket.Bind(new IPEndPoint(GetLocalIPAddress(), 0));
+            socket.Bind(new IPEndPoint(GetLocalIPAddress(), 6040));
             socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.HeaderIncluded, true);
             socket.IOControl(IOControlCode.ReceiveAll, BitConverter.GetBytes(1), BitConverter.GetBytes(0));
             socket.BeginReceive(packetBuffer, 0, packetBuffer.Length, SocketFlags.None, new AsyncCallback(OnReceive), null);
+            Task.Run(() =>
+            {
+                while (!packetQueue.IsCompleted)
+                {
+                    if (packetQueue.TryTake(out Byte[] packet))
+                    {
+                        Device_OnPacketArrival(packet);
+                    }
+                }
+            });
+            
         }
         public Dictionary<UInt64, UInt64> ProjectileOwner = new Dictionary<UInt64, UInt64>();
         public Dictionary<UInt64, String> IdToName = new Dictionary<UInt64, String>();
@@ -143,6 +156,8 @@ namespace LostArkLogger
             }
         }
         TcpReconstruction tcpReconstruction;
+        BlockingCollection<Byte[]> packetQueue = new BlockingCollection<Byte[]>();
+        Byte[] fragmentedRead = new Byte[0];
         private void OnReceive(IAsyncResult ar)
         {
             try
@@ -150,15 +165,17 @@ namespace LostArkLogger
                 var bytesRead = socket?.EndReceive(ar);
                 if (bytesRead > 0)
                 {
-                    Device_OnPacketArrival(packetBuffer.Take((int)bytesRead).ToArray());
-                    packetBuffer = new Byte[packetBuffer.Length];
+                    var packets = new Byte[(int)bytesRead];
+                    Array.Copy(packetBuffer, packets, (int)bytesRead);
+                    packetQueue.Add(packets);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            socket?.BeginReceive(packetBuffer, 0, packetBuffer.Length, SocketFlags.None, new AsyncCallback(OnReceive), null);
+            packetBuffer = new Byte[packetBuffer.Length];
+            socket?.BeginReceive(packetBuffer, 0, packetBuffer.Length, SocketFlags.None, new AsyncCallback(OnReceive), ar);
         }
         UInt32 currentIpAddr = 0xdeadbeef;
         string fileName;
@@ -184,6 +201,7 @@ namespace LostArkLogger
                         loggedPacketCount = 0;
                         tcpReconstruction = new TcpReconstruction(ProcessPacket);
                     }
+                    else return;
                 }
                 tcpReconstruction.ReassemblePacket(tcp);
             }

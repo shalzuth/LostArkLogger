@@ -223,7 +223,6 @@
     <Compile Include="Utilities\Oodle.cs" />
     <Compile Include="Utilities\Sniffer.cs" />
     <Compile Include="Utilities\Xor.cs" />
-    <Compile Include="Utilities\Firewall.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>

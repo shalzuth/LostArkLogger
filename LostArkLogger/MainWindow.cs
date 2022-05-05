@@ -20,7 +20,6 @@ namespace LostArkLogger
             Control.CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
             Oodle.Init();
-            FirewallManager.AllowFirewall();
             overlay = new Overlay();
             overlay.sniffer = sniffer;
             overlay.Show();
