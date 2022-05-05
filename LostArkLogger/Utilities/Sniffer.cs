@@ -65,14 +65,15 @@ namespace LostArkLogger
                 }
                 var opcode = (OpCodes)BitConverter.ToUInt16(packets, 2);
                 var packetSize = BitConverter.ToUInt16(packets.ToArray(), 0);
+                if (packets[5] != 1 || 6 > packets.Length || packetSize < 7)
+                {
+                    // not sure when this happens
+                    fragmentedPacket = new Byte[0];
+                    return;
+                }
                 if (packetSize > packets.Length)
                 {
                     fragmentedPacket = packets.ToArray();
-                    return;
-                }
-                if (packets[5] != 1 || 6 > packets.Length || packetSize < 7)
-                {
-                    fragmentedPacket = new Byte[0];
                     return;
                 }
                 var payload = packets.Skip(6).Take(packetSize - 6).ToArray();
