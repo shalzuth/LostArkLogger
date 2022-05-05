@@ -25,6 +25,15 @@ namespace LostArkLogger
                     return firewallRule.Enabled;
             return false;
         }
+
+        public static bool VerifyRule(string name)
+        {
+            var firewallPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
+            foreach (INetFwRule firewallRule in firewallPolicy.Rules)
+                if (firewallRule.Name != null && firewallRule.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                    ConfigureRule(firewallRule);
+            return false;
+        }
         public static void EnableRule(string name)
         {
             var firewallPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
@@ -36,17 +45,13 @@ namespace LostArkLogger
         {
             if (RuleExists(RuleName))
             {
-                if (!RuleIsEnabled(RuleName))
-                {
-                    EnableRule(RuleName);
-                }
+                if (!RuleIsEnabled(RuleName)) EnableRule(RuleName);
+                VerifyRule(RuleName);
             }
             else AddRule();
         }
-        public static void AddRule()
+        public static void ConfigureRule(INetFwRule firewallRule)
         {
-            var firewallPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
-            var firewallRule = (INetFwRule)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FWRule"));
             firewallRule.Name = RuleName;
             firewallRule.Description = "Allows Lost Ark Logger to sniff traffic";
             firewallRule.Action = NET_FW_ACTION_.NET_FW_ACTION_ALLOW;
@@ -56,6 +61,12 @@ namespace LostArkLogger
             //firewallRule.RemotePorts = "6040";
             firewallRule.ApplicationName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
             firewallRule.Enabled = true;
+        }
+        public static void AddRule()
+        {
+            var firewallPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
+            var firewallRule = (INetFwRule)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FWRule"));
+            ConfigureRule(firewallRule);
             firewallPolicy.Rules.Add(firewallRule);
         }
     }
