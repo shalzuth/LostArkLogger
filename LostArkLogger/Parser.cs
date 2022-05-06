@@ -99,7 +99,7 @@ namespace LostArkLogger
                     Entities.Clear();
                     var pc = new PKTInitEnv(payload);
                     Console.WriteLine("New instance, your id: " + pc.PlayerId);
-                    Entities.Add(new Entity { EntityId = pc.PlayerId, Name = "YOU" });
+                    Entities.Add(new Entity { EntityId = pc.PlayerId, Name = "You" });
                     newZone?.Invoke();
                 }
                 /*if ((OpCodes)BitConverter.ToUInt16(converted.ToArray(), 2) == OpCodes.PKTRemoveObject)
