@@ -33,6 +33,7 @@ namespace LostArkLogger
         public Dictionary<UInt64, UInt64> ProjectileOwner = new Dictionary<UInt64, UInt64>();
         public Dictionary<UInt64, String> IdToName = new Dictionary<UInt64, String>();
         public Dictionary<String, String> NameToClass = new Dictionary<String, String>();
+        public Dictionary<UInt64, UInt64> NpcIdToOwnerId = new Dictionary<UInt64, UInt64>();
         Byte[] fragmentedPacket = new Byte[0];
         void ProcessPacket(List<Byte> data)
         {
@@ -119,6 +120,7 @@ namespace LostArkLogger
                         {
                             var skillName = Skill.GetSkillName(damage.SkillId, damage.SkillIdWithState);
                             var ownerId = ProjectileOwner.ContainsKey(damage.PlayerId) ? ProjectileOwner[damage.PlayerId] : damage.PlayerId;
+                            ownerId = NpcIdToOwnerId.ContainsKey(ownerId) ? NpcIdToOwnerId[ownerId] : ownerId;
                             var sourceName = IdToName.ContainsKey(ownerId) ? IdToName[ownerId] : ownerId.ToString("X");
                             var destinationName = IdToName.ContainsKey(dmgEvent.TargetId) ? IdToName[dmgEvent.TargetId] : dmgEvent.TargetId.ToString("X");
                             if (sourceName == "You" && Skill.GetClassFromSkill(damage.SkillId) != "UnknownClass")
@@ -139,6 +141,10 @@ namespace LostArkLogger
                     //for (var i = 0; i < payload.Length - 4; i++)
                     //    Console.WriteLine(i + " : " + BitConverter.ToUInt32(payload, i) + " : " + BitConverter.ToUInt32(payload, i).ToString("X"));
                     // normal mobs when skills make them move. not needed for boss tracking, since guardians don't get moved by abilities. this will show more damage taken by players
+                }
+                else if (opcode == OpCodes.PKTNewNpcSummon)
+                {
+                    NpcIdToOwnerId[BitConverter.ToUInt64(payload, 44)] = BitConverter.ToUInt64(payload, 0);
                 }
                 if (packets.Length < packetSize) throw new Exception("bad packet maybe");
                 packets = packets.Skip(packetSize).ToArray();
