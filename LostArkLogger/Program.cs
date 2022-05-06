@@ -20,6 +20,7 @@ namespace LostArkLogger
 			if (!AdminRelauncher()) return;
 			AttemptFirewallPrompt();
 			Application.EnableVisualStyles();
+			Application.SetHighDpiMode(HighDpiMode.SystemAware);
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new MainWindow());
 		}
@@ -39,7 +40,7 @@ namespace LostArkLogger
 				{
 					UseShellExecute = true,
 					WorkingDirectory = Environment.CurrentDirectory,
-					FileName = Assembly.GetEntryAssembly().CodeBase,
+					FileName = Environment.ProcessPath,
 					Verb = "runas"
 				};
 				try { Process.Start(startInfo); }

@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
-using Snappy;
 using K4os.Compression.LZ4;
 
 namespace LostArkLogger
@@ -77,8 +76,8 @@ namespace LostArkLogger
                             .ToArray(); //TODO: check LZ4 payload and see if we should skip some data
                         break;
                     case 2: //Snappy
-                        //https://github.com/robertvazan/snappy.net
-                        payload = SnappyCodec.Uncompress(payload).Skip(16).ToArray();
+                        //https://github.com/aloneguid/IronSnappy
+                        payload = IronSnappy.Snappy.Decode(payload).Skip(16).ToArray();
                         break;
                     case 3: //Oodle
                         payload = Oodle.Decompress(payload).Skip(16).ToArray();
