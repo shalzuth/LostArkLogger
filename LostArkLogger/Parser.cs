@@ -99,6 +99,13 @@ namespace LostArkLogger
                     Entities.Add(new Entity { EntityId = pc.PlayerId, Name = "You" });
                     onNewZone?.Invoke();
                 }
+                else if (opcode == OpCodes.PKTInitLocal)
+                {
+                    Entities.Clear();
+                    var pc = new PKTInitLocal(payload);
+                    Entities.Add(new Entity { EntityId = pc.PlayerId, Name = "You" });
+                    onNewZone?.Invoke();
+                }
                 /*if ((OpCodes)BitConverter.ToUInt16(converted.ToArray(), 2) == OpCodes.PKTRemoveObject)
                 {
                     var projectile = new PKTRemoveObject { Bytes = converted };
