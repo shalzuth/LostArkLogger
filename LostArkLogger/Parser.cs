@@ -15,7 +15,7 @@ using K4os.Compression.LZ4;
 
 namespace LostArkLogger
 {
-    internal class Parser : IDisposable
+    public class Parser : IDisposable
     {
         Machina.TCPNetworkMonitor tcp;
         public event Action<LogInfo> onCombatEvent;

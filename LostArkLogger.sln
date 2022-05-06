@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostArk_ACT_Plugin", "LostA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MachinaNetFramework", "MachinaNetFramework\MachinaNetFramework.csproj", "{E463D199-BA11-4B7A-A342-DD1916F8C771}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostArkLoggerElectronBackend", "LostArkLoggerElectronBackend\LostArkLoggerElectronBackend.csproj", "{FD7AA4A2-B647-49B0-9F47-3EDAF803A4F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{E463D199-BA11-4B7A-A342-DD1916F8C771}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E463D199-BA11-4B7A-A342-DD1916F8C771}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E463D199-BA11-4B7A-A342-DD1916F8C771}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD7AA4A2-B647-49B0-9F47-3EDAF803A4F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD7AA4A2-B647-49B0-9F47-3EDAF803A4F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD7AA4A2-B647-49B0-9F47-3EDAF803A4F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD7AA4A2-B647-49B0-9F47-3EDAF803A4F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
