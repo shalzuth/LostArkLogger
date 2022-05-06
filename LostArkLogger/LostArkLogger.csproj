@@ -228,6 +228,12 @@
     <Compile Include="Overlay.Designer.cs">
       <DependentUpon>Overlay.cs</DependentUpon>
     </Compile>
+    <Compile Include="Overlay.SkillDamage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Overlay.SkillDamage.Designer.cs">
+      <DependentUpon>Overlay.SkillDamage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Packets\PKTSkillDamageAbnormalMoveNotify.cs" />
     <Compile Include="Utilities\Oodle.cs" />
     <Compile Include="Parser.cs" />
@@ -250,6 +256,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Overlay.resx">
       <DependentUpon>Overlay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Overlay.SkillDamage.resx">
+      <DependentUpon>Overlay.SkillDamage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -16,6 +16,9 @@ namespace LostArkLogger
             Control.CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
             SetStyle(ControlStyles.ResizeRedraw, true);
+            SkillDmgWnd = new Overlay_SkillDamage();
+            SkillDmgWnd.Show();
+            SkillDmgWnd.Visible = false;
         }
         internal void AddSniffer(Parser s)
         {
@@ -27,11 +30,15 @@ namespace LostArkLogger
         {
             Events = new ConcurrentBag<LogInfo>();
             Damages.Clear();
+            SkillDmgWnd.Clear();
+            SkillDmgWnd.Visible = false;
             Invalidate();
         }
         private DateTime startCombatTime = DateTime.Now;
+        private Overlay_SkillDamage SkillDmgWnd;
         ConcurrentBag<LogInfo> Events = new ConcurrentBag<LogInfo>();
         public ConcurrentDictionary<String, UInt64> Damages = new ConcurrentDictionary<string, ulong>();
+        public ConcurrentDictionary<String, ConcurrentDictionary<String, UInt64>> SkillDmg = new ConcurrentDictionary<string, ConcurrentDictionary<string, ulong>>();
         Font font = new Font("Helvetica", 10);
         void AddDamageEvent(LogInfo log)
         {
@@ -39,6 +46,19 @@ namespace LostArkLogger
             Events.Add(log);
             if (!Damages.ContainsKey(log.Source)) Damages[log.Source] = 0;
             Damages[log.Source] += log.Damage;
+
+            if(!SkillDmg.ContainsKey(log.Source))
+                SkillDmg[log.Source] = new ConcurrentDictionary<string, ulong>();
+            if(!SkillDmg[log.Source].ContainsKey(log.SkillName))
+                SkillDmg[log.Source][log.SkillName] = 0;
+
+            SkillDmg[log.Source][log.SkillName] += log.Damage;
+
+            if(SkillDmg.ContainsKey(SkillDmgWnd.owner))
+                SkillDmgWnd.Update(SkillDmg[SkillDmgWnd.owner]);
+            else
+                SkillDmgWnd.Clear();
+
             Invalidate();
         }
         internal Parser sniffer;
@@ -50,7 +70,7 @@ namespace LostArkLogger
             foreach(var color in colors) brushes.Add(new SolidBrush(ColorTranslator.FromHtml(color)));
         }
         int barHeight = 20;
-        string FormatNumber(UInt64 n) // https://stackoverflow.com/questions/30180672/string-format-numbers-to-millions-thousands-with-rounding
+        public static string FormatNumber(UInt64 n) // https://stackoverflow.com/questions/30180672/string-format-numbers-to-millions-thousands-with-rounding
         {
             if (n < 1000) return n.ToString();
             if (n < 10000) return String.Format("{0:#,.##}K", n - 5);
@@ -116,6 +136,13 @@ namespace LostArkLogger
             {
                 ReleaseCapture();
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+
+                var index = (int)Math.Floor(e.Location.Y / (float)barHeight - 1);
+                if(index < 0 || index > Damages.Count) return;
+                var playerName = Damages.OrderByDescending(b => b.Value).ElementAt(index).Key;
+                SkillDmgWnd.owner = playerName;
+                SkillDmgWnd.Update(SkillDmg[playerName]);
+                SkillDmgWnd.Visible = true;
             }
         }
         protected override void WndProc(ref Message m)
