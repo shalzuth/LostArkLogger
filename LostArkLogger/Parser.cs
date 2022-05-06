@@ -75,11 +75,12 @@ namespace LostArkLogger
                             0x11ff2);
                         if (result < 1)
                             throw new Exception("LZ4 output buffer too small");
-                        payload = buffer.Take(result).ToArray();
+                        payload = buffer.Take(result)
+                            .ToArray(); //TODO: check LZ4 payload and see if we should skip some data
                         break;
                     case 2: //Snappy
                         //https://github.com/robertvazan/snappy.net
-                        payload = SnappyCodec.Uncompress(payload);
+                        payload = SnappyCodec.Uncompress(payload).Skip(16).ToArray();
                         break;
                     case 3: //Oodle
                         payload = Oodle.Decompress(payload).Skip(16).ToArray();
