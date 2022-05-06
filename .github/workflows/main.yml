@@ -13,6 +13,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
       name: Checkout Code
+      with:
+        submodules: recursive
       
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1

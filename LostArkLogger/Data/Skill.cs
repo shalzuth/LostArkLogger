@@ -27,7 +27,7 @@ namespace LostArkLogger
                 var temp = GetSkillName(subId / 10, subId);
                 skillName = temp;
             }
-            if (skillName.Length == 0 && SkillEffect.Items.ContainsKey(subId.ToString())) skillName += SkillEffect.Items[subId.ToString()];
+            if (skillName.Length == 0 && SkillEffect.Items.ContainsKey((int)subId)) skillName += SkillEffect.Items[(int)subId];
             return skillName;
         }
         public static String GetClassFromSkill(UInt32 id)

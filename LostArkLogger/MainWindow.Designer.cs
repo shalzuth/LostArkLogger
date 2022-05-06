@@ -31,14 +31,15 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.loggedPacketCountLabel = new System.Windows.Forms.Label();
             this.weblink = new System.Windows.Forms.LinkLabel();
-            this.autoupload = new System.Windows.Forms.CheckBox();
-            this.endRunButton = new System.Windows.Forms.Button();
+            this.overlayEnabled = new System.Windows.Forms.CheckBox();
+            this.logEnabled = new System.Windows.Forms.CheckBox();
+            this.clearButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // loggedPacketCountLabel
             // 
             this.loggedPacketCountLabel.AutoSize = true;
-            this.loggedPacketCountLabel.Location = new System.Drawing.Point(12, 44);
+            this.loggedPacketCountLabel.Location = new System.Drawing.Point(11, 9);
             this.loggedPacketCountLabel.Name = "loggedPacketCountLabel";
             this.loggedPacketCountLabel.Size = new System.Drawing.Size(100, 13);
             this.loggedPacketCountLabel.TabIndex = 2;
@@ -47,7 +48,7 @@
             // weblink
             // 
             this.weblink.AutoSize = true;
-            this.weblink.Location = new System.Drawing.Point(225, 70);
+            this.weblink.Location = new System.Drawing.Point(152, 9);
             this.weblink.Name = "weblink";
             this.weblink.Size = new System.Drawing.Size(60, 13);
             this.weblink.TabIndex = 4;
@@ -55,51 +56,69 @@
             this.weblink.Text = "by shalzuth";
             this.weblink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.weblink_LinkClicked);
             // 
-            // autoupload
+            // overlayEnabled
             // 
-            this.autoupload.AutoSize = true;
-            this.autoupload.Location = new System.Drawing.Point(12, 66);
-            this.autoupload.Name = "autoupload";
-            this.autoupload.Size = new System.Drawing.Size(83, 17);
-            this.autoupload.TabIndex = 5;
-            this.autoupload.Text = "Auto-upload";
-            this.autoupload.UseVisualStyleBackColor = true;
+            this.overlayEnabled.AutoSize = true;
+            this.overlayEnabled.Checked = true;
+            this.overlayEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.overlayEnabled.Location = new System.Drawing.Point(12, 31);
+            this.overlayEnabled.Name = "overlayEnabled";
+            this.overlayEnabled.Size = new System.Drawing.Size(62, 17);
+            this.overlayEnabled.TabIndex = 5;
+            this.overlayEnabled.Text = "Overlay";
+            this.overlayEnabled.UseVisualStyleBackColor = true;
+            this.overlayEnabled.CheckedChanged += new System.EventHandler(this.overlayEnabled_CheckedChanged);
             // 
-            // endRunButton
+            // logEnabled
             // 
-            this.endRunButton.Location = new System.Drawing.Point(111, 62);
-            this.endRunButton.Name = "endRunButton";
-            this.endRunButton.Size = new System.Drawing.Size(75, 23);
-            this.endRunButton.TabIndex = 6;
-            this.endRunButton.Text = "End Run";
-            this.endRunButton.UseVisualStyleBackColor = true;
-            this.endRunButton.Click += new System.EventHandler(this.endRunButton_Click);
+            this.logEnabled.AutoSize = true;
+            this.logEnabled.Checked = true;
+            this.logEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.logEnabled.Location = new System.Drawing.Point(12, 55);
+            this.logEnabled.Name = "logEnabled";
+            this.logEnabled.Size = new System.Drawing.Size(44, 17);
+            this.logEnabled.TabIndex = 6;
+            this.logEnabled.Text = "Log";
+            this.logEnabled.UseVisualStyleBackColor = true;
+            this.logEnabled.CheckedChanged += new System.EventHandler(this.logEnabled_CheckedChanged);
+            // 
+            // clearButton
+            // 
+            this.clearButton.Location = new System.Drawing.Point(135, 51);
+            this.clearButton.Name = "clearButton";
+            this.clearButton.Size = new System.Drawing.Size(75, 23);
+            this.clearButton.TabIndex = 7;
+            this.clearButton.Text = "Clear";
+            this.clearButton.UseVisualStyleBackColor = true;
+            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(297, 92);
-            this.Controls.Add(this.endRunButton);
-            this.Controls.Add(this.autoupload);
+            this.ClientSize = new System.Drawing.Size(222, 84);
+            this.Controls.Add(this.clearButton);
+            this.Controls.Add(this.logEnabled);
+            this.Controls.Add(this.overlayEnabled);
             this.Controls.Add(this.weblink);
             this.Controls.Add(this.loggedPacketCountLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.HelpButton = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MainWindow";
             this.Text = "Lost Ark Logger";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.Label loggedPacketCountLabel;
+        public System.Windows.Forms.Label loggedPacketCountLabel;
         private System.Windows.Forms.LinkLabel weblink;
-        private System.Windows.Forms.CheckBox autoupload;
-        private System.Windows.Forms.Button endRunButton;
+        private System.Windows.Forms.CheckBox overlayEnabled;
+        public System.Windows.Forms.CheckBox logEnabled;
+        private System.Windows.Forms.Button clearButton;
     }
 }
 
