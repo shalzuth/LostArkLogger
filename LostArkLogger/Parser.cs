@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
+using Snappy;
+using K4os.Compression.LZ4;
 
 namespace LostArkLogger
 {
@@ -65,7 +67,24 @@ namespace LostArkLogger
                 }
                 var payload = packets.Skip(6).Take(packetSize - 6).ToArray();
                 Xor.Cipher(payload, (UInt16)opcode);
-                if (packets[4] == 3) payload = Oodle.Decompress(payload).Skip(16).ToArray();
+                switch (packets[4])
+                {
+                    case 1: //LZ4
+                        var buffer = new byte[0x11ff2];
+                        var result = LZ4Codec.Decode(payload, 0, payload.Length, buffer, 0,
+                            0x11ff2);
+                        if (result < 1)
+                            throw new Exception("LZ4 output buffer too small");
+                        payload = buffer.Take(result).ToArray();
+                        break;
+                    case 2: //Snappy
+                        //https://github.com/robertvazan/snappy.net
+                        payload = SnappyCodec.Uncompress(payload);
+                        break;
+                    case 3: //Oodle
+                        payload = Oodle.Decompress(payload).Skip(16).ToArray();
+                        break;
+                }
                 if (opcode == OpCodes.PKTNewProjectile)
                     ProjectileOwner[BitConverter.ToUInt64(payload, 4)] = BitConverter.ToUInt64(payload, 4 + 8);
                 else if (opcode == OpCodes.PKTNewNpc)
