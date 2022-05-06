@@ -3,11 +3,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
 namespace LostArkLogger
 {
-    internal class Oodle
+    public enum OodleInitStatus {
+        OODLE_OK,
+        OODLE_DLL_FAIL
+    }
+
+    public class Oodle
     {
         [DllImport("oo2net_9_win64")] static extern bool OodleNetwork1UDP_Decode(byte[] state, byte[] shared, byte[] comp, int compLen, byte[] raw, int rawLen);
         [DllImport("oo2net_9_win64")] static extern bool OodleNetwork1UDP_State_Uncompact(byte[] state, byte[] compressorState);
@@ -18,7 +22,8 @@ namespace LostArkLogger
         static Byte[] oodleSharedDict;
         static Byte[] initDict;
         const string oodleDll = "oo2net_9_win64.dll";
-        public static void Init()
+        public static OodleInitStatus Init()
+
         {
             while (!File.Exists(oodleDll))
             {
@@ -37,7 +42,7 @@ namespace LostArkLogger
                         continue;
                     }
                 }
-                if (MessageBox.Show("please copy oo2net_9_win64 from LostArk\\Binaries\\Win64 directory to current directory", "Missing DLL") != DialogResult.OK) return;
+                return OodleInitStatus.OODLE_DLL_FAIL;
             }
             var payload = ObjectSerialize.Decompress(Properties.Resources.oodle_state);
             initDict = payload.Skip(0x20).Take(0x800000).ToArray();
@@ -48,6 +53,8 @@ namespace LostArkLogger
             if (!OodleNetwork1UDP_State_Uncompact(oodleState, compressorState)) throw new Exception("oodle init fail");
             oodleSharedDict = new Byte[OodleNetwork1_Shared_Size(0x13)];
             OodleNetwork1_Shared_SetWindow(oodleSharedDict, 0x13, initDict, 0x800000);
+            return OodleInitStatus.OODLE_OK;
+
         }
         public static Byte[] Decompress(Byte[] decompressed)
         {

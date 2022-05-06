@@ -20,7 +20,10 @@ namespace LostArkLogger
         {
             Control.CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
-            Oodle.Init();
+            if (Oodle.Init() == OodleInitStatus.OODLE_DLL_FAIL)
+            {
+                if (MessageBox.Show("please copy oo2net_9_win64 from LostArk\\Binaries\\Win64 directory to current directory", "Missing DLL") != DialogResult.OK) return;
+            }
             if (!Directory.Exists("logs")) Directory.CreateDirectory("logs");
             overlay = new Overlay();
             overlay.sniffer = sniffer;
@@ -29,8 +32,10 @@ namespace LostArkLogger
             sniffer.onPacketTotalCount += (int totalPacketCount) => {
                 this.loggedPacketCountLabel.Text = "Logged Packets : " + totalPacketCount;
             };
+
             if (sniffer.monitorType == Machina.Infrastructure.NetworkMonitorType.WinPCap)
                 this.sniffModeLabel.Text = "winpcap";
+
             overlay.AddSniffer(sniffer);
 
             /*
