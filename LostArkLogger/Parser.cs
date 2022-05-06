@@ -107,29 +107,28 @@ namespace LostArkLogger
                 else if (opcode == OpCodes.PKTSkillDamageNotify)
                 {
                     var damage = new PKTSkillDamageNotify(payload);
+                    var skillName = Skill.GetSkillName(damage.SkillId, damage.SkillIdWithState);
+                    var sourceEntity = Entities.FirstOrDefault(entity => entity.EntityId == damage.PlayerId);
+                    if (sourceEntity != null)
                     {
-                        var sourceEntity = Entities.FirstOrDefault(entity => entity.EntityId == damage.PlayerId);
                         if (sourceEntity.Type == Entity.EntityType.Projectile || sourceEntity.Type == Entity.EntityType.Minion)
                             sourceEntity = Entities.FirstOrDefault(entity => entity.EntityId == sourceEntity.OwnerId);
-                        var sourceName = sourceEntity != null ? sourceEntity.Name : damage.PlayerId.ToString("X");
-                        if (sourceEntity != null)
-                        {
-                            var skillName = Skill.GetSkillName(damage.SkillId, damage.SkillIdWithState);
-                            var className = Skill.GetClassFromSkill(damage.SkillId);
-                            if (skillName != "UnknownClass" && sourceEntity.ClassName == "")
-                                sourceEntity.ClassName = className;
-                            sourceName += (" (" + sourceEntity.ClassName + ")");
-
-                            foreach (var dmgEvent in damage.Events)
-                            {
-                                Entity targetEntity = Entities.FirstOrDefault(entity => entity.EntityId == dmgEvent.TargetId);
-                                var destinationName = targetEntity != null ? sourceEntity.Name : dmgEvent.TargetId.ToString("X");
-                                //var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = sourceName.Contains("("), Destination = destinationName, SkillName = skillName, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
-                                var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = true, Type = sourceEntity.Type, Destination = destinationName, SkillName = skillName, Damage = dmgEvent.Damage, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
-                                AppendLog(log.ToString());
-                                onDamageEvent?.Invoke(log);
-                            }
-                        }
+                    }
+                    var sourceName = damage.PlayerId.ToString("X");
+                    if (sourceEntity != null)
+                    {
+                        var className = Skill.GetClassFromSkill(damage.SkillId);
+                        if (sourceEntity.ClassName == "") sourceEntity.ClassName = className; // for case where we don't know user's class yet
+                        sourceName = sourceEntity.Name + " (" + sourceEntity.ClassName + ")";
+                    }
+                    foreach (var dmgEvent in damage.Events)
+                    {
+                        Entity targetEntity = Entities.FirstOrDefault(entity => entity.EntityId == dmgEvent.TargetId);
+                        var destinationName = targetEntity != null ? sourceEntity.Name : dmgEvent.TargetId.ToString("X");
+                        //var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = sourceName.Contains("("), Destination = destinationName, SkillName = skillName, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
+                        var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = true, Type = sourceEntity.Type, Destination = destinationName, SkillName = skillName, Damage = dmgEvent.Damage, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
+                        AppendLog(log.ToString());
+                        onDamageEvent?.Invoke(log);
                     }
                 }
                 else if (opcode == OpCodes.PKTNewNpcSummon)
@@ -141,8 +140,6 @@ namespace LostArkLogger
                     //    Console.WriteLine(i + " : " + BitConverter.ToUInt32(payload, i) + " : " + BitConverter.ToUInt32(payload, i).ToString("X"));
                     // normal mobs when skills make them move. not needed for boss tracking, since guardians don't get moved by abilities. this will show more damage taken by players
                 }
-                else if (opcode == OpCodes.PKTNewNpcSummon)
-                    Entities.Add(new Entity { EntityId = BitConverter.ToUInt64(payload, 44), OwnerId = BitConverter.ToUInt64(payload, 0), Type = Entity.EntityType.Minion });
                 if (packets.Length < packetSize) throw new Exception("bad packet maybe");
                 packets = packets.Skip(packetSize).ToArray();
             }
