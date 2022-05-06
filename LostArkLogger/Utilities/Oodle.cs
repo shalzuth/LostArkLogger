@@ -16,8 +16,7 @@ namespace LostArkLogger
         [DllImport("oo2net_9_win64")] static extern int OodleNetwork1_Shared_Size(int bits);
         static Byte[] oodleState;
         static Byte[] oodleSharedDict;
-        [DllImport("kernel32")] static extern IntPtr LoadLibrary(string dllToLoad);
-        [DllImport("kernel32")] static extern bool FreeLibrary(IntPtr hModule);
+        static Byte[] initDict;
         const string oodleDll = "oo2net_9_win64.dll";
         public static void Init()
         {
@@ -40,22 +39,15 @@ namespace LostArkLogger
                 }
                 if (MessageBox.Show("please copy oo2net_9_win64 from LostArk\\Binaries\\Win64 directory to current directory", "Missing DLL") != DialogResult.OK) return;
             }
-            while (true)
-            {
-                var existingOodle = Process.GetCurrentProcess().Modules.OfType<ProcessModule>().FirstOrDefault(m => m.ModuleName.Contains("oo2net_9_win64"));
-                if (existingOodle != null) FreeLibrary(existingOodle.BaseAddress);
-                else break;
-            }
-            LoadLibrary(oodleDll);
             var payload = ObjectSerialize.Decompress(Properties.Resources.oodle_state);
-            var dict = payload.Skip(0x20).Take(0x800000).ToArray();
+            initDict = payload.Skip(0x20).Take(0x800000).ToArray();
             var compressorSize = BitConverter.ToInt32(payload, 0x18);
             var compressorState = payload.Skip(0x20).Skip(0x800000).Take(compressorSize).ToArray();
             var stateSize = OodleNetwork1UDP_State_Size();
             oodleState = new Byte[stateSize];
             if (!OodleNetwork1UDP_State_Uncompact(oodleState, compressorState)) throw new Exception("oodle init fail");
-            oodleSharedDict = new Byte[OodleNetwork1_Shared_Size(0x13) * 2];
-            OodleNetwork1_Shared_SetWindow(oodleSharedDict, 0x13, dict, 0x800000);
+            oodleSharedDict = new Byte[OodleNetwork1_Shared_Size(0x13)];
+            OodleNetwork1_Shared_SetWindow(oodleSharedDict, 0x13, initDict, 0x800000);
         }
         public static Byte[] Decompress(Byte[] decompressed)
         {
@@ -65,16 +57,11 @@ namespace LostArkLogger
             try
             {
                 if (!OodleNetwork1UDP_Decode(oodleState, oodleSharedDict, payload, payload.Length, tempPayload, oodleSize))
-                {
-                    Init();
-                    if (!OodleNetwork1UDP_Decode(oodleState, oodleSharedDict, payload, payload.Length, tempPayload, oodleSize))
-                        throw new Exception("oodle decompress fail");
-                }
+                    throw new Exception("oodle decompress fail");
             }
-            catch
+            catch (Exception e)
             {
-                Init();
-                return Decompress(decompressed);
+                Console.WriteLine("access excepted");
             }
             return tempPayload;
         }

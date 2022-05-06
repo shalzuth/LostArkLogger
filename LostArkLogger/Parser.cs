@@ -32,6 +32,16 @@ namespace LostArkLogger
         }
         public HashSet<Entity> Entities = new HashSet<Entity>();
         Byte[] fragmentedPacket = new Byte[0];
+        void ProcessDamageEvent(Entity sourceEntity, UInt32 skillId, UInt32 subSkillId, PKTSkillDamageNotify.SkillDamageNotifyEvent dmgEvent)
+        {
+            var skillName = Skill.GetSkillName(skillId, subSkillId);
+            var targetEntity = Entities.FirstOrDefault(entity => entity.EntityId == dmgEvent.TargetId);
+            var destinationName = targetEntity != null ? targetEntity.VisibleName : dmgEvent.TargetId.ToString("X");
+            //var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = sourceName.Contains("("), Destination = destinationName, SkillName = skillName, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
+            var log = new LogInfo { Time = DateTime.Now, Source = sourceEntity.VisibleName, PC = true, Type = sourceEntity.Type, Destination = destinationName, SkillName = skillName, Damage = dmgEvent.Damage, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
+            AppendLog(log.ToString());
+            onDamageEvent?.Invoke(log);
+        }
         void ProcessPacket(List<Byte> data)
         {
             var packets = data.ToArray();
@@ -50,6 +60,7 @@ namespace LostArkLogger
                     return;
                 }
                 var opcode = (OpCodes)BitConverter.ToUInt16(packets, 2);
+                //Console.WriteLine(opcode);
                 var packetSize = BitConverter.ToUInt16(packets.ToArray(), 0);
                 if (packets[5] != 1 || 6 > packets.Length || packetSize < 7)
                 {
@@ -107,39 +118,43 @@ namespace LostArkLogger
                 else if (opcode == OpCodes.PKTSkillDamageNotify)
                 {
                     var damage = new PKTSkillDamageNotify(payload);
-                    var skillName = Skill.GetSkillName(damage.SkillId, damage.SkillIdWithState);
                     var sourceEntity = Entities.FirstOrDefault(entity => entity.EntityId == damage.PlayerId);
                     if (sourceEntity != null)
                     {
                         if (sourceEntity.Type == Entity.EntityType.Projectile || sourceEntity.Type == Entity.EntityType.Minion)
                             sourceEntity = Entities.FirstOrDefault(entity => entity.EntityId == sourceEntity.OwnerId);
                     }
-                    var sourceName = damage.PlayerId.ToString("X");
                     if (sourceEntity != null)
                     {
                         var className = Skill.GetClassFromSkill(damage.SkillId);
-                        if (sourceEntity.ClassName == "") sourceEntity.ClassName = className; // for case where we don't know user's class yet
-                        sourceName = sourceEntity.Name + " (" + sourceEntity.ClassName + ")";
+                        if (sourceEntity.ClassName == "" && className != "UnknownClass") sourceEntity.ClassName = className; // for case where we don't know user's class yet
                     }
-                    foreach (var dmgEvent in damage.Events)
-                    {
-                        Entity targetEntity = Entities.FirstOrDefault(entity => entity.EntityId == dmgEvent.TargetId);
-                        var destinationName = targetEntity != null ? sourceEntity.Name : dmgEvent.TargetId.ToString("X");
-                        //var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = sourceName.Contains("("), Destination = destinationName, SkillName = skillName, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
-                        var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = true, Type = sourceEntity.Type, Destination = destinationName, SkillName = skillName, Damage = dmgEvent.Damage, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
-                        AppendLog(log.ToString());
-                        onDamageEvent?.Invoke(log);
-                    }
+                    else sourceEntity = new Entity { EntityId = damage.PlayerId, Name = damage.PlayerId.ToString("X"), Type = Entity.EntityType.Npc };
+                    foreach (var dmgEvent in damage.Events) ProcessDamageEvent(sourceEntity, damage.SkillId, damage.SkillIdWithState, dmgEvent);
                 }
-                else if (opcode == OpCodes.PKTNewNpcSummon)
-                    Entities.Add(new Entity { EntityId = BitConverter.ToUInt64(payload, 44), OwnerId = BitConverter.ToUInt64(payload, 0), Type = Entity.EntityType.Minion });
-                else if (opcode == OpCodes.PKTSkillDamageAbnormalMoveNotify)
+                else if (false && opcode == OpCodes.PKTSkillDamageAbnormalMoveNotify)
                 {
                     var damage = new PKTSkillDamageAbnormalMoveNotify(payload);
+
+                    var sourceEntity = Entities.FirstOrDefault(entity => entity.EntityId == damage.PlayerId);
+                    if (sourceEntity != null)
+                    {
+                        if (sourceEntity.Type == Entity.EntityType.Projectile || sourceEntity.Type == Entity.EntityType.Minion)
+                            sourceEntity = Entities.FirstOrDefault(entity => entity.EntityId == sourceEntity.OwnerId);
+                    }
+                    if (sourceEntity != null)
+                    {
+                        var className = Skill.GetClassFromSkill(damage.SkillId);
+                        if (sourceEntity.ClassName == "" && className != "UnknownClass") sourceEntity.ClassName = className; // for case where we don't know user's class yet
+                    }
+                    else sourceEntity = new Entity { EntityId = damage.PlayerId, Name = damage.PlayerId.ToString("X"), Type = Entity.EntityType.Npc };
+                    foreach (var dmgEvent in damage.Events) ProcessDamageEvent(sourceEntity, damage.SkillId, damage.SkillIdWithState, dmgEvent);
                     //for (var i = 0; i < payload.Length - 4; i++)
                     //    Console.WriteLine(i + " : " + BitConverter.ToUInt32(payload, i) + " : " + BitConverter.ToUInt32(payload, i).ToString("X"));
                     // normal mobs when skills make them move. not needed for boss tracking, since guardians don't get moved by abilities. this will show more damage taken by players
                 }
+                else if (opcode == OpCodes.PKTNewNpcSummon)
+                    Entities.Add(new Entity { EntityId = BitConverter.ToUInt64(payload, 44), OwnerId = BitConverter.ToUInt64(payload, 0), Type = Entity.EntityType.Minion });
                 if (packets.Length < packetSize) throw new Exception("bad packet maybe");
                 packets = packets.Skip(packetSize).ToArray();
             }

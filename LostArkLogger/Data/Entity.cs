@@ -11,6 +11,8 @@ namespace LostArkLogger
         public String ClassName = "";
         public EntityType Type;
 
+        public String VisibleName { get { return Name + (String.IsNullOrEmpty(ClassName) ? "" :" (" + ClassName + ")"); } }
+
         public override int GetHashCode()
         {
             return (int)EntityId;
