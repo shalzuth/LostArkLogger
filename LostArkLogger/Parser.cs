@@ -18,12 +18,12 @@ namespace LostArkLogger
     internal class Parser : IDisposable
     {
         Machina.TCPNetworkMonitor tcp;
-        MainWindow main;
-        public Action newZone;
-        public Action<LogInfo> addDamageEvent;
-        public Parser(MainWindow m)
+        public event Action<LogInfo> onDamageEvent;
+        public event Action onNewZone;
+        public event Action<int> onPacketTotalCount;
+        public bool enableLogging = true;
+        public Parser()
         {
-            main = m;
             var tcp = new Machina.TCPNetworkMonitor();
             tcp.Config.WindowName = "LOST ARK (64-bit, DX11) v.2.2.3.1";
             tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
@@ -40,7 +40,7 @@ namespace LostArkLogger
             var packets = data.ToArray();
             var packetWithTimestamp = BitConverter.GetBytes(DateTime.UtcNow.ToBinary()).ToArray().Concat(data);
             loggedPacketCount++;
-            main.loggedPacketCountLabel.Text = "Logged Packets : " + loggedPacketCount;
+
             while (packets.Length > 0)
             {
                 if (fragmentedPacket.Length > 0)
@@ -105,7 +105,7 @@ namespace LostArkLogger
                 {
                     var pc = new PKTInitEnv(payload);
                     IdToName[pc.PlayerId] = "You";
-                    newZone?.Invoke();
+                    onNewZone?.Invoke();
                 }
                 /*if ((OpCodes)BitConverter.ToUInt16(converted.ToArray(), 2) == OpCodes.PKTRemoveObject)
                 {
@@ -131,7 +131,7 @@ namespace LostArkLogger
                             //var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = sourceName.Contains("("), Destination = destinationName, SkillName = skillName, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
                             var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = true, Destination = destinationName, SkillName = skillName, Damage = dmgEvent.Damage, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
                             AppendLog(log.ToString());
-                            addDamageEvent?.Invoke(log);
+                            onDamageEvent?.Invoke(log);
                         }
                     }
                 }
@@ -155,7 +155,7 @@ namespace LostArkLogger
         int loggedPacketCount = 0;
         void AppendLog(String s)
         {
-            if (main.logEnabled.Checked) File.AppendAllText(fileName, s + "\n");
+            if (enableLogging) File.AppendAllText(fileName, s + "\n");
         }
         void Device_OnPacketArrival(Machina.Infrastructure.TCPConnection connection, byte[] bytes)
         {
@@ -165,7 +165,7 @@ namespace LostArkLogger
             {
                 if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && (OpCodes)BitConverter.ToUInt16(bytes, 2) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
                 {
-                    newZone?.Invoke();
+                    onNewZone?.Invoke();
                     currentIpAddr = srcAddr;
                     fileName = "logs\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
                     loggedPacketCount = 0;
