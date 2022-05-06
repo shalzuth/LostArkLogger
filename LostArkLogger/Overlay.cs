@@ -20,8 +20,8 @@ namespace LostArkLogger
         internal void AddSniffer(Parser s)
         {
             sniffer = s;
-            sniffer.addDamageEvent = AddDamageEvent;
-            sniffer.newZone = NewZone;
+            sniffer.onDamageEvent += AddDamageEvent;
+            sniffer.onNewZone += NewZone;
         }
         public void NewZone()
         {
@@ -136,6 +136,13 @@ namespace LostArkLogger
                 }
             }
             base.WndProc(ref m);
+        }
+
+        public new void Dispose()
+        {
+            sniffer.onDamageEvent -= AddDamageEvent;
+            sniffer.onNewZone -= NewZone;
+            base.Dispose();
         }
     }
 }

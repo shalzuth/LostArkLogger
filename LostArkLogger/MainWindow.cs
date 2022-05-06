@@ -24,7 +24,10 @@ namespace LostArkLogger
             overlay = new Overlay();
             overlay.sniffer = sniffer;
             overlay.Show();
-            sniffer = new Parser(this);
+            sniffer = new Parser();
+            sniffer.onPacketTotalCount += (int totalPacketCount) => {
+                this.loggedPacketCountLabel.Text = "Logged Packets : " + totalPacketCount;
+            };
             overlay.AddSniffer(sniffer);
         }
 
@@ -40,7 +43,7 @@ namespace LostArkLogger
 
         private void logEnabled_CheckedChanged(object sender, EventArgs e)
         {
-            //sniffer.log
+            this.sniffer.enableLogging = logEnabled.Checked;
         }
 
         private void clearButton_Click(object sender, EventArgs e)
