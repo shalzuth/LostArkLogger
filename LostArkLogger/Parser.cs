@@ -30,10 +30,7 @@ namespace LostArkLogger
             tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival(connection, data);
             tcp.Start();            
         }
-        public Dictionary<UInt64, UInt64> ProjectileOwner = new Dictionary<UInt64, UInt64>();
-        public Dictionary<UInt64, String> IdToName = new Dictionary<UInt64, String>();
-        public Dictionary<String, String> NameToClass = new Dictionary<String, String>();
-        public Dictionary<UInt64, UInt64> NpcIdToOwnerId = new Dictionary<UInt64, UInt64>();
+        public HashSet<Entity> Entities = new HashSet<Entity>();
         Byte[] fragmentedPacket = new Byte[0];
         void ProcessPacket(List<Byte> data)
         {
@@ -88,23 +85,20 @@ namespace LostArkLogger
                         break;
                 }
                 if (opcode == OpCodes.PKTNewProjectile)
-                    ProjectileOwner[BitConverter.ToUInt64(payload, 4)] = BitConverter.ToUInt64(payload, 4 + 8);
+                    Entities.Add(new Entity { EntityId = BitConverter.ToUInt64(payload, 4), OwnerId = BitConverter.ToUInt64(payload, 4 + 8), Type = Entity.EntityType.Projectile});
                 else if (opcode == OpCodes.PKTNewNpc)
-                {
-                    var npcName = Npc.GetNpcName(BitConverter.ToUInt32(payload, 15));
-                    IdToName[BitConverter.ToUInt64(payload, 7)] = npcName;
-                }
+                    Entities.Add(new Entity { EntityId = BitConverter.ToUInt64(payload, 7), Name = Npc.GetNpcName(BitConverter.ToUInt32(payload, 15)), Type = Entity.EntityType.Npc});
                 else if (opcode == OpCodes.PKTNewPC)
                 {
                     var pc = new PKTNewPC(payload);
-                    var pcClass = Npc.GetPcClass(pc.ClassId);
-                    if (!NameToClass.ContainsKey(pc.Name)) NameToClass[pc.Name] = pcClass + (NameToClass.ContainsValue(pcClass) ? (" - " + Guid.NewGuid().ToString().Substring(0, 4)) : "");
-                    IdToName[pc.PlayerId] = pc.Name + " (" + pcClass + ")";
+                    Entities.Add(new Entity { EntityId = pc.PlayerId, Name = pc.Name, ClassName = Npc.GetPcClass(pc.ClassId), Type = Entity.EntityType.Player });
                 }
                 else if (opcode == OpCodes.PKTInitEnv)
                 {
+                    Entities.Clear();
                     var pc = new PKTInitEnv(payload);
-                    IdToName[pc.PlayerId] = "You";
+                    Entities.Add(new Entity { EntityId = pc.PlayerId, Name = "You" });
+                    newZone?.Invoke();
                     onNewZone?.Invoke();
                 }
                 /*if ((OpCodes)BitConverter.ToUInt16(converted.ToArray(), 2) == OpCodes.PKTRemoveObject)
@@ -116,25 +110,37 @@ namespace LostArkLogger
                 {
                     var damage = new PKTSkillDamageNotify(payload);
                     {
-                        foreach (var dmgEvent in damage.Events)
-                        {
+                        Entity sourceEntity = Entities.FirstOrDefault(entity => entity.EntityId == damage.PlayerId);
+                        if (sourceEntity.Type == Entity.EntityType.Projectile || sourceEntity.Type == Entity.EntityType.Minion)
+                            sourceEntity = Entities.FirstOrDefault(entity => entity.EntityId == sourceEntity.OwnerId);
+                        var sourceName = sourceEntity != null ? sourceEntity.Name : damage.PlayerId.ToString("X");
+                        if (sourceEntity != null)
+                        { 
                             var skillName = Skill.GetSkillName(damage.SkillId, damage.SkillIdWithState);
+                            var className = Skill.GetClassFromSkill(damage.SkillId);
+                            if (skillName != "UnknownClass" && sourceEntity.ClassName == "")
+                                sourceEntity.ClassName = className;
+                            sourceName += (" (" + sourceEntity.ClassName + ")");
+
+                            foreach (var dmgEvent in damage.Events)
                             var ownerId = ProjectileOwner.ContainsKey(damage.PlayerId) ? ProjectileOwner[damage.PlayerId] : damage.PlayerId;
                             ownerId = NpcIdToOwnerId.ContainsKey(ownerId) ? NpcIdToOwnerId[ownerId] : ownerId;
                             var sourceName = IdToName.ContainsKey(ownerId) ? IdToName[ownerId] : ownerId.ToString("X");
                             var destinationName = IdToName.ContainsKey(dmgEvent.TargetId) ? IdToName[dmgEvent.TargetId] : dmgEvent.TargetId.ToString("X");
                             if (sourceName == "You" && Skill.GetClassFromSkill(damage.SkillId) != "UnknownClass")
                             {
-                                var myClass = Skill.GetClassFromSkill(damage.SkillId);
-                                if (myClass != "UnknownClass") sourceName = IdToName[ownerId] = "You (" + myClass + ")";
+                                Entity targetEntity = Entities.FirstOrDefault(entity => entity.EntityId == dmgEvent.TargetId);
+                                var destinationName = targetEntity != null ? sourceEntity.Name : dmgEvent.TargetId.ToString("X");
+                               //var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = sourceName.Contains("("), Destination = destinationName, SkillName = skillName, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
+                                var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = true, Type = sourceEntity.Type, Destination = destinationName, SkillName = skillName, Damage = dmgEvent.Damage, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
+                                AppendLog(log.ToString());
+                                addDamageEvent?.Invoke(log);
                             }
-                            //var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = sourceName.Contains("("), Destination = destinationName, SkillName = skillName, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
-                            var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = true, Destination = destinationName, SkillName = skillName, Damage = dmgEvent.Damage, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
-                            AppendLog(log.ToString());
-                            onDamageEvent?.Invoke(log);
                         }
                     }
                 }
+                else if (opcode == OpCodes.PKTNewNpcSummon)
+                    Entities.Add(new Entity { EntityId = BitConverter.ToUInt64(payload, 44), OwnerId = BitConverter.ToUInt64(payload, 0), Type = Entity.EntityType.Minion });
                 else if (opcode == OpCodes.PKTSkillDamageAbnormalMoveNotify)
                 {
                     var damage = new PKTSkillDamageAbnormalMoveNotify(payload);
