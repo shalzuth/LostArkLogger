@@ -121,7 +121,7 @@ namespace LostArkLogger
                             var className = Skill.GetClassFromSkill(damage.SkillId);
                             if (skillName != "UnknownClass" && sourceEntity.ClassName == "")
                                 sourceEntity.ClassName = className;
-                            sourceName =  $"You ( { sourceEntity.ClassName } )";
+                            sourceName += (" (" + sourceEntity.ClassName + ")");
 
                             foreach (var dmgEvent in damage.Events)
                             {
