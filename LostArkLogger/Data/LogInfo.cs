@@ -12,6 +12,7 @@ namespace LostArkLogger
         public Boolean Crit { get; set; }
         public Boolean BackAttack { get; set; }
         public Boolean FrontAttack { get; set; }
+        public Entity.EntityType Type { get; set; }
         public override string ToString()
         {
             return Time.ToString("yy:MM:dd:HH:mm:ss.f") + "," +
