@@ -39,6 +39,9 @@
   <PropertyGroup>
     <ApplicationIcon>winged-sword.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Costura, Version=5.7.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Costura.Fody.5.7.0\lib\netstandard1.0\Costura.dll</HintPath>
@@ -216,6 +219,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Entity.cs" />
     <Compile Include="Data\GameMsg_English.cs" />
     <Compile Include="Data\LogInfo.cs" />
     <Compile Include="Data\Npc.cs" />
@@ -229,6 +233,17 @@
       <DependentUpon>Overlay.cs</DependentUpon>
     </Compile>
     <Compile Include="Packets\PKTSkillDamageAbnormalMoveNotify.cs" />
+    <Compile Include="RetroOverlay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RetroOverlay.Designer.cs">
+      <DependentUpon>RetroOverlay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RetroUtil\ControlExtension.cs" />
+    <Compile Include="RetroUtil\DamageMeterRow.cs" />
+    <Compile Include="RetroUtil\MyColorTable.cs" />
+    <Compile Include="RetroUtil\PropertyComparer.cs" />
+    <Compile Include="RetroUtil\SortableBindingList.cs" />
     <Compile Include="Utilities\Oodle.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Utilities\Xor.cs" />
@@ -261,6 +276,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="RetroOverlay.resx">
+      <DependentUpon>RetroOverlay.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
