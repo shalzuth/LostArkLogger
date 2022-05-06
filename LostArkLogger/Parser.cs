@@ -18,19 +18,18 @@ namespace LostArkLogger
     internal class Parser : IDisposable
     {
         Machina.TCPNetworkMonitor tcp;
-        MainWindow main;
-        public Action newZone;
-        public Action<LogInfo> addDamageEvent;
-        public Parser(MainWindow m)
+        public event Action<LogInfo> onDamageEvent;
+        public event Action onNewZone;
+        public event Action<int> onPacketTotalCount;
+        public bool enableLogging = true;
+        public Parser()
         {
-            main = m;
             var tcp = new Machina.TCPNetworkMonitor();
             tcp.Config.WindowName = "LOST ARK (64-bit, DX11) v.2.2.3.1";
             tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
             tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival(connection, data);
             tcp.Start();            
         }
-
         public HashSet<Entity> Entities = new HashSet<Entity>();
         Byte[] fragmentedPacket = new Byte[0];
         void ProcessPacket(List<Byte> data)
@@ -38,7 +37,7 @@ namespace LostArkLogger
             var packets = data.ToArray();
             var packetWithTimestamp = BitConverter.GetBytes(DateTime.UtcNow.ToBinary()).ToArray().Concat(data);
             loggedPacketCount++;
-            main.loggedPacketCountLabel.Text = "Logged Packets : " + loggedPacketCount;
+
             while (packets.Length > 0)
             {
                 if (fragmentedPacket.Length > 0)
@@ -98,9 +97,9 @@ namespace LostArkLogger
                 {
                     Entities.Clear();
                     var pc = new PKTInitEnv(payload);
-                    Console.WriteLine("New instance, your id: " + pc.PlayerId);
                     Entities.Add(new Entity { EntityId = pc.PlayerId, Name = "You" });
                     newZone?.Invoke();
+                    onNewZone?.Invoke();
                 }
                 /*if ((OpCodes)BitConverter.ToUInt16(converted.ToArray(), 2) == OpCodes.PKTRemoveObject)
                 {
@@ -124,6 +123,11 @@ namespace LostArkLogger
                             sourceName += (" (" + sourceEntity.ClassName + ")");
 
                             foreach (var dmgEvent in damage.Events)
+                            var ownerId = ProjectileOwner.ContainsKey(damage.PlayerId) ? ProjectileOwner[damage.PlayerId] : damage.PlayerId;
+                            ownerId = NpcIdToOwnerId.ContainsKey(ownerId) ? NpcIdToOwnerId[ownerId] : ownerId;
+                            var sourceName = IdToName.ContainsKey(ownerId) ? IdToName[ownerId] : ownerId.ToString("X");
+                            var destinationName = IdToName.ContainsKey(dmgEvent.TargetId) ? IdToName[dmgEvent.TargetId] : dmgEvent.TargetId.ToString("X");
+                            if (sourceName == "You" && Skill.GetClassFromSkill(damage.SkillId) != "UnknownClass")
                             {
                                 Entity targetEntity = Entities.FirstOrDefault(entity => entity.EntityId == dmgEvent.TargetId);
                                 var destinationName = targetEntity != null ? sourceEntity.Name : dmgEvent.TargetId.ToString("X");
@@ -144,6 +148,10 @@ namespace LostArkLogger
                     //    Console.WriteLine(i + " : " + BitConverter.ToUInt32(payload, i) + " : " + BitConverter.ToUInt32(payload, i).ToString("X"));
                     // normal mobs when skills make them move. not needed for boss tracking, since guardians don't get moved by abilities. this will show more damage taken by players
                 }
+                else if (opcode == OpCodes.PKTNewNpcSummon)
+                {
+                    NpcIdToOwnerId[BitConverter.ToUInt64(payload, 44)] = BitConverter.ToUInt64(payload, 0);
+                }
                 if (packets.Length < packetSize) throw new Exception("bad packet maybe");
                 packets = packets.Skip(packetSize).ToArray();
             }
@@ -153,7 +161,7 @@ namespace LostArkLogger
         int loggedPacketCount = 0;
         void AppendLog(String s)
         {
-            if (main.logEnabled.Checked) File.AppendAllText(fileName, s + "\n");
+            if (enableLogging) File.AppendAllText(fileName, s + "\n");
         }
         void Device_OnPacketArrival(Machina.Infrastructure.TCPConnection connection, byte[] bytes)
         {
@@ -163,7 +171,7 @@ namespace LostArkLogger
             {
                 if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && (OpCodes)BitConverter.ToUInt16(bytes, 2) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
                 {
-                    newZone?.Invoke();
+                    onNewZone?.Invoke();
                     currentIpAddr = srcAddr;
                     fileName = "logs\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
                     loggedPacketCount = 0;

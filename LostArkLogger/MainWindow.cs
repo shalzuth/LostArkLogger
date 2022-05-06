@@ -15,6 +15,7 @@ namespace LostArkLogger
     {
         Parser sniffer;
         Overlay overlay;
+        RetroOverlay retro;
         public MainWindow()
         {
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -24,8 +25,20 @@ namespace LostArkLogger
             overlay = new Overlay();
             overlay.sniffer = sniffer;
             overlay.Show();
-            sniffer = new Parser(this);
+            sniffer = new Parser();
+            sniffer.onPacketTotalCount += (int totalPacketCount) => {
+                this.loggedPacketCountLabel.Text = "Logged Packets : " + totalPacketCount;
+            };
             overlay.AddSniffer(sniffer);
+
+            /*
+            // RetroOverlay
+            retro = new RetroOverlay();
+            retro.sniffer = sniffer;
+            retro.Show();
+            sniffer = new Parser(this);
+            retro.AddSniffer(sniffer);
+            */
         }
 
         private void weblink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -40,7 +53,7 @@ namespace LostArkLogger
 
         private void logEnabled_CheckedChanged(object sender, EventArgs e)
         {
-            //sniffer.log
+            this.sniffer.enableLogging = logEnabled.Checked;
         }
 
         private void clearButton_Click(object sender, EventArgs e)

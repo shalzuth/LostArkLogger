@@ -10,6 +10,11 @@ namespace LostArkLogger
 {
     public partial class Overlay : Form
     {
+        enum OverlayType {
+            TotalDamage,
+            SkillDamage,
+            Other
+        }
         public Overlay()
         {
             InitPens();
@@ -20,26 +25,41 @@ namespace LostArkLogger
         internal void AddSniffer(Parser s)
         {
             sniffer = s;
-            sniffer.addDamageEvent = AddDamageEvent;
-            sniffer.newZone = NewZone;
+            sniffer.onDamageEvent += AddDamageEvent;
+            sniffer.onNewZone += NewZone;
         }
         public void NewZone()
         {
             Events = new ConcurrentBag<LogInfo>();
             Damages.Clear();
-            Invalidate();
+            GroupDamages.Clear();
+            SkillDmg.Clear();
+
+            SwitchOverlay(OverlayType.TotalDamage);
         }
         private DateTime startCombatTime = DateTime.Now;
         ConcurrentBag<LogInfo> Events = new ConcurrentBag<LogInfo>();
+        private OverlayType currentOverlay = OverlayType.TotalDamage;
+        string owner = "";
         public ConcurrentDictionary<String, UInt64> Damages = new ConcurrentDictionary<string, ulong>();
+        public ConcurrentDictionary<String, UInt64> GroupDamages = new ConcurrentDictionary<string, ulong>();
+        public ConcurrentDictionary<String, ConcurrentDictionary<String, UInt64>> SkillDmg = new ConcurrentDictionary<string, ConcurrentDictionary<string, ulong>>();
         Font font = new Font("Helvetica", 10);
         void AddDamageEvent(LogInfo log)
         {
-            if(Damages.Count == 0) startCombatTime = DateTime.Now;
+            if(GroupDamages.Count == 0) startCombatTime = DateTime.Now;
             Events.Add(log);
-            if (!Damages.ContainsKey(log.Source)) Damages[log.Source] = 0;
-            Damages[log.Source] += log.Damage;
-            Invalidate();
+            if (!GroupDamages.ContainsKey(log.Source)) GroupDamages[log.Source] = 0;
+            GroupDamages[log.Source] += log.Damage;
+
+            if(!SkillDmg.ContainsKey(log.Source))
+                SkillDmg[log.Source] = new ConcurrentDictionary<string, ulong>();
+            if(!SkillDmg[log.Source].ContainsKey(log.SkillName))
+                SkillDmg[log.Source][log.SkillName] = 0;
+
+            SkillDmg[log.Source][log.SkillName] += log.Damage;
+
+            SwitchOverlay(currentOverlay);
         }
         internal Parser sniffer;
         List<Brush> brushes = new List<Brush>();
@@ -50,7 +70,7 @@ namespace LostArkLogger
             foreach(var color in colors) brushes.Add(new SolidBrush(ColorTranslator.FromHtml(color)));
         }
         int barHeight = 20;
-        string FormatNumber(UInt64 n) // https://stackoverflow.com/questions/30180672/string-format-numbers-to-millions-thousands-with-rounding
+        public static string FormatNumber(UInt64 n) // https://stackoverflow.com/questions/30180672/string-format-numbers-to-millions-thousands-with-rounding
         {
             if (n < 1000) return n.ToString();
             if (n < 10000) return String.Format("{0:#,.##}K", n - 5);
@@ -75,9 +95,12 @@ namespace LostArkLogger
             base.OnPaint(e);
             e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
             e.Graphics.FillRectangle(brushes[10], 0, 0, Size.Width, barHeight);
-            var titleBar = e.Graphics.MeasureString("DPS Meter", font);
+            var title = "DPS Meter";
+            if(currentOverlay == OverlayType.SkillDamage) title = "Damage details - " + owner;
+
+            var titleBar = e.Graphics.MeasureString(title, font);
             var heightBuffer = (barHeight - titleBar.Height) / 2;
-            e.Graphics.DrawString("DPS Meter", font, black, 5, heightBuffer);
+            e.Graphics.DrawString(title, font, black, 5, heightBuffer);
             if (Damages.Count == 0) return;
             var maxDamage = Damages.Max(b => b.Value);
             var totalDamage = Damages.Values.Sum(b=>(Single)b);
@@ -110,13 +133,36 @@ namespace LostArkLogger
         [DllImport("user32.dll")] static extern bool ReleaseCapture();
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
-        private void Overlay_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
+        private void Overlay_MouseDown(object sender, MouseEventArgs e) {
+            if(e.Button == MouseButtons.Left) {
                 ReleaseCapture();
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
+
+                var index = (int)Math.Floor(e.Location.Y / (float)barHeight - 1);
+                if(index < 0 || index > Damages.Count) return;
+                if(currentOverlay == OverlayType.TotalDamage) {
+                    owner = Damages.OrderByDescending(b => b.Value).ElementAt(index).Key;
+                    SwitchOverlay(OverlayType.SkillDamage);
+                }
             }
+            if(e.Button == MouseButtons.Right) {
+                SwitchOverlay(OverlayType.TotalDamage);
+            }
+        }
+        private void SwitchOverlay(OverlayType type) {
+            currentOverlay = type;
+
+            if(type == OverlayType.TotalDamage) {
+                Damages = GroupDamages;
+            }
+            if(type == OverlayType.SkillDamage) {
+                if(SkillDmg.ContainsKey(owner))
+                    Damages = SkillDmg[owner];
+                else
+                    Damages.Clear();
+            }
+
+            Invalidate();
         }
         protected override void WndProc(ref Message m)
         {
@@ -136,6 +182,13 @@ namespace LostArkLogger
                 }
             }
             base.WndProc(ref m);
+        }
+
+        public new void Dispose()
+        {
+            sniffer.onDamageEvent -= AddDamageEvent;
+            sniffer.onNewZone -= NewZone;
+            base.Dispose();
         }
     }
 }
