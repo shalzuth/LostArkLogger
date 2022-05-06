@@ -137,7 +137,7 @@ namespace LostArkLogger
         internal void AddSniffer(Parser s)
         {
             sniffer = s;
-            sniffer.addDamageEvent = AddDamageEvent;
+            sniffer.onDamageEvent += AddDamageEvent;
         }
 
         // main log writing to window
