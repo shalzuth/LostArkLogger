@@ -28,26 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.targetComboBox = new System.Windows.Forms.ComboBox();
+            this.targetComboBox = new LostArkLogger.LoggerComboBox();
             this.SuspendLayout();
             // 
             // targetComboBox
             // 
-            this.targetComboBox.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.targetComboBox.DropDownHeight = 75;
-            this.targetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.targetComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.targetComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.targetComboBox.ForeColor = System.Drawing.Color.White;
-            this.targetComboBox.FormattingEnabled = true;
-            this.targetComboBox.IntegralHeight = false;
-            this.targetComboBox.Items.AddRange(new object[] {
-            "Total damages"});
-            this.targetComboBox.Location = new System.Drawing.Point(77, 0);
+            this.targetComboBox.BackColor = System.Drawing.Color.Transparent;
+            this.targetComboBox.BorderColor = System.Drawing.Color.Black;
+            this.targetComboBox.BorderSize = 0;
+            this.targetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
+            this.targetComboBox.Font = new System.Drawing.Font("MS Gothic", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.targetComboBox.ForeColor = System.Drawing.Color.DimGray;
+            this.targetComboBox.IconColor = System.Drawing.Color.White;
+            this.targetComboBox.ListBackColor = System.Drawing.Color.Black;
+            this.targetComboBox.ListTextColor = System.Drawing.Color.White;
+            this.targetComboBox.Location = new System.Drawing.Point(58, 0);
+            this.targetComboBox.MinimumSize = new System.Drawing.Size(200, 30);
             this.targetComboBox.Name = "targetComboBox";
-            this.targetComboBox.Size = new System.Drawing.Size(121, 23);
+            this.targetComboBox.Size = new System.Drawing.Size(200, 30);
             this.targetComboBox.TabIndex = 0;
-            this.targetComboBox.SelectedIndexChanged += new System.EventHandler(this.TargetIndexChanged);
+            this.targetComboBox.Texts = "";
+            this.targetComboBox.OnSelectedIndexChanged += new System.EventHandler(this.targetComboBox_OnSelectedIndexChanged);
             // 
             // Overlay
             // 
@@ -71,6 +72,6 @@
 
         #endregion
 
-        private System.Windows.Forms.ComboBox targetComboBox;
+        private LoggerComboBox targetComboBox;
     }
 }

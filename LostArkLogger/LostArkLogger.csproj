@@ -244,6 +244,9 @@
     <Compile Include="RetroUtil\MyColorTable.cs" />
     <Compile Include="RetroUtil\PropertyComparer.cs" />
     <Compile Include="RetroUtil\SortableBindingList.cs" />
+    <Compile Include="UI\LoggerComboBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Utilities\Oodle.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Utilities\Xor.cs" />

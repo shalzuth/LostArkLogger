@@ -53,7 +53,7 @@ namespace LostArkLogger
         public ConcurrentDictionary<string, ConcurrentDictionary<string, UInt64>> SkillDmg = new ConcurrentDictionary<string, ConcurrentDictionary<string, ulong>>();
         public ConcurrentDictionary<string, ConcurrentDictionary<string, UInt64>> EntityDmg = new ConcurrentDictionary<string, ConcurrentDictionary<string, ulong>>();
         Font font = new Font("Helvetica", 10);
-        Font comboFont = new Font("Helvetica", 7f);
+        Font comboFont = new Font("Helvetica", 9);
         Font refreshFont = new Font("Arial", 12);
         void AddDamageEvent(LogInfo log)
         {
@@ -123,15 +123,23 @@ namespace LostArkLogger
         {
             base.OnPaint(e);
             e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
-            e.Graphics.FillRectangle(brushes[10], 0, 0, Size.Width, barHeight);
 
             var title = "DPS Meter";
             if(currentOverlay == OverlayType.SkillDamage) title = "Damage details - " + IdToName(focused);
-            targetComboBox.BackColor = ((SolidBrush)brushes[10]).Color;
-           
+
+            Brush backColor = brushes[10];
+            if(currentOverlay == OverlayType.SkillDamage) backColor = brushes[12];
+            e.Graphics.FillRectangle(backColor, 0, 0, Size.Width, barHeight);
+
+            targetComboBox.BackColor = ((SolidBrush)backColor).Color;
+            targetComboBox.ListBackColor = ((SolidBrush)backColor).Color;
+            targetComboBox.ForeColor = Color.White;
             targetComboBox.Font = comboFont;
-            this.targetComboBox.Location = new Point(e.Graphics.MeasureString(title, font).ToSize().Width + 15, 0); 
-            
+            targetComboBox.Location = new Point(e.Graphics.MeasureString(title, font).ToSize().Width + 15, 0);
+            targetComboBox.ListBackColor = ((SolidBrush)backColor).Color;
+            targetComboBox.MinimumSize = new Size(10, 10);
+            targetComboBox.Size = new Size(120, 20);
+
             var titleBar = e.Graphics.MeasureString(title, font);
             var heightBuffer = (barHeight - titleBar.Height) / 2;
             e.Graphics.DrawString(title, font, black, 5, heightBuffer);
@@ -212,20 +220,16 @@ namespace LostArkLogger
                 targetComboBox.Visible = false;
                 if(SkillDmg.ContainsKey(focused))
                     Damages = SkillDmg[focused];
-                else
-                    Damages.Clear();
             }
             if(type == OverlayType.EntityDamage) {
                 if(EntityDmg.ContainsKey(focused))
                     Damages = EntityDmg[focused];
-                else
-                    Damages.Clear();
             }
 
             Invalidate();
         }
 
-        private void TargetIndexChanged(object sender, System.EventArgs e) {
+        private void targetComboBox_OnSelectedIndexChanged(object sender, System.EventArgs e) {
             if(targetComboBox.SelectedIndex == -1) return;
             if(targetComboBox.SelectedIndex == 0) {
                 SwitchOverlay(OverlayType.TotalDamage);
