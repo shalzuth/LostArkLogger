@@ -22,15 +22,6 @@ namespace LostArkLogger
                    (Crit ? "1" : "0") + "," +
                    (BackAttack ? "1" : "0") + "," +
                    (FrontAttack ? "1" : "0");
-            return Time.ToString("yy:MM:dd:HH:mm:ss.f") + "," +
-                   SourceEntity.VisibleName + "," +
-                   //PC + "," +
-                   //Destination + "," +
-                   SkillName + "," +
-                   Damage + "," +
-                   (Crit ? "1" : "0") + "," +
-                   (BackAttack ? "1" : "0") + "," +
-                   (FrontAttack ? "1" : "0");
         }
     }
 }
