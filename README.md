@@ -1,6 +1,10 @@
 # Lost Ark Logger
  This project enables you to research and analyze combat actions by parsing packets
  
+# In-game Overlay
+![Imgur Image](https://i.imgur.com/jjXwnOr.gif)
+
+# ACT Plug-in
 ![Imgur Image](https://i.imgur.com/WrGNiOE.png)
  
 # How does this work

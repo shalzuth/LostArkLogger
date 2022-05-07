@@ -137,13 +137,13 @@ namespace LostArkLogger
         internal void AddSniffer(Parser s)
         {
             sniffer = s;
-            sniffer.onDamageEvent += AddDamageEvent;
+            sniffer.onCombatEvent += AddDamageEvent;
         }
 
         // main log writing to window
         void AddDamageEvent(LogInfo log)
         {
-            if (log.Type == Entity.EntityType.Npc) return;
+            if (log.SourceEntity.Type == Entity.EntityType.Npc) return;
             SortableBindingList<DamageMeterRow> updateList;
             // if we got new combat data, and we clicked reset, reset the meter
             if (!watch.IsRunning)
@@ -160,7 +160,7 @@ namespace LostArkLogger
             bool found = false;
             foreach (var attacker in updateList)
             {
-                if (attacker.Name == log.Source)
+                if (attacker.Name == log.SourceEntity.VisibleName)
                 {
                     found = true;
                     attacker.totalDamage += log.Damage;
@@ -180,7 +180,7 @@ namespace LostArkLogger
             {
                 var row = new DamageMeterRow
                 {
-                    Name = log.Source,
+                    Name = log.SourceEntity.VisibleName,
                     totalDamage = log.Damage,
                     highestDamage = log.Damage,
                     skillId = log.SkillName,

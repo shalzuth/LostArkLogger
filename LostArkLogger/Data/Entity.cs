@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace LostArkLogger
 {
@@ -9,21 +9,26 @@ namespace LostArkLogger
         public UInt64 OwnerId;
         public String Name;
         public String ClassName = "";
-        public EntityType Type;
-
+        public EntityType Type = EntityType.Npc;
         public String VisibleName { get { return Name + (String.IsNullOrEmpty(ClassName) ? "" :" (" + ClassName + ")"); } }
-
-        public override int GetHashCode()
-        {
-            return (int)EntityId;
-        }
-
         public enum EntityType
         {
-            Player = 0,
-            Npc = 1,
-            Projectile = 2,
-            Minion = 3,
+            Unknown,
+            Player,
+            Npc,
+            Projectile,
+            Summon,
+        }
+    }
+    public static class EntityExtensions
+    {
+        public static Entity GetOrAdd(this ConcurrentDictionary<UInt64, Entity> entityList, UInt64 entityId)
+        {
+            return entityList.GetOrAdd(entityId, new Entity { EntityId = entityId });
+        }
+        public static void AddOrUpdate(this ConcurrentDictionary<UInt64, Entity> entityList, Entity entity)
+        {
+            entityList[entity.EntityId] = entity;
         }
     }
 }

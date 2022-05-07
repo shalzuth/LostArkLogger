@@ -219,6 +219,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Encounter.cs" />
     <Compile Include="Data\Entity.cs" />
     <Compile Include="Data\GameMsg_English.cs" />
     <Compile Include="Data\LogInfo.cs" />
@@ -232,6 +233,7 @@
     <Compile Include="Overlay.Designer.cs">
       <DependentUpon>Overlay.cs</DependentUpon>
     </Compile>
+    <Compile Include="Packets\PKTCounterAttackNotify.cs" />
     <Compile Include="Packets\PKTSkillDamageAbnormalMoveNotify.cs" />
     <Compile Include="RetroOverlay.cs">
       <SubType>Form</SubType>

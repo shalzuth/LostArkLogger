@@ -60,9 +60,7 @@ namespace LostArkLogger
 
         private void clearButton_Click(object sender, EventArgs e)
         {
-            overlay.Damages.Clear();
             overlay.Invalidate();
         }
-
     }
 }
