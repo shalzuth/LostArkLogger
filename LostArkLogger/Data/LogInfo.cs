@@ -21,7 +21,8 @@ namespace LostArkLogger
                    Damage + "," +
                    (Crit ? "1" : "0") + "," +
                    (BackAttack ? "1" : "0") + "," +
-                   (FrontAttack ? "1" : "0");
+                   (FrontAttack ? "1" : "0") + "," +
+                   (Counter ? "1" : "0");
         }
     }
 }
