@@ -70,22 +70,21 @@ namespace LostArkLogger
 
             if (!TotalDamages.ContainsKey(ownerId)) TotalDamages[ownerId] = 0;
             TotalDamages[ownerId] += log.Damage;
+        
+            if(!SkillDmg.ContainsKey(ownerId))
+                SkillDmg[ownerId] = new ConcurrentDictionary<string, ulong>();
+            if(!SkillDmg[ownerId].ContainsKey(log.SkillName))
+                SkillDmg[ownerId][log.SkillName] = 0;
+            SkillDmg[ownerId][log.SkillName] += log.Damage;
 
-            if(log.Type == Entity.EntityType.Player) {
-                if(!SkillDmg.ContainsKey(ownerId))
-                    SkillDmg[ownerId] = new ConcurrentDictionary<string, ulong>();
-                if(!SkillDmg[ownerId].ContainsKey(log.SkillName))
-                    SkillDmg[ownerId][log.SkillName] = 0;
-                SkillDmg[ownerId][log.SkillName] += log.Damage;
-
-                if(!EntityDmg.ContainsKey(targetId)) {
-                    targetComboBox.Items.Add(IdToName(targetId));
-                    EntityDmg[targetId] = new ConcurrentDictionary<string, ulong>();
-                }
-                if(!EntityDmg[targetId].ContainsKey(ownerId))
-                    EntityDmg[targetId][ownerId] = 0;
-                EntityDmg[targetId][ownerId] += log.Damage;
+            if(!EntityDmg.ContainsKey(targetId)) {
+                targetComboBox.Items.Add(IdToName(targetId));
+                EntityDmg[targetId] = new ConcurrentDictionary<string, ulong>();
             }
+            if(!EntityDmg[targetId].ContainsKey(ownerId))
+                EntityDmg[targetId][ownerId] = 0;
+            EntityDmg[targetId][ownerId] += log.Damage;
+            
 
 
             SwitchOverlay(currentOverlay);
