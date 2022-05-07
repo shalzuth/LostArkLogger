@@ -38,7 +38,7 @@ namespace LostArkLogger
             var targetEntity = Entities.FirstOrDefault(entity => entity.EntityId == dmgEvent.TargetId);
             var destinationName = targetEntity != null ? targetEntity.VisibleName : dmgEvent.TargetId.ToString("X");
             //var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = sourceName.Contains("("), Destination = destinationName, SkillName = skillName, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
-            var log = new LogInfo { Time = DateTime.Now, Source = sourceEntity.VisibleName, PC = true, Type = sourceEntity.Type, Destination = destinationName, SkillName = skillName, Damage = dmgEvent.Damage, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
+            var log = new LogInfo { TargetId = dmgEvent.TargetId, OwnerId = sourceEntity.OwnerId, Time = DateTime.Now, Source = sourceEntity.VisibleName, PC = true, Type = sourceEntity.Type, Destination = destinationName, SkillName = skillName, Damage = dmgEvent.Damage, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
             AppendLog(log.ToString());
             onDamageEvent?.Invoke(log);
         }

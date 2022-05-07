@@ -28,13 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.targetComboBox = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
+            // 
+            // targetComboBox
+            // 
+            this.targetComboBox.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.targetComboBox.DropDownHeight = 75;
+            this.targetComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.targetComboBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.targetComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.targetComboBox.ForeColor = System.Drawing.Color.White;
+            this.targetComboBox.FormattingEnabled = true;
+            this.targetComboBox.IntegralHeight = false;
+            this.targetComboBox.Items.AddRange(new object[] {
+            "Total damages"});
+            this.targetComboBox.Location = new System.Drawing.Point(77, 0);
+            this.targetComboBox.Name = "targetComboBox";
+            this.targetComboBox.Size = new System.Drawing.Size(121, 23);
+            this.targetComboBox.TabIndex = 0;
+            this.targetComboBox.SelectedIndexChanged += new System.EventHandler(this.TargetIndexChanged);
             // 
             // Overlay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(300, 120);
+            this.Controls.Add(this.targetComboBox);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MinimizeBox = false;
@@ -50,5 +70,7 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.ComboBox targetComboBox;
     }
 }

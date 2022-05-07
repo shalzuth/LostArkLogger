@@ -13,7 +13,7 @@ namespace LostArkLogger
         enum OverlayType {
             TotalDamage,
             SkillDamage,
-            Other
+            EntityDamage
         }
         public Overlay()
         {
@@ -32,32 +32,61 @@ namespace LostArkLogger
         {
             Events = new ConcurrentBag<LogInfo>();
             Damages.Clear();
-            GroupDamages.Clear();
+            TotalDamages.Clear();
             SkillDmg.Clear();
+            EntityDmg.Clear();
+            EntityNames.Clear();
+            targetComboBox.Items.Clear();
+            targetComboBox.Items.Add("Total damages");
+            targetComboBox.SelectedIndex = 0;
+            targetComboBox.TabIndex = 0;
 
             SwitchOverlay(OverlayType.TotalDamage);
         }
         private DateTime startCombatTime = DateTime.Now;
         ConcurrentBag<LogInfo> Events = new ConcurrentBag<LogInfo>();
         private OverlayType currentOverlay = OverlayType.TotalDamage;
-        string owner = "";
-        public ConcurrentDictionary<String, UInt64> Damages = new ConcurrentDictionary<string, ulong>();
-        public ConcurrentDictionary<String, UInt64> GroupDamages = new ConcurrentDictionary<string, ulong>();
-        public ConcurrentDictionary<String, ConcurrentDictionary<String, UInt64>> SkillDmg = new ConcurrentDictionary<string, ConcurrentDictionary<string, ulong>>();
+        string focused = String.Empty;
+        public ConcurrentDictionary<string, string> EntityNames = new ConcurrentDictionary<string, string>();
+        public ConcurrentDictionary<string, UInt64> Damages = new ConcurrentDictionary<string, ulong>();
+        public ConcurrentDictionary<string, UInt64> TotalDamages = new ConcurrentDictionary<string, ulong>();
+        public ConcurrentDictionary<string, ConcurrentDictionary<string, UInt64>> SkillDmg = new ConcurrentDictionary<string, ConcurrentDictionary<string, ulong>>();
+        public ConcurrentDictionary<string, ConcurrentDictionary<string, UInt64>> EntityDmg = new ConcurrentDictionary<string, ConcurrentDictionary<string, ulong>>();
         Font font = new Font("Helvetica", 10);
+        Font comboFont = new Font("Helvetica", 7f);
+        Font refreshFont = new Font("Arial", 12);
         void AddDamageEvent(LogInfo log)
         {
-            if(GroupDamages.Count == 0) startCombatTime = DateTime.Now;
+            if(TotalDamages.Count == 0) startCombatTime = DateTime.Now;
             Events.Add(log);
-            if (!GroupDamages.ContainsKey(log.Source)) GroupDamages[log.Source] = 0;
-            GroupDamages[log.Source] += log.Damage;
 
-            if(!SkillDmg.ContainsKey(log.Source))
-                SkillDmg[log.Source] = new ConcurrentDictionary<string, ulong>();
-            if(!SkillDmg[log.Source].ContainsKey(log.SkillName))
-                SkillDmg[log.Source][log.SkillName] = 0;
+            var ownerId = log.OwnerId.ToString("X");
+            var targetId = log.TargetId.ToString("X");
 
-            SkillDmg[log.Source][log.SkillName] += log.Damage;
+            if(!EntityNames.ContainsKey(ownerId))
+                EntityNames[ownerId] = log.Source;
+            if(!EntityNames.ContainsKey(targetId))
+                EntityNames[targetId] = log.Destination;
+
+            if (!TotalDamages.ContainsKey(ownerId)) TotalDamages[ownerId] = 0;
+            TotalDamages[ownerId] += log.Damage;
+
+            if(log.Type == Entity.EntityType.Player) {
+                if(!SkillDmg.ContainsKey(ownerId))
+                    SkillDmg[ownerId] = new ConcurrentDictionary<string, ulong>();
+                if(!SkillDmg[ownerId].ContainsKey(log.SkillName))
+                    SkillDmg[ownerId][log.SkillName] = 0;
+                SkillDmg[ownerId][log.SkillName] += log.Damage;
+
+                if(!EntityDmg.ContainsKey(targetId)) {
+                    targetComboBox.Items.Add(IdToName(targetId));
+                    EntityDmg[targetId] = new ConcurrentDictionary<string, ulong>();
+                }
+                if(!EntityDmg[targetId].ContainsKey(ownerId))
+                    EntityDmg[targetId][ownerId] = 0;
+                EntityDmg[targetId][ownerId] += log.Damage;
+            }
+
 
             SwitchOverlay(currentOverlay);
         }
@@ -95,12 +124,18 @@ namespace LostArkLogger
             base.OnPaint(e);
             e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
             e.Graphics.FillRectangle(brushes[10], 0, 0, Size.Width, barHeight);
-            var title = "DPS Meter";
-            if(currentOverlay == OverlayType.SkillDamage) title = "Damage details - " + owner;
 
+            var title = "DPS Meter";
+            if(currentOverlay == OverlayType.SkillDamage) title = "Damage details - " + IdToName(focused);
+            targetComboBox.BackColor = ((SolidBrush)brushes[10]).Color;
+           
+            targetComboBox.Font = comboFont;
+            this.targetComboBox.Location = new Point(e.Graphics.MeasureString(title, font).ToSize().Width + 15, 0); 
+            
             var titleBar = e.Graphics.MeasureString(title, font);
             var heightBuffer = (barHeight - titleBar.Height) / 2;
             e.Graphics.DrawString(title, font, black, 5, heightBuffer);
+            e.Graphics.DrawString("⟳", refreshFont, black, Size.Width - 20, 0);
             if (Damages.Count == 0) return;
             var maxDamage = Damages.Max(b => b.Value);
             var totalDamage = Damages.Values.Sum(b=>(Single)b);
@@ -110,21 +145,27 @@ namespace LostArkLogger
                 var elapsed = (DateTime.Now - startCombatTime).TotalSeconds;
                 var playerDmg = orderedDamages.ElementAt(i);
                 var barWidth = ((Single)playerDmg.Value / maxDamage) * Size.Width;
+                var valueName = IdToName(playerDmg.Key);
                 if (barWidth < .3f) continue;
-                e.Graphics.FillRectangle(brushes[i], 0, (i + 1) * barHeight, barWidth, barHeight);
+                
                 var dps = FormatNumber((ulong)(playerDmg.Value / elapsed));
                 var formattedDmg = FormatNumber(playerDmg.Value) + " (" + dps + ", " + (100f * playerDmg.Value / totalDamage).ToString("#.0") + "%)";
                 var nameOffset = 0;
-                if (playerDmg.Key.Contains("("))
+                if (valueName.Contains("("))
                 {
-                    var className = playerDmg.Key.Substring(playerDmg.Key.IndexOf("(") + 1);
+                    var className = valueName.Substring(valueName.IndexOf("(") + 1);
                     className = className.Substring(0, className.IndexOf(")"));
+                    e.Graphics.FillRectangle(brushes[Array.IndexOf(ClassIconIndex, className)], 0, (i + 1) * barHeight, barWidth, barHeight);
                     e.Graphics.DrawImage(Properties.Resources.class_symbol_0, new Rectangle(2, (i + 1) * barHeight + 2, barHeight - 4, barHeight - 4), GetSpriteLocation(Array.IndexOf(ClassIconIndex, className)), GraphicsUnit.Pixel);
-                    nameOffset += 16;
+                    nameOffset += 16;                    
+                } else {
+                    e.Graphics.FillRectangle(brushes[i], 0, (i + 1) * barHeight, barWidth, barHeight);
                 }
                 var edge = e.Graphics.MeasureString(formattedDmg, font);
-                e.Graphics.DrawString(playerDmg.Key, font, black, nameOffset + 5, (i + 1) * barHeight + heightBuffer);
+                e.Graphics.DrawString(valueName, font, black, nameOffset + 5, (i + 1) * barHeight + heightBuffer);
                 e.Graphics.DrawString(formattedDmg, font, black, Size.Width - edge.Width, (i + 1) * barHeight + heightBuffer);
+
+
             }
             ControlPaint.DrawSizeGrip(e.Graphics, BackColor, ClientSize.Width - 16, ClientSize.Height - 16, 16, 16);
         }
@@ -138,32 +179,62 @@ namespace LostArkLogger
                 ReleaseCapture();
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
 
+                /* Handle clic on refresh button */
+                if((e.Location.X >= Size.Width - 20 && e.Location.X <= Size.Width - 5) && e.Location.Y <= 15)
+                    NewZone();
+
+                /* Handle clic on bar */
                 var index = (int)Math.Floor(e.Location.Y / (float)barHeight - 1);
                 if(index < 0 || index > Damages.Count) return;
                 if(currentOverlay == OverlayType.TotalDamage) {
-                    owner = Damages.OrderByDescending(b => b.Value).ElementAt(index).Key;
-                    SwitchOverlay(OverlayType.SkillDamage);
+                    var focusId = Damages.OrderByDescending(b => b.Value).ElementAt(index).Key;
+                    if(EntityNames.ContainsKey(focusId)) {
+                        focused = focusId;
+                        SwitchOverlay(OverlayType.SkillDamage);
+                    }
                 }
             }
             if(e.Button == MouseButtons.Right) {
                 SwitchOverlay(OverlayType.TotalDamage);
             }
         }
+        private string IdToName(string id) {
+            return EntityNames.ContainsKey(id) ? EntityNames[id] : id;
+        }
         private void SwitchOverlay(OverlayType type) {
             currentOverlay = type;
+            targetComboBox.Visible = true;
 
             if(type == OverlayType.TotalDamage) {
-                Damages = GroupDamages;
+                Damages = TotalDamages;
             }
             if(type == OverlayType.SkillDamage) {
-                if(SkillDmg.ContainsKey(owner))
-                    Damages = SkillDmg[owner];
+                targetComboBox.Visible = false;
+                if(SkillDmg.ContainsKey(focused))
+                    Damages = SkillDmg[focused];
+                else
+                    Damages.Clear();
+            }
+            if(type == OverlayType.EntityDamage) {
+                if(EntityDmg.ContainsKey(focused))
+                    Damages = EntityDmg[focused];
                 else
                     Damages.Clear();
             }
 
             Invalidate();
         }
+
+        private void TargetIndexChanged(object sender, System.EventArgs e) {
+            if(targetComboBox.SelectedIndex == -1) return;
+            if(targetComboBox.SelectedIndex == 0) {
+                SwitchOverlay(OverlayType.TotalDamage);
+            } else {
+                focused = EntityDmg.OrderBy(b => b.Key).ElementAt(targetComboBox.SelectedIndex - 1).Key;
+                SwitchOverlay(OverlayType.EntityDamage);
+            }
+        }
+
         protected override void WndProc(ref Message m)
         {
             const int wmNcHitTest = 0x84;

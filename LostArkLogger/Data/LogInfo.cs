@@ -13,6 +13,9 @@ namespace LostArkLogger
         public Boolean BackAttack { get; set; }
         public Boolean FrontAttack { get; set; }
         public Entity.EntityType Type { get; set; }
+        public ulong OwnerId { get; set; }
+        public ulong TargetId { get; set; }
+
         public override string ToString()
         {
             return Time.ToString("yy:MM:dd:HH:mm:ss.f") + "," +
