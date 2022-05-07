@@ -60,7 +60,7 @@ namespace LostArkLogger
             }
             catch (Exception e)
             {
-                Console.WriteLine("access excepted");
+                //Console.WriteLine("access excepted");
             }
             return tempPayload;
         }
