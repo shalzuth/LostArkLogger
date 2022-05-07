@@ -29,6 +29,8 @@ namespace LostArkLogger
             sniffer.onPacketTotalCount += (int totalPacketCount) => {
                 this.loggedPacketCountLabel.Text = "Logged Packets : " + totalPacketCount;
             };
+            if (sniffer.monitorType == Machina.Infrastructure.NetworkMonitorType.WinPCap)
+                this.sniffModeLabel.Text = "winpcap";
             overlay.AddSniffer(sniffer);
 
             /*
@@ -61,5 +63,6 @@ namespace LostArkLogger
             overlay.Damages.Clear();
             overlay.Invalidate();
         }
+
     }
 }

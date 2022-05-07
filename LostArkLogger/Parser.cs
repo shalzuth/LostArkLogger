@@ -22,14 +22,35 @@ namespace LostArkLogger
         public event Action onNewZone;
         public event Action<int> onPacketTotalCount;
         public bool enableLogging = true;
+        public Machina.Infrastructure.NetworkMonitorType monitorType;
         public Parser()
         {
+            var use_npcap = true;
+            // See if winpcap loads
+            try
+            {
+                pcap_strerror(1);
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                use_npcap = false;
+            }
+            // Fall back to raw sockets
             var tcp = new Machina.TCPNetworkMonitor();
-            tcp.Config.WindowName = "LOST ARK (64-bit, DX11) v.2.2.3.1";
-            tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
+            tcp.Config.WindowClass = "EFLaunchUnrealUWindowsClient";
+            if (use_npcap) {
+                this.monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
+            } else {
+                this.monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
+            }
             tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival(connection, data);
             tcp.Start();            
         }
+#pragma warning disable CA2101 // Specify marshaling for P/Invoke string arguments
+        [DllImport("wpcap.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+#pragma warning restore CA2101 // Specify marshaling for P/Invoke string arguments
+        internal static extern IntPtr pcap_strerror(int err);
+
         public HashSet<Entity> Entities = new HashSet<Entity>();
         Byte[] fragmentedPacket = new Byte[0];
         void ProcessDamageEvent(Entity sourceEntity, UInt32 skillId, UInt32 subSkillId, PKTSkillDamageNotify.SkillDamageNotifyEvent dmgEvent)

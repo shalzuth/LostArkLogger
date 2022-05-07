@@ -34,6 +34,7 @@
             this.overlayEnabled = new System.Windows.Forms.CheckBox();
             this.logEnabled = new System.Windows.Forms.CheckBox();
             this.clearButton = new System.Windows.Forms.Button();
+            this.sniffModeLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // loggedPacketCountLabel
@@ -92,11 +93,22 @@
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
+            // sniffModeLabel
+            // 
+            this.sniffModeLabel.AutoSize = true;
+            this.sniffModeLabel.Location = new System.Drawing.Point(149, 31);
+            this.sniffModeLabel.Name = "sniffModeLabel";
+            this.sniffModeLabel.Size = new System.Drawing.Size(61, 13);
+            this.sniffModeLabel.TabIndex = 8;
+            this.sniffModeLabel.Text = "rawsockets";
+            this.sniffModeLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(222, 84);
+            this.Controls.Add(this.sniffModeLabel);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.logEnabled);
             this.Controls.Add(this.overlayEnabled);
@@ -119,6 +131,7 @@
         private System.Windows.Forms.CheckBox overlayEnabled;
         public System.Windows.Forms.CheckBox logEnabled;
         private System.Windows.Forms.Button clearButton;
+        public System.Windows.Forms.Label sniffModeLabel;
     }
 }
 
