@@ -33,6 +33,11 @@ namespace LostArkLogger
             sniffer.onNewZone += NewZone;
             encounter = sniffer.currentEncounter;
         }
+        private void Clear() 
+        {
+            sniffer.currentEncounter.Infos = new ConcurrentBag<LogInfo>();
+            NewZone();
+        }
         public void NewZone()
         {
             encounter = sniffer.currentEncounter;
@@ -43,6 +48,7 @@ namespace LostArkLogger
         Encounter encounter;
         Entity SubEntity;
         Font font = new Font("Helvetica", 10);
+        Font refreshFont = new Font("Arial", 12);
         void AddDamageEvent(LogInfo log)
         {
             Invalidate();
@@ -130,10 +136,11 @@ namespace LostArkLogger
                     e.Graphics.DrawString(formattedDmg, font, black, Size.Width - edge.Width, (i + 1) * barHeight + heightBuffer);
                 }
             }
-            ControlPaint.DrawFocusRectangle(e.Graphics, new Rectangle(Size.Width - 50, barHeight / 4, 10, barHeight / 2));
-            e.Graphics.DrawLine(pen, Size.Width - 30, barHeight / 2, Size.Width - 20, barHeight / 2);
-            e.Graphics.DrawLine(pen, Size.Width - 5, barHeight / 2, Size.Width - 15, barHeight / 2);
+            ControlPaint.DrawFocusRectangle(e.Graphics, new Rectangle(Size.Width - 70, barHeight / 4, 10, barHeight / 2));
+            e.Graphics.DrawLine(pen, Size.Width - 50, barHeight / 2, Size.Width - 40, barHeight / 2);
+            e.Graphics.DrawLine(pen, Size.Width - 25, barHeight / 2, Size.Width - 35, barHeight / 2);
             ControlPaint.DrawSizeGrip(e.Graphics, BackColor, ClientSize.Width - 16, ClientSize.Height - 16, 16, 16);
+            e.Graphics.DrawString("⟳", refreshFont, black, Size.Width - 25, 0);
         }
         [DllImport("user32.dll")] static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [DllImport("user32.dll")] static extern bool ReleaseCapture();
@@ -161,9 +168,10 @@ namespace LostArkLogger
                         SwitchOverlay(OverlayType.TotalDamage);
                     }
                 }
-                if (new Rectangle(Size.Width - 50, barHeight / 4, 10, barHeight / 2).Contains(e.Location)) SwitchOverlay(OverlayType.Encounters);
-                if (new Rectangle(Size.Width - 30, 0, 10, barHeight).Contains(e.Location)) SwitchOverlay(false);
-                if (new Rectangle(Size.Width - 15, 0, 10, barHeight).Contains(e.Location)) SwitchOverlay(true);
+                if (new Rectangle(Size.Width - 70, barHeight / 4, 10, barHeight / 2).Contains(e.Location)) SwitchOverlay(OverlayType.Encounters);
+                if (new Rectangle(Size.Width - 50, 0, 10, barHeight).Contains(e.Location)) SwitchOverlay(false);
+                if (new Rectangle(Size.Width - 35, 0, 10, barHeight).Contains(e.Location)) SwitchOverlay(true);
+                if(new Rectangle(Size.Width - 25, barHeight / 4, 20, barHeight / 2).Contains(e.Location)) Clear();
             }
             if (e.Button == MouseButtons.Right)
             {
