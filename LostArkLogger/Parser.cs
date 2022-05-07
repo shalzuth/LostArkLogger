@@ -33,7 +33,7 @@ namespace LostArkLogger
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
                 use_npcap = false; // Fall back to raw sockets
             }
             Encounters.Add(currentEncounter);
@@ -125,7 +125,7 @@ namespace LostArkLogger
                         payload = Oodle.Decompress(payload).Skip(16).ToArray();
                         break;
                 }
-                Console.WriteLine(opcode + " : " + BitConverter.ToString(payload));
+                //Console.WriteLine(opcode + " : " + BitConverter.ToString(payload));
                 if (opcode == OpCodes.PKTNewProjectile)
                     currentEncounter.Entities.AddOrUpdate(new Entity { EntityId = BitConverter.ToUInt64(payload, 4), OwnerId = BitConverter.ToUInt64(payload, 4 + 8), Type = Entity.EntityType.Projectile });
                 else if (opcode == OpCodes.PKTNewNpc)
