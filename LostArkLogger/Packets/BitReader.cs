@@ -73,6 +73,12 @@ namespace LostArkLogger
 
             return Value;
         }
+        public UInt64 ReadPackedInt()
+        {
+            var valBits = (UInt16)ReadBits(4);
+            return ReadBits(4 + valBits * 4);
+        }
+
         public UInt32 BitReverse(UInt32 value, Byte numBits)
         {
             UInt32 a = 0;

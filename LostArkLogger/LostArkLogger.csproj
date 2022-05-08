@@ -87,6 +87,7 @@
     <Compile Include="Overlay.Designer.cs">
       <DependentUpon>Overlay.cs</DependentUpon>
     </Compile>
+    <Compile Include="Packets\PKTStatChangeOriginNotify.cs" />
     <Compile Include="Packets\PKTCounterAttackNotify.cs" />
     <Compile Include="Packets\PKTSkillDamageAbnormalMoveNotify.cs" />
     <Compile Include="Packets\PKTParalyzationStateNotify.cs" />
