@@ -45,12 +45,6 @@ namespace LostArkLogger
             onCombatEvent += Parser_onDamageEvent;
             onNewZone += Parser_onNewZone;
 
-            tcp = new Machina.TCPNetworkMonitor();
-            tcp.Config.WindowClass = "EFLaunchUnrealUWindowsClient";
-            tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
-            tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival(connection, data);
-            tcp.Start();
-
             if (use_npcap)
             {
                 monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
