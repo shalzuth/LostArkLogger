@@ -9,6 +9,7 @@ using Snappy;
 using K4os.Compression.LZ4;
 using SharpPcap;
 using LostArkLogger.Utilities;
+using System.Net.NetworkInformation;
 
 namespace LostArkLogger
 {
