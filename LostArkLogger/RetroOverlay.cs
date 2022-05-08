@@ -29,8 +29,8 @@ namespace LostArkLogger
         private Stopwatch watch = new Stopwatch();
         private SortableBindingList<DamageMeterRow> AttackerList = new SortableBindingList<DamageMeterRow>();
 
-        private float totalDamage;
-        private float topDmg;
+        private ulong totalDamage;
+        private ulong topDmg;
 
         public RetroOverlay()
         {
