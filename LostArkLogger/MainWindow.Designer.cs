@@ -33,10 +33,11 @@
             this.weblink = new System.Windows.Forms.LinkLabel();
             this.overlayEnabled = new System.Windows.Forms.CheckBox();
             this.logEnabled = new System.Windows.Forms.CheckBox();
-            this.sniffModeLabel = new System.Windows.Forms.Label();
             this.debugLog = new System.Windows.Forms.CheckBox();
             this.versionLabel = new System.Windows.Forms.Label();
             this.checkUpdate = new System.Windows.Forms.Button();
+            this.clearButton = new System.Windows.Forms.Button();
+            this.sniffModeCheckbox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // loggedPacketCountLabel
@@ -85,15 +86,27 @@
             this.logEnabled.UseVisualStyleBackColor = true;
             this.logEnabled.CheckedChanged += new System.EventHandler(this.logEnabled_CheckedChanged);
             // 
-            // sniffModeLabel
+            // clearButton
             // 
-            this.sniffModeLabel.AutoSize = true;
-            this.sniffModeLabel.Location = new System.Drawing.Point(149, 31);
-            this.sniffModeLabel.Name = "sniffModeLabel";
-            this.sniffModeLabel.Size = new System.Drawing.Size(61, 13);
-            this.sniffModeLabel.TabIndex = 8;
-            this.sniffModeLabel.Text = "rawsockets";
-            this.sniffModeLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.clearButton.Location = new System.Drawing.Point(135, 51);
+            this.clearButton.Name = "clearButton";
+            this.clearButton.Size = new System.Drawing.Size(75, 23);
+            this.clearButton.TabIndex = 7;
+            this.clearButton.Text = "Clear";
+            this.clearButton.UseVisualStyleBackColor = true;
+            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
+            // 
+            // sniffModeCheckbox
+            // 
+            this.sniffModeCheckbox.AutoSize = true;
+            this.sniffModeCheckbox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.sniffModeCheckbox.Location = new System.Drawing.Point(118, 28);
+            this.sniffModeCheckbox.Name = "sniffModeCheckbox";
+            this.sniffModeCheckbox.Size = new System.Drawing.Size(92, 17);
+            this.sniffModeCheckbox.TabIndex = 9;
+            this.sniffModeCheckbox.Text = "use winpcap?";
+            this.sniffModeCheckbox.UseVisualStyleBackColor = true;
+            this.sniffModeCheckbox.CheckedChanged += new System.EventHandler(this.sniffModeCheckbox_CheckedChanged);
             // 
             // debugLog
             // 
@@ -133,7 +146,8 @@
             this.Controls.Add(this.checkUpdate);
             this.Controls.Add(this.versionLabel);
             this.Controls.Add(this.debugLog);
-            this.Controls.Add(this.sniffModeLabel);
+            this.Controls.Add(this.sniffModeCheckbox);
+            this.Controls.Add(this.clearButton);
             this.Controls.Add(this.logEnabled);
             this.Controls.Add(this.overlayEnabled);
             this.Controls.Add(this.weblink);
@@ -154,10 +168,11 @@
         private System.Windows.Forms.LinkLabel weblink;
         private System.Windows.Forms.CheckBox overlayEnabled;
         public System.Windows.Forms.CheckBox logEnabled;
-        public System.Windows.Forms.Label sniffModeLabel;
         private System.Windows.Forms.CheckBox debugLog;
         private System.Windows.Forms.Label versionLabel;
         private System.Windows.Forms.Button checkUpdate;
+        private System.Windows.Forms.Button clearButton;
+        private System.Windows.Forms.CheckBox sniffModeCheckbox;
     }
 }
 

@@ -15,12 +15,13 @@ namespace LostArkLogger
     internal class Parser : IDisposable
     {
         Machina.TCPNetworkMonitor tcp;
+        ILiveDevice pcap;
         public event Action<LogInfo> onCombatEvent;
         public event Action onNewZone;
         public event Action<int> onPacketTotalCount;
         public bool enableLogging = true;
         public bool use_npcap = true;
-        public Machina.Infrastructure.NetworkMonitorType monitorType;
+        public Machina.Infrastructure.NetworkMonitorType? monitorType = null;
         public Parser()
         {
             use_npcap = true;
@@ -40,6 +41,14 @@ namespace LostArkLogger
             onCombatEvent += Parser_onDamageEvent;
             onNewZone += Parser_onNewZone;
 
+            InstallListener();
+        }
+        // UI needs to be able to ask us to reload our listener based on the current user settings
+        public void InstallListener()
+        {
+            // If we have an installed listener, that needs to go away or we duplicate traffic
+            UninstallListeners();
+            // We default to using npcap, but the UI can also set this to false.
             if (use_npcap)
             {
                 monitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
@@ -49,7 +58,8 @@ namespace LostArkLogger
                 try
                 {
                     gameInterface = NetworkUtil.GetAdapterUsedByProcess("LostArk");
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     Console.WriteLine("Failed to get adapter information from LostArk, is it running?\n{0}", ex.ToString());
                     throw ex;
@@ -78,10 +88,11 @@ namespace LostArkLogger
                 // If we failed to find a pcap device, fall back to rawsockets.
                 if (!foundAdapter) use_npcap = false;
             }
-            
-            if (use_npcap == false) {
+
+            if (use_npcap == false)
+            {
                 // Always fall back to rawsockets
-                var tcp = new Machina.TCPNetworkMonitor();
+                tcp = new Machina.TCPNetworkMonitor();
                 tcp.Config.WindowClass = "EFLaunchUnrealUWindowsClient";
                 monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
                 tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival_machina(connection, data);
@@ -336,28 +347,30 @@ namespace LostArkLogger
         private void Parser_onNewZone()
         {
         }
-
-        public void Dispose()
+        public void UninstallListeners()
         {
             logger?.Dispose();
             logStream?.Dispose();
-            tcp.Stop();
-            if (this.use_npcap)
+            if (tcp != null) tcp.Stop();
+            if (pcap != null)
             {
-                foreach (var device in CaptureDeviceList.Instance)
+                try
                 {
-                    try
-                    {
-                        device.Open(DeviceModes.None, 1000); // todo: 1sec timeout ok?
-                        device.StopCapture();
-                        Console.WriteLine("Stopping capture on {0}", device.Name, device.Description);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("Exception while trying to stop capture on NIC {0}:\n{1}", device.Name, ex.ToString());
-                    }
+                    pcap.StopCapture();
+                    pcap.Close();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception while trying to stop capture on NIC {0}:\n{1}", pcap.Name, ex.ToString());
                 }
             }
+            tcp = null;
+            pcap = null;
+        }
+
+        public void Dispose()
+        {
+
         }
     }
 }

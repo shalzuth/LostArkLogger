@@ -31,6 +31,7 @@ namespace LostArkLogger
             overlay.AddSniffer(sniffer);
             overlay.Show();
 
+            if (sniffer.use_npcap) this.sniffModeCheckbox.Checked = true;
             /*
             // RetroOverlay
             retro = new RetroOverlay();
@@ -87,6 +88,12 @@ namespace LostArkLogger
                     Environment.Exit(0);
                 }
             }
+        }
+        private void sniffModeCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            this.sniffer.use_npcap = sniffModeCheckbox.Enabled;
+            this.sniffer.InstallListener();
+            this.sniffModeCheckbox.Enabled = this.sniffer.use_npcap; // Unset the checkbox if it fails to initialize
         }
     }
 }
