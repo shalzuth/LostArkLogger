@@ -82,5 +82,41 @@ namespace LostArkLogger.Properties {
                 this["OnTop"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool StartMinimized {
+            get {
+                return ((bool)(this["StartMinimized"]));
+            }
+            set {
+                this["StartMinimized"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point mainWindowLocation {
+            get {
+                return ((global::System.Drawing.Point)(this["mainWindowLocation"]));
+            }
+            set {
+                this["mainWindowLocation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size mainWindowSize {
+            get {
+                return ((global::System.Drawing.Size)(this["mainWindowSize"]));
+            }
+            set {
+                this["mainWindowSize"] = value;
+            }
+        }
     }
 }

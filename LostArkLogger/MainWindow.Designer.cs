@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.loggedPacketCountLabel = new System.Windows.Forms.Label();
             this.weblink = new System.Windows.Forms.LinkLabel();
@@ -35,6 +36,11 @@
             this.logEnabled = new System.Windows.Forms.CheckBox();
             this.clearButton = new System.Windows.Forms.Button();
             this.sniffModeLabel = new System.Windows.Forms.Label();
+            this.mainNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.startMinimized = new System.Windows.Forms.CheckBox();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // loggedPacketCountLabel
@@ -49,7 +55,7 @@
             // weblink
             // 
             this.weblink.AutoSize = true;
-            this.weblink.Location = new System.Drawing.Point(152, 9);
+            this.weblink.Location = new System.Drawing.Point(199, 9);
             this.weblink.Name = "weblink";
             this.weblink.Size = new System.Drawing.Size(60, 13);
             this.weblink.TabIndex = 4;
@@ -85,7 +91,7 @@
             // 
             // clearButton
             // 
-            this.clearButton.Location = new System.Drawing.Point(135, 51);
+            this.clearButton.Location = new System.Drawing.Point(184, 51);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(75, 23);
             this.clearButton.TabIndex = 7;
@@ -96,18 +102,55 @@
             // sniffModeLabel
             // 
             this.sniffModeLabel.AutoSize = true;
-            this.sniffModeLabel.Location = new System.Drawing.Point(149, 31);
+            this.sniffModeLabel.Location = new System.Drawing.Point(198, 31);
             this.sniffModeLabel.Name = "sniffModeLabel";
             this.sniffModeLabel.Size = new System.Drawing.Size(61, 13);
             this.sniffModeLabel.TabIndex = 8;
             this.sniffModeLabel.Text = "rawsockets";
             this.sniffModeLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // mainNotifyIcon
+            // 
+            this.mainNotifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.mainNotifyIcon.BalloonTipText = "I\'m still here!";
+            this.mainNotifyIcon.BalloonTipTitle = "Lost Ark Logger";
+            this.mainNotifyIcon.ContextMenuStrip = this.contextMenuStrip1;
+            this.mainNotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("mainNotifyIcon.Icon")));
+            this.mainNotifyIcon.Text = "Lost Ark Logger";
+            this.mainNotifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exitToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(94, 26);
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(93, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // startMinimized
+            // 
+            this.startMinimized.AutoSize = true;
+            this.startMinimized.Checked = global::LostArkLogger.Properties.Settings.Default.StartMinimized;
+            this.startMinimized.Location = new System.Drawing.Point(80, 31);
+            this.startMinimized.Name = "startMinimized";
+            this.startMinimized.Size = new System.Drawing.Size(97, 17);
+            this.startMinimized.TabIndex = 9;
+            this.startMinimized.Text = "Start Minimized";
+            this.startMinimized.UseVisualStyleBackColor = true;
+            this.startMinimized.CheckedChanged += new System.EventHandler(this.startMinimized_CheckedChanged);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(222, 84);
+            this.ClientSize = new System.Drawing.Size(271, 84);
+            this.Controls.Add(this.startMinimized);
             this.Controls.Add(this.sniffModeLabel);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.logEnabled);
@@ -120,6 +163,10 @@
             this.MaximizeBox = false;
             this.Name = "MainWindow";
             this.Text = "Lost Ark Logger";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
+            this.Load += new System.EventHandler(this.MainWindow_Load);
+            this.Resize += new System.EventHandler(this.MainWindow_Resize);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -132,6 +179,10 @@
         public System.Windows.Forms.CheckBox logEnabled;
         private System.Windows.Forms.Button clearButton;
         public System.Windows.Forms.Label sniffModeLabel;
+        private System.Windows.Forms.NotifyIcon mainNotifyIcon;
+        private System.Windows.Forms.CheckBox startMinimized;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
     }
 }
 
