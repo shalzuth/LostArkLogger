@@ -72,6 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\AuctionItem.cs" />
     <Compile Include="Data\Encounter.cs" />
     <Compile Include="Data\Entity.cs" />
     <Compile Include="Data\GameMsg_English.cs" />
@@ -89,6 +90,7 @@
     </Compile>
     <Compile Include="Packets\PKTCounterAttackNotify.cs" />
     <Compile Include="Packets\PKTSkillDamageAbnormalMoveNotify.cs" />
+    <Compile Include="Packets\PKTAuctionSearchResult.cs" />
     <Compile Include="RetroOverlay.cs">
       <SubType>Form</SubType>
     </Compile>

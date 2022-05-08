@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using K4os.Compression.LZ4;
+using Snappy;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
-using Snappy;
-using K4os.Compression.LZ4;
 
 namespace LostArkLogger
 {
@@ -125,7 +118,24 @@ namespace LostArkLogger
                         payload = Oodle.Decompress(payload).Skip(16).ToArray();
                         break;
                 }
-                //Console.WriteLine(opcode + " : " + BitConverter.ToString(payload));
+
+                // write packets for analyzing, bypass common, useless packets
+                //if (opcode != OpCodes.PKTMoveError && opcode != OpCodes.PKTMoveNotify && opcode != OpCodes.PKTMoveNotifyList && opcode != OpCodes.PKTTransitStateNotify && opcode != OpCodes.PKTPing && opcode != OpCodes.PKTPong)
+                //    Console.WriteLine(opcode + " : " + BitConverter.ToString(payload));
+
+                /* Uncomment for auction house accessory sniffing
+                if (opcode == OpCodes.PKTAuctionSearchResult)
+                {
+                    var pc = new PKTAuctionSearchResult(payload);
+                    Console.WriteLine("NumItems=" + pc.NumItems.ToString());
+                    Console.WriteLine("Id, Stat1, Stat2, Engraving1, Engraving2, Engraving3");
+                    foreach (var item in pc.Items)
+                    {
+                        Console.WriteLine(item.ToString());
+                    }
+                }
+                */
+
                 if (opcode == OpCodes.PKTNewProjectile)
                     currentEncounter.Entities.AddOrUpdate(new Entity { EntityId = BitConverter.ToUInt64(payload, 4), OwnerId = BitConverter.ToUInt64(payload, 4 + 8), Type = Entity.EntityType.Projectile });
                 else if (opcode == OpCodes.PKTNewNpc)
