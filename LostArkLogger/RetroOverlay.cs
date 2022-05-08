@@ -25,8 +25,6 @@ namespace LostArkLogger
 {
     public partial class RetroOverlay : Form
     {
-        IPEndPoint endPoint;
-
         StringBuilder log = new StringBuilder();
         private Stopwatch watch = new Stopwatch();
         private SortableBindingList<DamageMeterRow> AttackerList = new SortableBindingList<DamageMeterRow>();

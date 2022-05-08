@@ -22,29 +22,16 @@ namespace LostArkLogger
         public event Action onNewZone;
         public event Action<int> onPacketTotalCount;
         public bool enableLogging = true;
-        public Machina.Infrastructure.NetworkMonitorType monitorType;
         public Parser()
         {
-            var use_npcap = true;
-            // See if winpcap loads
-            try
-            {
-                pcap_strerror(1);
-            }
-            catch (Exception ex)
-            {
-                //Console.WriteLine(ex.ToString());
-                use_npcap = false; // Fall back to raw sockets
-            }
             Encounters.Add(currentEncounter);
             onCombatEvent += AppendLog;
             onCombatEvent += Parser_onDamageEvent;
             onNewZone += Parser_onNewZone;
 
-            var tcp = new Machina.TCPNetworkMonitor();
+            tcp = new Machina.TCPNetworkMonitor();
             tcp.Config.WindowClass = "EFLaunchUnrealUWindowsClient";
-            if (use_npcap) monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
-            else monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
+            tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
             tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival(connection, data);
             tcp.Start();
         }

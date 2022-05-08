@@ -15,7 +15,7 @@ namespace LostArkLogger
     {
         Parser sniffer;
         Overlay overlay;
-        RetroOverlay retro;
+
         public MainWindow()
         {
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -29,8 +29,6 @@ namespace LostArkLogger
             sniffer.onPacketTotalCount += (int totalPacketCount) => {
                 this.loggedPacketCountLabel.Text = "Logged Packets : " + totalPacketCount;
             };
-            if (sniffer.monitorType == Machina.Infrastructure.NetworkMonitorType.WinPCap)
-                this.sniffModeLabel.Text = "winpcap";
             overlay.AddSniffer(sniffer);
 
             /*
