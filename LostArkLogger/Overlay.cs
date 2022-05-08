@@ -132,11 +132,11 @@ namespace LostArkLogger
                     }
                     if (currentOverlay == OverlayType.SkillDamage)
                     {
-                        if (Skill.GetSkillIcon(uint.Parse(rowText), out String iconFile, out int iconIndex))
+                        /*if (Skill.GetSkillIcon(uint.Parse(rowText), out String iconFile, out int iconIndex))
                         {
                             nameOffset += 16;
                             e.Graphics.DrawImage((Bitmap)Properties.Resources.ResourceManager.GetObject(iconFile.ToLower()), new Rectangle(2, (i + 1) * barHeight + 2, barHeight - 4, barHeight - 4), GetSpriteLocation(iconIndex), GraphicsUnit.Pixel);
-                        }
+                        }*/
                         rowText = Skill.GetSkillName(uint.Parse(rowText));
                     }
                     var edge = e.Graphics.MeasureString(formattedDmg, font);
