@@ -29,7 +29,14 @@ namespace LostArkLogger
         {
             get
             {
-                return Infos.GroupBy(i => i.SourceEntity.VisibleName).Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(j => j.Counter ? 1 : 0))).ToDictionary(x => x.Key, x => x.Value);
+                return Infos.Where(i=>i.Counter).GroupBy(i => i.SourceEntity.VisibleName).Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(j => j.Counter ? 1 : 0))).ToDictionary(x => x.Key, x => x.Value);
+            }
+        }
+        public Dictionary<String, UInt64> Stagger
+        {
+            get
+            {
+                return Infos.Where(i=>i.Stagger>0).GroupBy(i => i.SourceEntity.VisibleName).Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(j => (Single)j.Stagger))).ToDictionary(x => x.Key, x => x.Value);
             }
         }
         public Dictionary<String, UInt64> GetSkillDamages(Entity entity)

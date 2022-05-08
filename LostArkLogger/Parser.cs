@@ -171,7 +171,9 @@ namespace LostArkLogger
                 if (opcode == OpCodes.PKTNewProjectile)
                     currentEncounter.Entities.AddOrUpdate(new Entity { EntityId = BitConverter.ToUInt64(payload, 4), OwnerId = BitConverter.ToUInt64(payload, 4 + 8), Type = Entity.EntityType.Projectile });
                 else if (opcode == OpCodes.PKTNewNpc)
+                {
                     currentEncounter.Entities.AddOrUpdate(new Entity { EntityId = BitConverter.ToUInt64(payload, 7), Name = Npc.GetNpcName(BitConverter.ToUInt32(payload, 15)), Type = Entity.EntityType.Npc });
+                }
                 else if (opcode == OpCodes.PKTNewPC)
                 {
                     var pc = new PKTNewPC(payload);
@@ -201,6 +203,19 @@ namespace LostArkLogger
                     ProcessSkillDamage(new PKTSkillDamageNotify(payload));
                 else if (opcode == OpCodes.PKTSkillDamageAbnormalMoveNotify)
                     ProcessSkillDamage(new PKTSkillDamageAbnormalMoveNotify(payload));
+                else if (opcode == OpCodes.PKTParalyzationStateNotify)
+                {
+                    var stagger = new PKTParalyzationStateNotify(payload);
+                    var enemy = currentEncounter.Entities.GetOrAdd(stagger.TargetId);
+                    var lastInfo = currentEncounter.Infos.Last(); // hope this works
+                    var player = lastInfo.SourceEntity;
+                    var staggerAmount = stagger.ParalyzationPoint - enemy.Stagger;
+                    if (stagger.ParalyzationPoint == 0) staggerAmount = stagger.ParalyzationPointMax - enemy.Stagger;
+                    enemy.Stagger = stagger.ParalyzationPoint;
+                    var log = new LogInfo { Time = DateTime.Now, SourceEntity = player, DestinationEntity = enemy, SkillName = lastInfo.SkillName, Stagger = staggerAmount };
+                    onCombatEvent?.Invoke(log);
+
+                }
                 else if (opcode == OpCodes.PKTCounterAttackNotify)
                 {
                     var counter = new PKTCounterAttackNotify(payload);

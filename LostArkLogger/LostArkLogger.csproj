@@ -89,6 +89,7 @@
     </Compile>
     <Compile Include="Packets\PKTCounterAttackNotify.cs" />
     <Compile Include="Packets\PKTSkillDamageAbnormalMoveNotify.cs" />
+    <Compile Include="Packets\PKTParalyzationStateNotify.cs" />
     <Compile Include="RetroOverlay.cs">
       <SubType>Form</SubType>
     </Compile>

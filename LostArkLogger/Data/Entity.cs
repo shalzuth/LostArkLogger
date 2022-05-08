@@ -10,6 +10,7 @@ namespace LostArkLogger
         public String Name;
         public String ClassName = "";
         public EntityType Type = EntityType.Npc;
+        public UInt32 Stagger;
         public String VisibleName { get { return Name + (String.IsNullOrEmpty(ClassName) ? "" :" (" + ClassName + ")"); } }
         public enum EntityType
         {

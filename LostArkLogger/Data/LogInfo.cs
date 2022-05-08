@@ -10,6 +10,7 @@ namespace LostArkLogger
         public UInt32 SkillSubId { get; set; }
         public String SkillName { get; set; }
         public UInt64 Damage { get; set; }
+        public UInt64 Stagger { get; set; }
         public Boolean Crit { get; set; }
         public Boolean BackAttack { get; set; }
         public Boolean FrontAttack { get; set; }

@@ -15,6 +15,7 @@ namespace LostArkLogger
             TotalDamage,
             SkillDamage,
             Counterattacks,
+            Stagger,
             Encounters,
             Other
         }
@@ -85,6 +86,7 @@ namespace LostArkLogger
             var title = "DPS Meter";
             if (currentOverlay == OverlayType.SkillDamage) title = "Damage details - " + SubEntity.VisibleName;
             if (currentOverlay == OverlayType.Counterattacks) title = "Counterattacks";
+            if (currentOverlay == OverlayType.Stagger) title = "Stagger";
             if (currentOverlay == OverlayType.Encounters) title = "Encounters";
             var titleBar = e.Graphics.MeasureString(title, font);
             var heightBuffer = (barHeight - titleBar.Height) / 2;
@@ -103,6 +105,7 @@ namespace LostArkLogger
                 var rows = new Dictionary<String, UInt64>();
                 if (currentOverlay == OverlayType.TotalDamage) rows = encounter.TopLevelDamage;
                 else if (currentOverlay == OverlayType.Counterattacks) rows = encounter.Counterattacks;
+                else if (currentOverlay == OverlayType.Stagger) rows = encounter.Stagger;
                 else if (currentOverlay == OverlayType.SkillDamage)
                 {
                     rows = encounter.Infos.Where(i => i.SourceEntity == SubEntity).GroupBy(i => i.SkillId).Select(i => new KeyValuePair<String, UInt64>(i.Key.ToString(), (UInt64)i.Sum(j => (Single)j.Damage))).ToDictionary(x => x.Key, x => x.Value);
@@ -188,12 +191,17 @@ namespace LostArkLogger
             if (currentOverlay == OverlayType.TotalDamage)
             {
                 if (progress) SwitchOverlay(OverlayType.Counterattacks);
-                else SwitchOverlay(OverlayType.Counterattacks);
+                else SwitchOverlay(OverlayType.Stagger);
             }
             else if (currentOverlay == OverlayType.Counterattacks)
             {
-                if (progress) SwitchOverlay(OverlayType.TotalDamage);
+                if (progress) SwitchOverlay(OverlayType.Stagger);
                 else SwitchOverlay(OverlayType.TotalDamage);
+            }
+            else if (currentOverlay == OverlayType.Stagger)
+            {
+                if (progress) SwitchOverlay(OverlayType.TotalDamage);
+                else SwitchOverlay(OverlayType.Counterattacks);
             }
         }
         void SwitchOverlay(OverlayType type)
