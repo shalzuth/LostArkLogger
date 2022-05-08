@@ -56,11 +56,6 @@ namespace LostArkLogger
             this.sniffer.enableLogging = logEnabled.Checked;
         }
 
-        private void clearButton_Click(object sender, EventArgs e)
-        {
-            overlay.Invalidate();
-        }
-
         private void debugLog_CheckedChanged(object sender, EventArgs e)
         {
             sniffer.debugLog = debugLog.Checked;
@@ -90,9 +85,12 @@ namespace LostArkLogger
         }
         private void sniffModeCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            this.sniffer.use_npcap = sniffModeCheckbox.Enabled;
+            this.sniffModeCheckbox.Enabled = false;
+            this.sniffer.use_npcap = sniffModeCheckbox.Checked;
             this.sniffer.InstallListener();
-            this.sniffModeCheckbox.Enabled = this.sniffer.use_npcap; // Unset the checkbox if it fails to initialize
+            // This will unset the checkbox if it fails to initialize
+            this.sniffModeCheckbox.Checked = this.sniffer.use_npcap;
+            this.sniffModeCheckbox.Enabled = true;
         }
     }
 }

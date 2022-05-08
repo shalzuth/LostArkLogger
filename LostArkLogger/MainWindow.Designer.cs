@@ -36,7 +36,6 @@
             this.debugLog = new System.Windows.Forms.CheckBox();
             this.versionLabel = new System.Windows.Forms.Label();
             this.checkUpdate = new System.Windows.Forms.Button();
-            this.clearButton = new System.Windows.Forms.Button();
             this.sniffModeCheckbox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
@@ -85,16 +84,6 @@
             this.logEnabled.Text = "Log";
             this.logEnabled.UseVisualStyleBackColor = true;
             this.logEnabled.CheckedChanged += new System.EventHandler(this.logEnabled_CheckedChanged);
-            // 
-            // clearButton
-            // 
-            this.clearButton.Location = new System.Drawing.Point(135, 51);
-            this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(75, 23);
-            this.clearButton.TabIndex = 7;
-            this.clearButton.Text = "Clear";
-            this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
             // sniffModeCheckbox
             // 
@@ -149,7 +138,6 @@
             this.Controls.Add(this.versionLabel);
             this.Controls.Add(this.debugLog);
             this.Controls.Add(this.sniffModeCheckbox);
-            this.Controls.Add(this.clearButton);
             this.Controls.Add(this.logEnabled);
             this.Controls.Add(this.overlayEnabled);
             this.Controls.Add(this.weblink);
@@ -173,7 +161,6 @@
         private System.Windows.Forms.CheckBox debugLog;
         private System.Windows.Forms.Label versionLabel;
         private System.Windows.Forms.Button checkUpdate;
-        private System.Windows.Forms.Button clearButton;
         private System.Windows.Forms.CheckBox sniffModeCheckbox;
     }
 }

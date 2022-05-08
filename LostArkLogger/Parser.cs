@@ -54,40 +54,44 @@ namespace LostArkLogger
             {
                 monitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
                 string filter = "ip and tcp port 6040";
-                // listening on every device results in duplicate traffic, unfortunately, so we'll find the adapter used by the game here
+                bool foundAdapter = false;
                 NetworkInterface gameInterface;
+                // listening on every device results in duplicate traffic, unfortunately, so we'll find the adapter used by the game here
                 try
                 {
                     gameInterface = NetworkUtil.GetAdapterUsedByProcess("LostArk");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Failed to get adapter information from LostArk, is it running?\n{0}", ex.ToString());
-                    throw ex;
-                }
-                bool foundAdapter = false;
-                foreach (var device in CaptureDeviceList.Instance)
-                {
-                    if (device.MacAddress == null) continue; // SharpPcap.IPCapDevice.MacAddress is null in some cases
-                    if (gameInterface.GetPhysicalAddress().ToString() == device.MacAddress.ToString())
+                    foreach (var device in CaptureDeviceList.Instance)
                     {
-                        try
+                        if (device.MacAddress == null) continue; // SharpPcap.IPCapDevice.MacAddress is null in some cases
+                        if (gameInterface.GetPhysicalAddress().ToString() == device.MacAddress.ToString())
                         {
-                            device.Open(DeviceModes.None, 1000); // todo: 1sec timeout ok?
-                            device.Filter = filter;
-                            device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
-                            device.StartCapture();
-                            foundAdapter = true;
-                            break;
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("Exception while trying to listen to NIC {0}:\n{1}", device.Name, ex.ToString());
+                            try
+                            {
+                                device.Open(DeviceModes.None, 1000); // todo: 1sec timeout ok?
+                                device.Filter = filter;
+                                device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
+                                device.StartCapture();
+                                pcap = device;
+                                foundAdapter = true;
+                                break;
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("Exception while trying to listen to NIC {0}:\n{1}", device.Name, ex.ToString());
+                            }
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Sharppcap init failed, using rawsockets instead, exception:\n{0}", ex.ToString());
+                }
                 // If we failed to find a pcap device, fall back to rawsockets.
-                if (!foundAdapter) use_npcap = false;
+                if (!foundAdapter)
+                {
+                    use_npcap = false;
+                    pcap = null;
+                }
             }
 
             if (use_npcap == false)
