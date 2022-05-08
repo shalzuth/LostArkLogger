@@ -17,7 +17,7 @@ jobs:
         submodules: recursive
         
     - name: Set Version
-      run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
+      run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:11})
       
     - name: Update Assembly version
       shell: powershell
