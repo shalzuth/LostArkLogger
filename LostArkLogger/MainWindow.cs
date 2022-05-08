@@ -60,5 +60,10 @@ namespace LostArkLogger
         {
             overlay.Invalidate();
         }
+
+        private void debugLog_CheckedChanged(object sender, EventArgs e)
+        {
+            sniffer.debugLog = debugLog.Checked;
+        }
     }
 }

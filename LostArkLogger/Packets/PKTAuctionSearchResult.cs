@@ -20,7 +20,7 @@ namespace LostArkLogger
             public List<ItemStat> Stats;
             public List<ItemStat> Engravings;
 
-            public string ToString()
+            public override string ToString()
             {
                 return Id + ", " +
                     AuctionItem.getStatName(Stats[0].Id) + "-" + Stats[0].Value + ", " +

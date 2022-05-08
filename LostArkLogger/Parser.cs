@@ -201,6 +201,9 @@ namespace LostArkLogger
         {
             if (enableLogging) File.AppendAllText(fileName, s.ToString() + "\n");
         }
+        public Boolean debugLog = false;
+        BinaryWriter logger;
+        FileStream logStream;
         void Device_OnPacketArrival(Machina.Infrastructure.TCPConnection connection, byte[] bytes)
         {
             if (connection.RemotePort != 6040) return;
@@ -211,10 +214,17 @@ namespace LostArkLogger
                 {
                     onNewZone?.Invoke();
                     currentIpAddr = srcAddr;
-                    fileName = "logs\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
-                    loggedPacketCount = 0;
                 }
                 else return;
+            }
+            if (debugLog)
+            {
+                if (logger == null)
+                {
+                    logStream = new FileStream(fileName.Replace(".log", ".bin"), FileMode.Create);
+                    logger = new BinaryWriter(logStream);
+                }
+                logger.Write(BitConverter.GetBytes(DateTime.Now.ToBinary()).Concat(BitConverter.GetBytes(bytes.Length)).Concat(bytes).ToArray());
             }
             ProcessPacket(bytes.ToList());
         }
@@ -228,6 +238,8 @@ namespace LostArkLogger
 
         public void Dispose()
         {
+            logger?.Dispose();
+            logStream?.Dispose();
             tcp.Stop();
         }
     }

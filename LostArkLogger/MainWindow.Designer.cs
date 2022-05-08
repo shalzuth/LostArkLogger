@@ -33,8 +33,8 @@
             this.weblink = new System.Windows.Forms.LinkLabel();
             this.overlayEnabled = new System.Windows.Forms.CheckBox();
             this.logEnabled = new System.Windows.Forms.CheckBox();
-            this.clearButton = new System.Windows.Forms.Button();
             this.sniffModeLabel = new System.Windows.Forms.Label();
+            this.debugLog = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // loggedPacketCountLabel
@@ -83,16 +83,6 @@
             this.logEnabled.UseVisualStyleBackColor = true;
             this.logEnabled.CheckedChanged += new System.EventHandler(this.logEnabled_CheckedChanged);
             // 
-            // clearButton
-            // 
-            this.clearButton.Location = new System.Drawing.Point(135, 51);
-            this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(75, 23);
-            this.clearButton.TabIndex = 7;
-            this.clearButton.Text = "Clear";
-            this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
-            // 
             // sniffModeLabel
             // 
             this.sniffModeLabel.AutoSize = true;
@@ -103,13 +93,24 @@
             this.sniffModeLabel.Text = "rawsockets";
             this.sniffModeLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
+            // debugLog
+            // 
+            this.debugLog.AutoSize = true;
+            this.debugLog.Location = new System.Drawing.Point(152, 55);
+            this.debugLog.Name = "debugLog";
+            this.debugLog.Size = new System.Drawing.Size(58, 17);
+            this.debugLog.TabIndex = 9;
+            this.debugLog.Text = "Debug";
+            this.debugLog.UseVisualStyleBackColor = true;
+            this.debugLog.CheckedChanged += new System.EventHandler(this.debugLog_CheckedChanged);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(222, 84);
+            this.Controls.Add(this.debugLog);
             this.Controls.Add(this.sniffModeLabel);
-            this.Controls.Add(this.clearButton);
             this.Controls.Add(this.logEnabled);
             this.Controls.Add(this.overlayEnabled);
             this.Controls.Add(this.weblink);
@@ -130,8 +131,8 @@
         private System.Windows.Forms.LinkLabel weblink;
         private System.Windows.Forms.CheckBox overlayEnabled;
         public System.Windows.Forms.CheckBox logEnabled;
-        private System.Windows.Forms.Button clearButton;
         public System.Windows.Forms.Label sniffModeLabel;
+        private System.Windows.Forms.CheckBox debugLog;
     }
 }
 

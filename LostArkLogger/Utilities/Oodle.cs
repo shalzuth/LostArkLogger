@@ -58,7 +58,7 @@ namespace LostArkLogger
                 if (!OodleNetwork1UDP_Decode(oodleState, oodleSharedDict, payload, payload.Length, tempPayload, oodleSize))
                     throw new Exception("oodle decompress fail");
             }
-            catch (Exception e)
+            catch //(Exception e)
             {
                 //Console.WriteLine("access excepted");
             }
