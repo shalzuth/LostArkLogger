@@ -20,7 +20,7 @@ namespace LostArkLogger
         {
             Control.CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
-            versionLabel.Text = System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString();
+            versionLabel.Text = "v" + System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString();
             Oodle.Init();
             if (!Directory.Exists("logs")) Directory.CreateDirectory("logs");
             overlay = new Overlay();
@@ -65,6 +65,29 @@ namespace LostArkLogger
         private void debugLog_CheckedChanged(object sender, EventArgs e)
         {
             sniffer.debugLog = debugLog.Checked;
+        }
+
+        private void checkUpdate_Click(object sender, EventArgs e)
+        {
+            using (var wc = new WebClient())
+            {
+                wc.Headers["User-Agent"] = "LostArkLogger";
+                var json = wc.DownloadString(@"https://api.github.com/repos/shalzuth/LostArkLogger/releases/latest");
+                var version = json.Substring(json.IndexOf("tag_name") + 12);
+                version = version.Substring(0, version.IndexOf("\""));
+                if (version == System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString()) MessageBox.Show("Current version is up to date : " + version, "Version Info");
+                else
+                {
+                    var exeUrl = json.Substring(json.IndexOf("browser_download_url") + 23);
+                    exeUrl = exeUrl.Substring(0, exeUrl.IndexOf("\""));
+                    var curFileName = System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName;
+                    if (File.Exists(curFileName + ".old")) File.Delete(curFileName + ".old");
+                    File.Move(curFileName, curFileName + ".old"); // need to delete this old breadcrumb elegantly. maybe on app start. not going to solve right now.
+                    wc.DownloadFile(exeUrl, curFileName);
+                    System.Diagnostics.Process.Start(curFileName);
+                    Environment.Exit(0);
+                }
+            }
         }
     }
 }

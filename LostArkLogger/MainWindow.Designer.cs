@@ -36,6 +36,7 @@
             this.sniffModeLabel = new System.Windows.Forms.Label();
             this.debugLog = new System.Windows.Forms.CheckBox();
             this.versionLabel = new System.Windows.Forms.Label();
+            this.checkUpdate = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // loggedPacketCountLabel
@@ -114,11 +115,22 @@
             this.versionLabel.TabIndex = 10;
             this.versionLabel.Text = "v1.0.0.0";
             // 
+            // checkUpdate
+            // 
+            this.checkUpdate.Location = new System.Drawing.Point(62, 54);
+            this.checkUpdate.Name = "checkUpdate";
+            this.checkUpdate.Size = new System.Drawing.Size(98, 23);
+            this.checkUpdate.TabIndex = 11;
+            this.checkUpdate.Text = "Check Update";
+            this.checkUpdate.UseVisualStyleBackColor = true;
+            this.checkUpdate.Click += new System.EventHandler(this.checkUpdate_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(222, 84);
+            this.Controls.Add(this.checkUpdate);
             this.Controls.Add(this.versionLabel);
             this.Controls.Add(this.debugLog);
             this.Controls.Add(this.sniffModeLabel);
@@ -145,6 +157,7 @@
         public System.Windows.Forms.Label sniffModeLabel;
         private System.Windows.Forms.CheckBox debugLog;
         private System.Windows.Forms.Label versionLabel;
+        private System.Windows.Forms.Button checkUpdate;
     }
 }
 
