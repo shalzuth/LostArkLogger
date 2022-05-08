@@ -21,7 +21,7 @@ jobs:
             
     - name: Update Assembly version
       shell: powershell
-      run: (Get-Content LostArkLogger\Properties\AssemblyInfo.cs).replace('1.0.0.0', $RELEASE_VERSION).replace("refs/tags/v", "") | Set-Content LostArkLogger\Properties\AssemblyInfo.cs
+      run: (Get-Content LostArkLogger\Properties\AssemblyInfo.cs).replace('1.0.0.0', ${{ github.ref }}).replace("refs/tags/v", "") | Set-Content LostArkLogger\Properties\AssemblyInfo.cs
       
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
