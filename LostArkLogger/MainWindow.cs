@@ -60,5 +60,65 @@ namespace LostArkLogger
         {
             overlay.Invalidate();
         }
+
+        private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                WindowState = FormWindowState.Normal;
+                ShowInTaskbar = true;
+                mainNotifyIcon.Visible = false;
+            }
+        }
+
+        private void MainWindow_Resize(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                mainNotifyIcon.Visible = true;
+                mainNotifyIcon.ShowBalloonTip(1000);
+                ShowInTaskbar = false;
+            }
+        }
+
+        private void startMinimized_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.StartMinimized = startMinimized.Checked;
+        }
+
+        private void MainWindow_Load(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.mainWindowSize.Width != 0 && Properties.Settings.Default.mainWindowSize.Height != 0)
+            {
+                Location = Properties.Settings.Default.mainWindowLocation;
+                Size = Properties.Settings.Default.mainWindowSize;
+            }
+
+            if (Properties.Settings.Default.StartMinimized)
+            {
+                WindowState = FormWindowState.Minimized;
+                Hide();
+            }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Dispose();
+        }
+
+        private void MainWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Normal)
+            {
+                Properties.Settings.Default.mainWindowLocation = Location;
+                Properties.Settings.Default.mainWindowSize = Size;
+            }
+            else
+            {
+                Properties.Settings.Default.mainWindowLocation = RestoreBounds.Location;
+                Properties.Settings.Default.mainWindowSize = RestoreBounds.Size;
+            }
+            Properties.Settings.Default.Save();
+        }
     }
 }
