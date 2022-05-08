@@ -12,6 +12,8 @@ using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using Snappy;
 using K4os.Compression.LZ4;
+using SharpPcap;
+using LostArkLogger.Utilities;
 
 namespace LostArkLogger
 {
@@ -22,8 +24,22 @@ namespace LostArkLogger
         public event Action onNewZone;
         public event Action<int> onPacketTotalCount;
         public bool enableLogging = true;
+        public bool use_npcap = true;
+        public Machina.Infrastructure.NetworkMonitorType monitorType;
         public Parser()
         {
+            use_npcap = true;
+            // See if winpcap loads
+            try
+            {
+                pcap_strerror(1);
+            }
+            catch (Exception ex)
+            {
+                //Console.WriteLine(ex.ToString());
+                use_npcap = false; // Fall back to raw sockets
+            }
+
             Encounters.Add(currentEncounter);
             onCombatEvent += AppendLog;
             onCombatEvent += Parser_onDamageEvent;
@@ -34,6 +50,49 @@ namespace LostArkLogger
             tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
             tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival(connection, data);
             tcp.Start();
+
+            if (use_npcap)
+            {
+                monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
+                string filter = "ip and tcp port 6040";
+                // listening on every device results in duplicate traffic, unfortunately, so we'll find the adapter used by the game here
+                NetworkInterface gameInterface;
+                try
+                {
+                    gameInterface = NetworkUtil.GetAdapterUsedByProcess("LostArk");
+                } catch (Exception ex)
+                {
+                    Console.WriteLine("Failed to get adapter information from LostArk, is it running?\n{0}", ex.ToString());
+                    throw ex;
+                }
+                foreach (var device in CaptureDeviceList.Instance)
+                {
+                    if (gameInterface.GetPhysicalAddress().ToString() == device.MacAddress.ToString())
+                    {
+                        try
+                        {
+                            device.Open(DeviceModes.None, 1000); // todo: 1sec timeout ok?
+                            device.Filter = filter;
+                            device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
+                            device.StartCapture();
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Exception while trying to listen to NIC {0}:\n{1}", device.Name, ex.ToString());
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // For rawsockets
+                var tcp = new Machina.TCPNetworkMonitor();
+                tcp.Config.WindowClass = "EFLaunchUnrealUWindowsClient";
+                monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
+                tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival_machina(connection, data);
+                tcp.Start();
+            }
         }
 #pragma warning disable CA2101 // Specify marshaling for P/Invoke string arguments
         [DllImport("wpcap.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)] static extern IntPtr pcap_strerror(int err);
@@ -168,7 +227,7 @@ namespace LostArkLogger
         {
             if (enableLogging) File.AppendAllText(fileName, s.ToString() + "\n");
         }
-        void Device_OnPacketArrival(Machina.Infrastructure.TCPConnection connection, byte[] bytes)
+        void Device_OnPacketArrival_machina(Machina.Infrastructure.TCPConnection connection, byte[] bytes)
         {
             if (connection.RemotePort != 6040) return;
             var srcAddr = connection.RemoteIP;
@@ -185,6 +244,34 @@ namespace LostArkLogger
             }
             ProcessPacket(bytes.ToList());
         }
+        void Device_OnPacketArrival_pcap(object sender, PacketCapture evt)
+        {
+            var rawpkt = evt.GetPacket();
+            var packet = PacketDotNet.Packet.ParsePacket(rawpkt.LinkLayerType, rawpkt.Data);
+            var ipPacket = packet.Extract<PacketDotNet.IPPacket>();
+            var tcpPacket = packet.Extract<PacketDotNet.TcpPacket>();
+            var bytes = tcpPacket.PayloadData;
+            
+            if (tcpPacket != null)
+            {
+                if (tcpPacket.SourcePort != 6040) return;
+#pragma warning disable CS0618 // Type or member is obsolete
+                var srcAddr = (uint)ipPacket.SourceAddress.Address;
+#pragma warning restore CS0618 // Type or member is obsolete
+                if (srcAddr != currentIpAddr)
+                {
+                    if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && (OpCodes)BitConverter.ToUInt16(bytes, 2) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
+                    {
+                        onNewZone?.Invoke();
+                        currentIpAddr = srcAddr;
+                        fileName = "logs\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
+                        loggedPacketCount = 0;
+                    }
+                    else return;
+                }
+                ProcessPacket(bytes.ToList());
+            }
+        }
         private void Parser_onDamageEvent(LogInfo log)
         {
             currentEncounter.Infos.Add(log);
@@ -196,6 +283,22 @@ namespace LostArkLogger
         public void Dispose()
         {
             tcp.Stop();
+            if (this.use_npcap)
+            {
+                foreach (var device in CaptureDeviceList.Instance)
+                {
+                    try
+                    {
+                        device.Open(DeviceModes.None, 1000); // todo: 1sec timeout ok?
+                        device.StopCapture();
+                        Console.WriteLine("Stopping capture on {0}", device.Name, device.Description);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Exception while trying to stop capture on NIC {0}:\n{1}", device.Name, ex.ToString());
+                    }
+                }
+            }
         }
     }
 }
