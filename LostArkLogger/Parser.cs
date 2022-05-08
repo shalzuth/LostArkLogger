@@ -164,8 +164,9 @@ namespace LostArkLogger
                 {
                     var health = new PKTStatChangeOriginNotify(payload);
                     //Console.WriteLine(health.HealAmount + " : " + health.NewHealth);
-                    //var log = new LogInfo { Time = DateTime.Now, SourceEntity = currentEncounter.Entities.GetOrAdd(health.PlayerId), Damage = -(Int64)health.HealAmount };
-                    //onCombatEvent?.Invoke(log);
+                    // need to figure out real source, right now it's the target.
+                    var log = new LogInfo { Time = DateTime.Now, SourceEntity = currentEncounter.Entities.GetOrAdd(health.PlayerId), DestinationEntity = currentEncounter.Entities.GetOrAdd(health.PlayerId), Heal = health.HealAmount };
+                    onCombatEvent?.Invoke(log);
                 }
                 else if (opcode == OpCodes.PKTParalyzationStateNotify)
                 {

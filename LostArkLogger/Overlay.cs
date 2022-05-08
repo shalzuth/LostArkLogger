@@ -10,16 +10,24 @@ namespace LostArkLogger
 {
     public partial class Overlay : Form
     {
-        enum OverlayType // need better state, suboverlay type/etc.
+        enum Level // need better state, suboverlay type/etc.
         {
-            TotalDamage,
-            SkillDamage,
+            None,
+            Damage,
             Counterattacks,
             Stagger,
-            Encounters,
-            Other
+            Heal,
+            Shield,
+            Max
         }
-        OverlayType currentOverlay = OverlayType.TotalDamage;
+        enum Scope // need better state, suboverlay type/etc.
+        {
+            TopLevel,
+            Encounters,
+            Player
+        }
+        Level level = Level.Damage;
+        Scope scope = Scope.TopLevel;
         public Overlay()
         {
             InitPens();
@@ -31,19 +39,14 @@ namespace LostArkLogger
         {
             sniffer = s;
             sniffer.onCombatEvent += AddDamageEvent;
-            sniffer.onNewZone += NewZone;
             encounter = sniffer.currentEncounter;
-        }
-        public void NewZone()
-        {
-            encounter = sniffer.currentEncounter;
-            SwitchOverlay(OverlayType.TotalDamage);
         }
         Encounter encounter;
         Entity SubEntity;
         Font font = new Font("Helvetica", 10);
         void AddDamageEvent(LogInfo log)
         {
+            if (sniffer.currentEncounter.Infos.Count > 0) encounter = sniffer.currentEncounter;
             Invalidate();
         }
         internal Parser sniffer;
@@ -77,6 +80,7 @@ namespace LostArkLogger
         public String[] ClassIconIndex = { "start1", "Destroyer", "unk", "Arcana", "Berserker", "Wardancer", "Deadeye", "MartialArtist", "Gunlancer", "Gunner", "Scrapper", "Mage", "Summoner", "Warrior",
          "Soulfist", "Sharpshooter", "Artillerist", "dummyfill", "Bard", "Glavier", "Assassin", "Deathblade", "Shadowhunter", "Paladin", "Scouter", "Reaper", "FemaleGunner", "Gunslinger", "MaleMartialArtist", "Striker", "Sorceress" };
         public Pen arrowPen = new Pen(Color.FromArgb(255, 255, 255, 255), 4) { StartCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor };
+        IOrderedEnumerable<KeyValuePair<String, UInt64>> orderedRows;
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -84,15 +88,17 @@ namespace LostArkLogger
             e.Graphics.FillRectangle(brushes[10], 0, 0, Size.Width, barHeight);
 
             var title = "DPS Meter";
-            if (currentOverlay == OverlayType.SkillDamage) title = "Damage details - " + SubEntity.VisibleName;
-            if (currentOverlay == OverlayType.Counterattacks) title = "Counterattacks";
-            if (currentOverlay == OverlayType.Stagger) title = "Stagger";
-            if (currentOverlay == OverlayType.Encounters) title = "Encounters";
+            if (scope == Scope.Encounters) title = "Encounters";
+            else
+            {
+                title = level.ToString();
+                if (scope == Scope.Player) title += " (" + SubEntity.VisibleName + ")";
+            }
             var titleBar = e.Graphics.MeasureString(title, font);
             var heightBuffer = (barHeight - titleBar.Height) / 2;
             e.Graphics.DrawString(title, font, black, 5, heightBuffer);
 
-            if (currentOverlay == OverlayType.Encounters)
+            if (scope == Scope.Encounters)
             {
                 for (var i = 0; i < sniffer.Encounters.Count; i++)
                 {
@@ -102,21 +108,22 @@ namespace LostArkLogger
             }
             else
             {
-                var rows = new Dictionary<String, UInt64>();
-                if (currentOverlay == OverlayType.TotalDamage) rows = encounter.TopLevelDamage;
-                else if (currentOverlay == OverlayType.Counterattacks) rows = encounter.Counterattacks;
-                else if (currentOverlay == OverlayType.Stagger) rows = encounter.Stagger;
-                else if (currentOverlay == OverlayType.SkillDamage)
-                {
-                    rows = encounter.Infos.Where(i => i.SourceEntity == SubEntity).GroupBy(i => i.SkillId).Select(i => new KeyValuePair<String, UInt64>(i.Key.ToString(), (UInt64)i.Sum(j => (Single)j.Damage))).ToDictionary(x => x.Key, x => x.Value);
-                }
+                var rows = encounter.GetDamages((i => (Single)(
+                    level == Level.Damage ? i.Damage : 
+                    level == Level.Stagger ? i.Stagger :
+                    level == Level.Counterattacks ? (i.Counter ? 1u : 0) :
+                    level == Level.Heal ? i.Heal :
+                    level == Level.Shield ? i.Shield : 0)), SubEntity);
+                if (level == Level.Damage) rows = encounter.GetDamages((i=>i.Damage), SubEntity);
+                else if (level == Level.Counterattacks) rows = encounter.Counterattacks;
+                else if (level == Level.Stagger) rows = encounter.Stagger;
                 var elapsed = ((encounter.End == default(DateTime) ? DateTime.Now : encounter.End) - encounter.Start).TotalSeconds;
                 var maxDamage = rows.Count == 0 ? 0 : rows.Max(b => b.Value);
                 var totalDamage = rows.Values.Sum(b => (Single)b);
-                var orderedDamages = rows.OrderByDescending(b => b.Value);
-                for (var i = 0; i < rows.Count; i++)
+                orderedRows = rows.OrderByDescending(b => b.Value);
+                for (var i = 0; i < orderedRows.Count(); i++)
                 {
-                    var playerDmg = orderedDamages.ElementAt(i);
+                    var playerDmg = orderedRows.ElementAt(i);
                     var rowText = playerDmg.Key;
                     var barWidth = ((Single)playerDmg.Value / maxDamage) * Size.Width;
                     if (barWidth < .3f) continue;
@@ -131,7 +138,7 @@ namespace LostArkLogger
                         e.Graphics.DrawImage(Properties.Resources.class_symbol_0, new Rectangle(2, (i + 1) * barHeight + 2, barHeight - 4, barHeight - 4), GetSpriteLocation(Array.IndexOf(ClassIconIndex, className)), GraphicsUnit.Pixel);
                         nameOffset += 16;
                     }
-                    if (currentOverlay == OverlayType.SkillDamage)
+                    if (scope == Scope.Player)
                     {
                         /*if (Skill.GetSkillIcon(uint.Parse(rowText), out String iconFile, out int iconIndex))
                         {
@@ -164,50 +171,46 @@ namespace LostArkLogger
                 var index = (int)Math.Floor(e.Location.Y / (float)barHeight - 1);
                 if (index >= 0)// && index <= Damages.Count)
                 {
-                    if (currentOverlay == OverlayType.TotalDamage)
+                    if (scope == Scope.TopLevel)
                     {
-                        var entityName = encounter.TopLevelDamage.OrderByDescending(b => b.Value).ElementAt(index).Key;
+                        var entityName = orderedRows.ElementAt(index).Key;
                         SubEntity = encounter.Infos.First(i => i.SourceEntity.VisibleName == entityName).SourceEntity;
-                        SwitchOverlay(OverlayType.SkillDamage);
+                        SwitchOverlay(Scope.Player);
                     }
-                    if (currentOverlay == OverlayType.Encounters)
+                    if (scope == Scope.Encounters)
                     {
                         encounter = sniffer.Encounters.ElementAt(sniffer.Encounters.Count - index - 1);
-                        SwitchOverlay(OverlayType.TotalDamage);
+                        SwitchOverlay(Scope.TopLevel);
                     }
                 }
-                if (new Rectangle(Size.Width - 50, barHeight / 4, 10, barHeight / 2).Contains(e.Location)) SwitchOverlay(OverlayType.Encounters);
+                if (new Rectangle(Size.Width - 50, barHeight / 4, 10, barHeight / 2).Contains(e.Location)) SwitchOverlay(Scope.Encounters);
                 if (new Rectangle(Size.Width - 30, 0, 10, barHeight).Contains(e.Location)) SwitchOverlay(false);
                 if (new Rectangle(Size.Width - 15, 0, 10, barHeight).Contains(e.Location)) SwitchOverlay(true);
             }
             if (e.Button == MouseButtons.Right)
             {
-                if (currentOverlay == OverlayType.SkillDamage)
-                    SwitchOverlay(OverlayType.TotalDamage);
+                if (scope == Scope.Player)
+                    SwitchOverlay(Scope.TopLevel);
+                else if (scope == Scope.TopLevel)
+                    SwitchOverlay(Scope.Encounters);
             }
         }
         void SwitchOverlay(bool progress) 
         {
-            if (currentOverlay == OverlayType.TotalDamage)
-            {
-                if (progress) SwitchOverlay(OverlayType.Counterattacks);
-                else SwitchOverlay(OverlayType.Stagger);
-            }
-            else if (currentOverlay == OverlayType.Counterattacks)
-            {
-                if (progress) SwitchOverlay(OverlayType.Stagger);
-                else SwitchOverlay(OverlayType.TotalDamage);
-            }
-            else if (currentOverlay == OverlayType.Stagger)
-            {
-                if (progress) SwitchOverlay(OverlayType.TotalDamage);
-                else SwitchOverlay(OverlayType.Counterattacks);
-            }
+            if (progress) level++;
+            else level--;
+            if (level == Level.None) level = Level.Max - 1;
+            else if (level == Level.Max) level = Level.None + 1;
+            Invalidate();
         }
-        void SwitchOverlay(OverlayType type)
+        void SwitchOverlay(Level type)
         {
-            currentOverlay = type;
-
+            level = type;
+            Invalidate();
+        }
+        void SwitchOverlay(Scope type)
+        {
+            scope = type;
             Invalidate();
         }
         protected override void WndProc(ref Message m)
@@ -233,7 +236,6 @@ namespace LostArkLogger
         public new void Dispose()
         {
             sniffer.onCombatEvent -= AddDamageEvent;
-            sniffer.onNewZone -= NewZone;
             base.Dispose();
         }
     }

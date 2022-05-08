@@ -18,13 +18,6 @@ namespace LostArkLogger
                 return (Infos.Count == 0 ? "Current" : Infos.GroupBy(i => i.DestinationEntity.VisibleName).Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(j => (Single)j.Damage))).OrderByDescending(i => i.Value).FirstOrDefault().Key) + " : " + Start;
             }
         }
-        public Dictionary<String, UInt64> TopLevelDamage
-        {
-            get
-            {
-                return Infos.GroupBy(i => i.SourceEntity.VisibleName).Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(j => (Single)j.Damage))).ToDictionary(x => x.Key, x => x.Value);
-            }
-        }
         public Dictionary<String, UInt64> Counterattacks
         {
             get
@@ -39,9 +32,16 @@ namespace LostArkLogger
                 return Infos.Where(i=>i.Stagger>0).GroupBy(i => i.SourceEntity.VisibleName).Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(j => (Single)j.Stagger))).ToDictionary(x => x.Key, x => x.Value);
             }
         }
-        public Dictionary<String, UInt64> GetSkillDamages(Entity entity)
+        public Dictionary<String, UInt64> GetDamages(Func<LogInfo, float> sum, Entity entity = default(Entity))
         {
-            return Infos.Where(i=>i.SourceEntity == entity).GroupBy(i => "(" + i.SkillId + ") " + i.SkillName).Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(j => (Single)j.Damage))).ToDictionary(x => x.Key, x => x.Value);
+            var baseSearch = Infos.Where(i => i.SourceEntity.Type == Entity.EntityType.Player);
+            IEnumerable<IGrouping<String, LogInfo>> grouped;
+            if (entity != default(Entity))
+                grouped = baseSearch.Where(i => i.SourceEntity == entity).GroupBy(i => "(" + i.SkillId + ") " + i.SkillName);
+            else
+                grouped = baseSearch.GroupBy(i => i.SourceEntity.VisibleName);
+            return grouped.Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(sum))).ToDictionary(x => x.Key, x => x.Value);
+            //return grouped.Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(j => (Single)j.Damage))).ToDictionary(x => x.Key, x => x.Value);
         }
     }
 }
