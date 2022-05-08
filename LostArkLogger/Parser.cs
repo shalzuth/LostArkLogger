@@ -42,7 +42,7 @@ namespace LostArkLogger
 
             if (use_npcap)
             {
-                monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
+                monitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
                 string filter = "ip and tcp port 6040";
                 // listening on every device results in duplicate traffic, unfortunately, so we'll find the adapter used by the game here
                 NetworkInterface gameInterface;
