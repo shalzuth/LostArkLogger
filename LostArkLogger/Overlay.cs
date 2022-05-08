@@ -15,10 +15,11 @@ namespace LostArkLogger
             TotalDamage,
             SkillDamage,
             Counterattacks,
+            Stagger,
             Encounters,
             Other
         }
-        OverlayType type = OverlayType.TotalDamage;
+        OverlayType currentOverlay = OverlayType.TotalDamage;
         public Overlay()
         {
             InitPens();
@@ -38,8 +39,6 @@ namespace LostArkLogger
             encounter = sniffer.currentEncounter;
             SwitchOverlay(OverlayType.TotalDamage);
         }
-        private DateTime startCombatTime = DateTime.Now;
-        private OverlayType currentOverlay = OverlayType.TotalDamage;
         Encounter encounter;
         Entity SubEntity;
         Font font = new Font("Helvetica", 10);
@@ -69,13 +68,14 @@ namespace LostArkLogger
         }
         public Rectangle GetSpriteLocation(int i)
         {
+            i--;
             var imageSize = 64;
-            var x = i % 16;
-            var y = i / 16;
+            var x = i % 17;
+            var y = i / 17;
             return new Rectangle(x * imageSize, y * imageSize, imageSize, imageSize);
         }
-        public String[] ClassIconIndex = { "Destroyer", "unk", "Arcana", "Berserker", "Wardancer", "Deadeye", "MartialArtist", "Gunlancer", "Gunner", "Scrapper", "Mage", "Summoner", "Warrior",
-         "Soulfist", "Sharpshooter", "Artillerist", "Bard", "Glavier", "Assassin", "Deathblade", "Shadowhunter", "Paladin", "Scouter", "Reaper", "FemaleGunner", "Gunslinger", "MaleMartialArtist", "Striker", "Sorceress" };
+        public String[] ClassIconIndex = { "start1", "Destroyer", "unk", "Arcana", "Berserker", "Wardancer", "Deadeye", "MartialArtist", "Gunlancer", "Gunner", "Scrapper", "Mage", "Summoner", "Warrior",
+         "Soulfist", "Sharpshooter", "Artillerist", "dummyfill", "Bard", "Glavier", "Assassin", "Deathblade", "Shadowhunter", "Paladin", "Scouter", "Reaper", "FemaleGunner", "Gunslinger", "MaleMartialArtist", "Striker", "Sorceress" };
         public Pen pen = new Pen(Color.FromArgb(255, 255, 255, 255), 4) { StartCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor };
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -86,6 +86,7 @@ namespace LostArkLogger
             var title = "DPS Meter";
             if (currentOverlay == OverlayType.SkillDamage) title = "Damage details - " + SubEntity.VisibleName;
             if (currentOverlay == OverlayType.Counterattacks) title = "Counterattacks";
+            if (currentOverlay == OverlayType.Stagger) title = "Stagger";
             if (currentOverlay == OverlayType.Encounters) title = "Encounters";
             var titleBar = e.Graphics.MeasureString(title, font);
             var heightBuffer = (barHeight - titleBar.Height) / 2;
@@ -93,7 +94,7 @@ namespace LostArkLogger
 
             if (currentOverlay == OverlayType.Encounters)
             {
-                for (var i = 0; i < sniffer.Encounters.Count && i < 8; i++)
+                for (var i = 0; i < sniffer.Encounters.Count; i++)
                 {
                     e.Graphics.FillRectangle(brushes[i], 0, (i + 1) * barHeight, Size.Width, barHeight);
                     e.Graphics.DrawString(sniffer.Encounters.ElementAt(sniffer.Encounters.Count - i - 1).EncounterName, font, black, 5, (i + 1) * barHeight + heightBuffer);
@@ -104,29 +105,43 @@ namespace LostArkLogger
                 var rows = new Dictionary<String, UInt64>();
                 if (currentOverlay == OverlayType.TotalDamage) rows = encounter.TopLevelDamage;
                 else if (currentOverlay == OverlayType.Counterattacks) rows = encounter.Counterattacks;
-                else if (currentOverlay == OverlayType.SkillDamage) rows = encounter.GetSkillDamages(SubEntity);
+                else if (currentOverlay == OverlayType.Stagger) rows = encounter.Stagger;
+                else if (currentOverlay == OverlayType.SkillDamage)
+                {
+                    rows = encounter.Infos.Where(i => i.SourceEntity == SubEntity).GroupBy(i => i.SkillId).Select(i => new KeyValuePair<String, UInt64>(i.Key.ToString(), (UInt64)i.Sum(j => (Single)j.Damage))).ToDictionary(x => x.Key, x => x.Value);
+                }
                 var elapsed = ((encounter.End == default(DateTime) ? DateTime.Now : encounter.End) - encounter.Start).TotalSeconds;
                 var maxDamage = rows.Count == 0 ? 0 : rows.Max(b => b.Value);
                 var totalDamage = rows.Values.Sum(b => (Single)b);
                 var orderedDamages = rows.OrderByDescending(b => b.Value);
-                for (var i = 0; i < rows.Count && i < 8; i++)
+                for (var i = 0; i < rows.Count; i++)
                 {
                     var playerDmg = orderedDamages.ElementAt(i);
+                    var rowText = playerDmg.Key;
                     var barWidth = ((Single)playerDmg.Value / maxDamage) * Size.Width;
                     if (barWidth < .3f) continue;
                     e.Graphics.FillRectangle(brushes[i], 0, (i + 1) * barHeight, barWidth, barHeight);
                     var dps = FormatNumber((ulong)(playerDmg.Value / elapsed));
                     var formattedDmg = FormatNumber(playerDmg.Value) + " (" + dps + ", " + (100f * playerDmg.Value / totalDamage).ToString("#.0") + "%)";
                     var nameOffset = 0;
-                    if (playerDmg.Key.Contains("("))
+                    if (rowText.Contains("("))
                     {
-                        var className = playerDmg.Key.Substring(playerDmg.Key.IndexOf("(") + 1);
+                        var className = rowText.Substring(rowText.IndexOf("(") + 1);
                         className = className.Substring(0, className.IndexOf(")"));
                         e.Graphics.DrawImage(Properties.Resources.class_symbol_0, new Rectangle(2, (i + 1) * barHeight + 2, barHeight - 4, barHeight - 4), GetSpriteLocation(Array.IndexOf(ClassIconIndex, className)), GraphicsUnit.Pixel);
                         nameOffset += 16;
                     }
+                    if (currentOverlay == OverlayType.SkillDamage)
+                    {
+                        /*if (Skill.GetSkillIcon(uint.Parse(rowText), out String iconFile, out int iconIndex))
+                        {
+                            nameOffset += 16;
+                            e.Graphics.DrawImage((Bitmap)Properties.Resources.ResourceManager.GetObject(iconFile.ToLower()), new Rectangle(2, (i + 1) * barHeight + 2, barHeight - 4, barHeight - 4), GetSpriteLocation(iconIndex), GraphicsUnit.Pixel);
+                        }*/
+                        rowText = Skill.GetSkillName(uint.Parse(rowText));
+                    }
                     var edge = e.Graphics.MeasureString(formattedDmg, font);
-                    e.Graphics.DrawString(playerDmg.Key, font, black, nameOffset + 5, (i + 1) * barHeight + heightBuffer);
+                    e.Graphics.DrawString(rowText, font, black, nameOffset + 5, (i + 1) * barHeight + heightBuffer);
                     e.Graphics.DrawString(formattedDmg, font, black, Size.Width - edge.Width, (i + 1) * barHeight + heightBuffer);
                 }
             }
@@ -176,12 +191,17 @@ namespace LostArkLogger
             if (currentOverlay == OverlayType.TotalDamage)
             {
                 if (progress) SwitchOverlay(OverlayType.Counterattacks);
-                else SwitchOverlay(OverlayType.Counterattacks);
+                else SwitchOverlay(OverlayType.Stagger);
             }
             else if (currentOverlay == OverlayType.Counterattacks)
             {
-                if (progress) SwitchOverlay(OverlayType.TotalDamage);
+                if (progress) SwitchOverlay(OverlayType.Stagger);
                 else SwitchOverlay(OverlayType.TotalDamage);
+            }
+            else if (currentOverlay == OverlayType.Stagger)
+            {
+                if (progress) SwitchOverlay(OverlayType.TotalDamage);
+                else SwitchOverlay(OverlayType.Counterattacks);
             }
         }
         void SwitchOverlay(OverlayType type)

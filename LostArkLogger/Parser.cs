@@ -15,29 +15,16 @@ namespace LostArkLogger
         public event Action onNewZone;
         public event Action<int> onPacketTotalCount;
         public bool enableLogging = true;
-        public Machina.Infrastructure.NetworkMonitorType monitorType;
         public Parser()
         {
-            var use_npcap = true;
-            // See if winpcap loads
-            try
-            {
-                pcap_strerror(1);
-            }
-            catch (Exception ex)
-            {
-                //Console.WriteLine(ex.ToString());
-                use_npcap = false; // Fall back to raw sockets
-            }
             Encounters.Add(currentEncounter);
             onCombatEvent += AppendLog;
             onCombatEvent += Parser_onDamageEvent;
             onNewZone += Parser_onNewZone;
 
-            var tcp = new Machina.TCPNetworkMonitor();
+            tcp = new Machina.TCPNetworkMonitor();
             tcp.Config.WindowClass = "EFLaunchUnrealUWindowsClient";
-            if (use_npcap) monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
-            else monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
+            tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
             tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival(connection, data);
             tcp.Start();
         }
@@ -53,13 +40,15 @@ namespace LostArkLogger
             var targetEntity = currentEncounter.Entities.GetOrAdd(dmgEvent.TargetId);
             var destinationName = targetEntity != null ? targetEntity.VisibleName : dmgEvent.TargetId.ToString("X");
             //var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = sourceName.Contains("("), Destination = destinationName, SkillName = skillName, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
-            var log = new LogInfo { Time = DateTime.Now, SourceEntity = sourceEntity, DestinationEntity = targetEntity, SkillName = skillName, Damage = dmgEvent.Damage, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
+            var log = new LogInfo { Time = DateTime.Now, SourceEntity = sourceEntity, DestinationEntity = targetEntity, SkillId = skillId, SkillSubId = subSkillId, SkillName = skillName, Damage = dmgEvent.Damage, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
             onCombatEvent?.Invoke(log);
         }
         void ProcessSkillDamage(PKTSkillDamageNotify damage)
         {
             var sourceEntity = currentEncounter.Entities.GetOrAdd(damage.PlayerId);
-            if (sourceEntity.Type == Entity.EntityType.Projectile || sourceEntity.Type == Entity.EntityType.Summon)
+            if (sourceEntity.Type == Entity.EntityType.Projectile)
+                sourceEntity = currentEncounter.Entities.GetOrAdd(sourceEntity.OwnerId);
+            if (sourceEntity.Type == Entity.EntityType.Summon)
                 sourceEntity = currentEncounter.Entities.GetOrAdd(sourceEntity.OwnerId);
             var className = Skill.GetClassFromSkill(damage.SkillId);
             if (String.IsNullOrEmpty(sourceEntity.ClassName) && className != "UnknownClass") sourceEntity.ClassName = className; // for case where we don't know user's class yet            
@@ -139,7 +128,9 @@ namespace LostArkLogger
                 if (opcode == OpCodes.PKTNewProjectile)
                     currentEncounter.Entities.AddOrUpdate(new Entity { EntityId = BitConverter.ToUInt64(payload, 4), OwnerId = BitConverter.ToUInt64(payload, 4 + 8), Type = Entity.EntityType.Projectile });
                 else if (opcode == OpCodes.PKTNewNpc)
+                {
                     currentEncounter.Entities.AddOrUpdate(new Entity { EntityId = BitConverter.ToUInt64(payload, 7), Name = Npc.GetNpcName(BitConverter.ToUInt32(payload, 15)), Type = Entity.EntityType.Npc });
+                }
                 else if (opcode == OpCodes.PKTNewPC)
                 {
                     var pc = new PKTNewPC(payload);
@@ -151,7 +142,7 @@ namespace LostArkLogger
                     if (currentEncounter.Infos.Count == 0) Encounters.Remove(currentEncounter);
                     currentEncounter = new Encounter();
                     Encounters.Add(currentEncounter);
-                    currentEncounter.Entities.AddOrUpdate(new Entity { EntityId = pc.PlayerId, Name = "You" });
+                    currentEncounter.Entities.AddOrUpdate(new Entity { EntityId = pc.PlayerId, Name = "You", Type = Entity.EntityType.Player });
                     onNewZone?.Invoke();
                 }
                 else if (opcode == OpCodes.PKTRaidResult)
@@ -169,6 +160,24 @@ namespace LostArkLogger
                     ProcessSkillDamage(new PKTSkillDamageNotify(payload));
                 else if (opcode == OpCodes.PKTSkillDamageAbnormalMoveNotify)
                     ProcessSkillDamage(new PKTSkillDamageAbnormalMoveNotify(payload));
+                else if (opcode == OpCodes.PKTStatChangeOriginNotify) // bard heal
+                {
+                    var health = new PKTStatChangeOriginNotify(payload);
+                    //var log = new LogInfo { Time = DateTime.Now, SourceEntity = currentEncounter.Entities.GetOrAdd(health.PlayerId), Damage = -(Int64)health.HealAmount };
+                    //onCombatEvent?.Invoke(log);
+                }
+                else if (opcode == OpCodes.PKTParalyzationStateNotify)
+                {
+                    var stagger = new PKTParalyzationStateNotify(payload);
+                    var enemy = currentEncounter.Entities.GetOrAdd(stagger.TargetId);
+                    var lastInfo = currentEncounter.Infos.LastOrDefault(); // hope this works
+                    var player = lastInfo?.SourceEntity;
+                    var staggerAmount = stagger.ParalyzationPoint - enemy.Stagger;
+                    if (stagger.ParalyzationPoint == 0) staggerAmount = stagger.ParalyzationPointMax - enemy.Stagger;
+                    enemy.Stagger = stagger.ParalyzationPoint;
+                    var log = new LogInfo { Time = DateTime.Now, SourceEntity = player, DestinationEntity = enemy, SkillName = lastInfo.SkillName, Stagger = staggerAmount };
+                    onCombatEvent?.Invoke(log);
+                }
                 else if (opcode == OpCodes.PKTCounterAttackNotify)
                 {
                     var counter = new PKTCounterAttackNotify(payload);
