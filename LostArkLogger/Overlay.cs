@@ -18,7 +18,7 @@ namespace LostArkLogger
             Encounters,
             Other
         }
-        OverlayType type = OverlayType.TotalDamage;
+        OverlayType currentOverlay = OverlayType.TotalDamage;
         public Overlay()
         {
             InitPens();
@@ -38,8 +38,6 @@ namespace LostArkLogger
             encounter = sniffer.currentEncounter;
             SwitchOverlay(OverlayType.TotalDamage);
         }
-        private DateTime startCombatTime = DateTime.Now;
-        private OverlayType currentOverlay = OverlayType.TotalDamage;
         Encounter encounter;
         Entity SubEntity;
         Font font = new Font("Helvetica", 10);
@@ -94,7 +92,7 @@ namespace LostArkLogger
 
             if (currentOverlay == OverlayType.Encounters)
             {
-                for (var i = 0; i < sniffer.Encounters.Count && i < 8; i++)
+                for (var i = 0; i < sniffer.Encounters.Count; i++)
                 {
                     e.Graphics.FillRectangle(brushes[i], 0, (i + 1) * barHeight, Size.Width, barHeight);
                     e.Graphics.DrawString(sniffer.Encounters.ElementAt(sniffer.Encounters.Count - i - 1).EncounterName, font, black, 5, (i + 1) * barHeight + heightBuffer);
@@ -113,7 +111,7 @@ namespace LostArkLogger
                 var maxDamage = rows.Count == 0 ? 0 : rows.Max(b => b.Value);
                 var totalDamage = rows.Values.Sum(b => (Single)b);
                 var orderedDamages = rows.OrderByDescending(b => b.Value);
-                for (var i = 0; i < rows.Count && i < 8; i++)
+                for (var i = 0; i < rows.Count; i++)
                 {
                     var playerDmg = orderedDamages.ElementAt(i);
                     var rowText = playerDmg.Key;
