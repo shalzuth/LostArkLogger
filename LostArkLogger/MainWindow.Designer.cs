@@ -100,6 +100,8 @@
             // 
             this.sniffModeCheckbox.AutoSize = true;
             this.sniffModeCheckbox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.sniffModeCheckbox.Checked = true;
+            this.sniffModeCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.sniffModeCheckbox.Location = new System.Drawing.Point(118, 28);
             this.sniffModeCheckbox.Name = "sniffModeCheckbox";
             this.sniffModeCheckbox.Size = new System.Drawing.Size(92, 17);

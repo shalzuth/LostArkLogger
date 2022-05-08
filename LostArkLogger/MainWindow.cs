@@ -31,7 +31,6 @@ namespace LostArkLogger
             overlay.AddSniffer(sniffer);
             overlay.Show();
 
-            if (sniffer.use_npcap) this.sniffModeCheckbox.Checked = true;
             /*
             // RetroOverlay
             retro = new RetroOverlay();
