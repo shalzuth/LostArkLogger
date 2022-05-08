@@ -60,7 +60,7 @@ namespace LostArkLogger
             var targetEntity = currentEncounter.Entities.GetOrAdd(dmgEvent.TargetId);
             var destinationName = targetEntity != null ? targetEntity.VisibleName : dmgEvent.TargetId.ToString("X");
             //var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = sourceName.Contains("("), Destination = destinationName, SkillName = skillName, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
-            var log = new LogInfo { Time = DateTime.Now, SourceEntity = sourceEntity, DestinationEntity = targetEntity, SkillName = skillName, Damage = dmgEvent.Damage, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
+            var log = new LogInfo { Time = DateTime.Now, SourceEntity = sourceEntity, DestinationEntity = targetEntity, SkillId = skillId, SkillSubId = subSkillId, SkillName = skillName, Damage = dmgEvent.Damage, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
             onCombatEvent?.Invoke(log);
         }
         void ProcessSkillDamage(PKTSkillDamageNotify damage)
@@ -125,7 +125,7 @@ namespace LostArkLogger
                         payload = Oodle.Decompress(payload).Skip(16).ToArray();
                         break;
                 }
-                //Console.WriteLine(opcode + " : " + BitConverter.ToString(payload));
+                Console.WriteLine(opcode + " : " + BitConverter.ToString(payload));
                 if (opcode == OpCodes.PKTNewProjectile)
                     currentEncounter.Entities.AddOrUpdate(new Entity { EntityId = BitConverter.ToUInt64(payload, 4), OwnerId = BitConverter.ToUInt64(payload, 4 + 8), Type = Entity.EntityType.Projectile });
                 else if (opcode == OpCodes.PKTNewNpc)

@@ -34,7 +34,7 @@ namespace LostArkLogger
         }
         public Dictionary<String, UInt64> GetSkillDamages(Entity entity)
         {
-            return Infos.Where(i=>i.SourceEntity == entity).GroupBy(i => i.SkillName).Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(j => (Single)j.Damage))).ToDictionary(x => x.Key, x => x.Value);
+            return Infos.Where(i=>i.SourceEntity == entity).GroupBy(i => "(" + i.SkillId + ") " + i.SkillName).Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(j => (Single)j.Damage))).ToDictionary(x => x.Key, x => x.Value);
         }
     }
 }

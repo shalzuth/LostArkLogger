@@ -156,6 +156,29 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\class_symbol_0.png" />
+    <None Include="Resources\ac_skill_0.png" />
+    <None Include="Resources\bd_skill_0.png" />
+    <None Include="Resources\bk_skill_0.png" />
+    <None Include="Resources\bk_skill_1.png" />
+    <None Include="Resources\bl_skill_0.png" />
+    <None Include="Resources\bm_skill_0.png" />
+    <None Include="Resources\bs_skill_0.png" />
+    <None Include="Resources\dh_skill_0.png" />
+    <None Include="Resources\dm_skill_0.png" />
+    <None Include="Resources\dt_skill_0.png" />
+    <None Include="Resources\gl_skill_0.png" />
+    <None Include="Resources\he_skill_0.png" />
+    <None Include="Resources\he_skill_1.png" />
+    <None Include="Resources\hk_skill_0.png" />
+    <None Include="Resources\if_skill_0.png" />
+    <None Include="Resources\lm_skill_0.png" />
+    <None Include="Resources\po_skill_0.png" />
+    <None Include="Resources\po_skill_1.png" />
+    <None Include="Resources\rp_skill_0.png" />
+    <None Include="Resources\sc_skill_0.png" />
+    <None Include="Resources\scs_skill_0.png" />
+    <None Include="Resources\sm_skill_0.png" />
+    <None Include="Resources\so_skill_0.png" />
     <Content Include="winged-sword.ico" />
   </ItemGroup>
   <ItemGroup>
