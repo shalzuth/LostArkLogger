@@ -76,7 +76,7 @@ namespace LostArkLogger
         }
         public String[] ClassIconIndex = { "start1", "Destroyer", "unk", "Arcana", "Berserker", "Wardancer", "Deadeye", "MartialArtist", "Gunlancer", "Gunner", "Scrapper", "Mage", "Summoner", "Warrior",
          "Soulfist", "Sharpshooter", "Artillerist", "dummyfill", "Bard", "Glavier", "Assassin", "Deathblade", "Shadowhunter", "Paladin", "Scouter", "Reaper", "FemaleGunner", "Gunslinger", "MaleMartialArtist", "Striker", "Sorceress" };
-        public Pen pen = new Pen(Color.FromArgb(255, 255, 255, 255), 4) { StartCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor };
+        public Pen arrowPen = new Pen(Color.FromArgb(255, 255, 255, 255), 4) { StartCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor };
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -96,7 +96,7 @@ namespace LostArkLogger
             {
                 for (var i = 0; i < sniffer.Encounters.Count; i++)
                 {
-                    e.Graphics.FillRectangle(brushes[i], 0, (i + 1) * barHeight, Size.Width, barHeight);
+                    e.Graphics.FillRectangle(brushes[i % brushes.Count], 0, (i + 1) * barHeight, Size.Width, barHeight);
                     e.Graphics.DrawString(sniffer.Encounters.ElementAt(sniffer.Encounters.Count - i - 1).EncounterName, font, black, 5, (i + 1) * barHeight + heightBuffer);
                 }
             }
@@ -120,7 +120,7 @@ namespace LostArkLogger
                     var rowText = playerDmg.Key;
                     var barWidth = ((Single)playerDmg.Value / maxDamage) * Size.Width;
                     if (barWidth < .3f) continue;
-                    e.Graphics.FillRectangle(brushes[i], 0, (i + 1) * barHeight, barWidth, barHeight);
+                    e.Graphics.FillRectangle(brushes[i % brushes.Count], 0, (i + 1) * barHeight, barWidth, barHeight);
                     var dps = FormatNumber((ulong)(playerDmg.Value / elapsed));
                     var formattedDmg = FormatNumber(playerDmg.Value) + " (" + dps + ", " + (100f * playerDmg.Value / totalDamage).ToString("#.0") + "%)";
                     var nameOffset = 0;
@@ -146,8 +146,8 @@ namespace LostArkLogger
                 }
             }
             ControlPaint.DrawFocusRectangle(e.Graphics, new Rectangle(Size.Width - 50, barHeight / 4, 10, barHeight / 2));
-            e.Graphics.DrawLine(pen, Size.Width - 30, barHeight / 2, Size.Width - 20, barHeight / 2);
-            e.Graphics.DrawLine(pen, Size.Width - 5, barHeight / 2, Size.Width - 15, barHeight / 2);
+            e.Graphics.DrawLine(arrowPen, Size.Width - 30, barHeight / 2, Size.Width - 20, barHeight / 2);
+            e.Graphics.DrawLine(arrowPen, Size.Width - 5, barHeight / 2, Size.Width - 15, barHeight / 2);
             ControlPaint.DrawSizeGrip(e.Graphics, BackColor, ClientSize.Width - 16, ClientSize.Height - 16, 16, 16);
         }
         [DllImport("user32.dll")] static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
