@@ -54,8 +54,10 @@ namespace LostArkLogger
                     Console.WriteLine("Failed to get adapter information from LostArk, is it running?\n{0}", ex.ToString());
                     throw ex;
                 }
+                bool foundAdapter = false;
                 foreach (var device in CaptureDeviceList.Instance)
                 {
+                    if (device.MacAddress == null) continue; // SharpPcap.IPCapDevice.MacAddress is null in some cases
                     if (gameInterface.GetPhysicalAddress().ToString() == device.MacAddress.ToString())
                     {
                         try
@@ -64,6 +66,7 @@ namespace LostArkLogger
                             device.Filter = filter;
                             device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
                             device.StartCapture();
+                            foundAdapter = true;
                             break;
                         }
                         catch (Exception ex)
@@ -72,10 +75,12 @@ namespace LostArkLogger
                         }
                     }
                 }
+                // If we failed to find a pcap device, fall back to rawsockets.
+                if (!foundAdapter) use_npcap = false;
             }
-            else
-            {
-                // For rawsockets
+            
+            if (use_npcap == false) {
+                // Always fall back to rawsockets
                 var tcp = new Machina.TCPNetworkMonitor();
                 tcp.Config.WindowClass = "EFLaunchUnrealUWindowsClient";
                 monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
