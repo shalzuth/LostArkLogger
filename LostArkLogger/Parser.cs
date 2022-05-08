@@ -53,7 +53,9 @@ namespace LostArkLogger
         void ProcessSkillDamage(PKTSkillDamageNotify damage)
         {
             var sourceEntity = currentEncounter.Entities.GetOrAdd(damage.PlayerId);
-            if (sourceEntity.Type == Entity.EntityType.Projectile || sourceEntity.Type == Entity.EntityType.Summon)
+            if (sourceEntity.Type == Entity.EntityType.Projectile)
+                sourceEntity = currentEncounter.Entities.GetOrAdd(sourceEntity.OwnerId);
+            if (sourceEntity.Type == Entity.EntityType.Summon)
                 sourceEntity = currentEncounter.Entities.GetOrAdd(sourceEntity.OwnerId);
             var className = Skill.GetClassFromSkill(damage.SkillId);
             if (String.IsNullOrEmpty(sourceEntity.ClassName) && className != "UnknownClass") sourceEntity.ClassName = className; // for case where we don't know user's class yet            
@@ -128,7 +130,7 @@ namespace LostArkLogger
                     if (currentEncounter.Infos.Count == 0) Encounters.Remove(currentEncounter);
                     currentEncounter = new Encounter();
                     Encounters.Add(currentEncounter);
-                    currentEncounter.Entities.AddOrUpdate(new Entity { EntityId = pc.PlayerId, Name = "You" });
+                    currentEncounter.Entities.AddOrUpdate(new Entity { EntityId = pc.PlayerId, Name = "You", Type = Entity.EntityType.Player });
                     onNewZone?.Invoke();
                 }
                 else if (opcode == OpCodes.PKTRaidResult)
