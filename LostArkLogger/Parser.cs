@@ -176,7 +176,7 @@ namespace LostArkLogger
                     var staggerAmount = stagger.ParalyzationPoint - enemy.Stagger;
                     if (stagger.ParalyzationPoint == 0) staggerAmount = stagger.ParalyzationPointMax - enemy.Stagger;
                     enemy.Stagger = stagger.ParalyzationPoint;
-                    var log = new LogInfo { Time = DateTime.Now, SourceEntity = player, DestinationEntity = enemy, SkillName = lastInfo.SkillName, Stagger = staggerAmount };
+                    var log = new LogInfo { Time = DateTime.Now, SourceEntity = player, DestinationEntity = enemy, SkillName = lastInfo?.SkillName, Stagger = staggerAmount };
                     onCombatEvent?.Invoke(log);
                 }
                 else if (opcode == OpCodes.PKTCounterAttackNotify)

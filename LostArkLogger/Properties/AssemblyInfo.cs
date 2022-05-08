@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("shalzuth")]
 [assembly: AssemblyProduct("LostArkLogger")]
-[assembly: AssemblyCopyright("Copyright © 2022, shalzuth")]
+[assembly: AssemblyCopyright("Copyright 2022, shalzuth")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
