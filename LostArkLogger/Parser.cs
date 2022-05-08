@@ -163,6 +163,7 @@ namespace LostArkLogger
                 else if (opcode == OpCodes.PKTStatChangeOriginNotify) // bard heal
                 {
                     var health = new PKTStatChangeOriginNotify(payload);
+                    //Console.WriteLine(health.HealAmount + " : " + health.NewHealth);
                     //var log = new LogInfo { Time = DateTime.Now, SourceEntity = currentEncounter.Entities.GetOrAdd(health.PlayerId), Damage = -(Int64)health.HealAmount };
                     //onCombatEvent?.Invoke(log);
                 }
