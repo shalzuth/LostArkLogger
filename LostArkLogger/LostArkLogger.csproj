@@ -100,6 +100,8 @@
     <Compile Include="RetroUtil\MyColorTable.cs" />
     <Compile Include="RetroUtil\PropertyComparer.cs" />
     <Compile Include="RetroUtil\SortableBindingList.cs" />
+    <Compile Include="Utilities\ManagedIpHelper.cs" />
+    <Compile Include="Utilities\NetworkUtil.cs" />
     <Compile Include="Utilities\Oodle.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Utilities\Xor.cs" />
