@@ -81,7 +81,6 @@ namespace LostArkLogger
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            encounter.Infos.Add(new LogInfo { SourceEntity = new Entity { Name = "test", ClassName = "Bard" }, Damage = 100, SkillId = 28220 });
             e.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
             e.Graphics.FillRectangle(brushes[10], 0, 0, Size.Width, barHeight);
 
