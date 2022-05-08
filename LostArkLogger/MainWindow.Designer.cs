@@ -35,6 +35,7 @@
             this.logEnabled = new System.Windows.Forms.CheckBox();
             this.sniffModeLabel = new System.Windows.Forms.Label();
             this.debugLog = new System.Windows.Forms.CheckBox();
+            this.versionLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // loggedPacketCountLabel
@@ -96,7 +97,7 @@
             // debugLog
             // 
             this.debugLog.AutoSize = true;
-            this.debugLog.Location = new System.Drawing.Point(152, 55);
+            this.debugLog.Location = new System.Drawing.Point(80, 31);
             this.debugLog.Name = "debugLog";
             this.debugLog.Size = new System.Drawing.Size(58, 17);
             this.debugLog.TabIndex = 9;
@@ -104,11 +105,21 @@
             this.debugLog.UseVisualStyleBackColor = true;
             this.debugLog.CheckedChanged += new System.EventHandler(this.debugLog_CheckedChanged);
             // 
+            // versionLabel
+            // 
+            this.versionLabel.AutoSize = true;
+            this.versionLabel.Location = new System.Drawing.Point(166, 59);
+            this.versionLabel.Name = "versionLabel";
+            this.versionLabel.Size = new System.Drawing.Size(46, 13);
+            this.versionLabel.TabIndex = 10;
+            this.versionLabel.Text = "v1.0.0.0";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(222, 84);
+            this.Controls.Add(this.versionLabel);
             this.Controls.Add(this.debugLog);
             this.Controls.Add(this.sniffModeLabel);
             this.Controls.Add(this.logEnabled);
@@ -133,6 +144,7 @@
         public System.Windows.Forms.CheckBox logEnabled;
         public System.Windows.Forms.Label sniffModeLabel;
         private System.Windows.Forms.CheckBox debugLog;
+        private System.Windows.Forms.Label versionLabel;
     }
 }
 

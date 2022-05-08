@@ -20,6 +20,7 @@ namespace LostArkLogger
         {
             Control.CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
+            versionLabel.Text = System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString();
             Oodle.Init();
             if (!Directory.Exists("logs")) Directory.CreateDirectory("logs");
             overlay = new Overlay();

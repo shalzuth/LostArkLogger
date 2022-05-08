@@ -15,6 +15,13 @@ jobs:
       name: Checkout Code
       with:
         submodules: recursive
+        
+    - name: Set Version
+      run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
+      
+    - name: Update Assembly version
+      shell: powershell
+      run: (Get-Content LostArkLogger\Properties\AssemblyInfo.cs).replace('1.0.0.0', '$RELEASE_VERSION') | Set-Content LostArkLogger\Properties\AssemblyInfo.cs
       
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
