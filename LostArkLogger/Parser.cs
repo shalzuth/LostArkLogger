@@ -15,6 +15,9 @@ namespace LostArkLogger
 {
     internal class Parser : IDisposable
     {
+#pragma warning disable CA2101 // Specify marshaling for P/Invoke string arguments
+        [DllImport("wpcap.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)] static extern IntPtr pcap_strerror(int err);
+#pragma warning restore CA2101 // Specify marshaling for P/Invoke string arguments
         Machina.TCPNetworkMonitor tcp;
         ILiveDevice pcap;
         public event Action<LogInfo> onCombatEvent;
@@ -22,7 +25,11 @@ namespace LostArkLogger
         public event Action<int> onPacketTotalCount;
         public bool enableLogging = true;
         public bool use_npcap = false;
+        private object lockPacketProcessing = new object(); // needed to synchronize UI swapping devices
         public Machina.Infrastructure.NetworkMonitorType? monitorType = null;
+        public List<Encounter> Encounters = new List<Encounter>();
+        public Encounter currentEncounter = new Encounter();
+        Byte[] fragmentedPacket = new Byte[0];
         public Parser()
         {
             Encounters.Add(currentEncounter);
@@ -35,71 +42,71 @@ namespace LostArkLogger
         // UI needs to be able to ask us to reload our listener based on the current user settings
         public void InstallListener()
         {
-            // If we have an installed listener, that needs to go away or we duplicate traffic
-            UninstallListeners();
-
-            // We default to using npcap, but the UI can also set this to false.
-            if (use_npcap)
+            lock (lockPacketProcessing)
             {
-                monitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
-                string filter = "ip and tcp port 6040";
-                bool foundAdapter = false;
-                NetworkInterface gameInterface;
-                // listening on every device results in duplicate traffic, unfortunately, so we'll find the adapter used by the game here
-                try
+                // If we have an installed listener, that needs to go away or we duplicate traffic
+                UninstallListeners();
+
+                // Reset all state related to current packet processing here that won't be valid when creating a new listener.
+                fragmentedPacket = new Byte[0];
+
+                // We default to using npcap, but the UI can also set this to false.
+                if (use_npcap)
                 {
-                    pcap_strerror(1); // verify winpcap works at all
-                    gameInterface = NetworkUtil.GetAdapterUsedByProcess("LostArk");
-                    foreach (var device in CaptureDeviceList.Instance)
+                    monitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
+                    string filter = "ip and tcp port 6040";
+                    bool foundAdapter = false;
+                    NetworkInterface gameInterface;
+                    // listening on every device results in duplicate traffic, unfortunately, so we'll find the adapter used by the game here
+                    try
                     {
-                        if (device.MacAddress == null) continue; // SharpPcap.IPCapDevice.MacAddress is null in some cases
-                        if (gameInterface.GetPhysicalAddress().ToString() == device.MacAddress.ToString())
+                        pcap_strerror(1); // verify winpcap works at all
+                        gameInterface = NetworkUtil.GetAdapterUsedByProcess("LostArk");
+                        foreach (var device in CaptureDeviceList.Instance)
                         {
-                            try
+                            if (device.MacAddress == null) continue; // SharpPcap.IPCapDevice.MacAddress is null in some cases
+                            if (gameInterface.GetPhysicalAddress().ToString() == device.MacAddress.ToString())
                             {
-                                device.Open(DeviceModes.None, 1000); // todo: 1sec timeout ok?
-                                device.Filter = filter;
-                                device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
-                                device.StartCapture();
-                                pcap = device;
-                                foundAdapter = true;
-                                break;
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine("Exception while trying to listen to NIC {0}:\n{1}", device.Name, ex.ToString());
+                                try
+                                {
+                                    device.Open(DeviceModes.None, 1000); // todo: 1sec timeout ok?
+                                    device.Filter = filter;
+                                    device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
+                                    device.StartCapture();
+                                    pcap = device;
+                                    foundAdapter = true;
+                                    break;
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine("Exception while trying to listen to NIC {0}:\n{1}", device.Name, ex.ToString());
+                                }
                             }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Sharppcap init failed, using rawsockets instead, exception:\n{0}", ex.ToString());
+                    }
+                    // If we failed to find a pcap device, fall back to rawsockets.
+                    if (!foundAdapter)
+                    {
+                        use_npcap = false;
+                        pcap = null;
+                    }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Sharppcap init failed, using rawsockets instead, exception:\n{0}", ex.ToString());
-                }
-                // If we failed to find a pcap device, fall back to rawsockets.
-                if (!foundAdapter)
-                {
-                    use_npcap = false;
-                    pcap = null;
-                }
-            }
 
-            if (use_npcap == false)
-            {
-                // Always fall back to rawsockets
-                tcp = new Machina.TCPNetworkMonitor();
-                tcp.Config.WindowClass = "EFLaunchUnrealUWindowsClient";
-                monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
-                tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival_machina(connection, data);
-                tcp.Start();
+                if (use_npcap == false)
+                {
+                    // Always fall back to rawsockets
+                    tcp = new Machina.TCPNetworkMonitor();
+                    tcp.Config.WindowClass = "EFLaunchUnrealUWindowsClient";
+                    monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
+                    tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival_machina(connection, data);
+                    tcp.Start();
+                }
             }
         }
-#pragma warning disable CA2101 // Specify marshaling for P/Invoke string arguments
-        [DllImport("wpcap.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)] static extern IntPtr pcap_strerror(int err);
-#pragma warning restore CA2101 // Specify marshaling for P/Invoke string arguments
-        public List<Encounter> Encounters = new List<Encounter>();
-        public Encounter currentEncounter = new Encounter();
-        Byte[] fragmentedPacket = new Byte[0];
         void ProcessDamageEvent(Entity sourceEntity, UInt32 skillId, UInt32 subSkillId, PKTSkillDamageNotify.SkillDamageNotifyEvent dmgEvent)
         {
             var skillName = Skill.GetSkillName(skillId, subSkillId);
@@ -295,47 +302,55 @@ namespace LostArkLogger
 
         void Device_OnPacketArrival_machina(Machina.Infrastructure.TCPConnection connection, byte[] bytes)
         {
-            if (connection.RemotePort != 6040) return;
-            var srcAddr = connection.RemoteIP;
-            if (srcAddr != currentIpAddr)
+            if (tcp == null) return; // To avoid any late delegate calls causing state issues when listener uninstalled
+            lock (lockPacketProcessing)
             {
-                if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && (OpCodes)BitConverter.ToUInt16(bytes, 2) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
-                {
-                    onNewZone?.Invoke();
-                    currentIpAddr = srcAddr;
-                }
-                else return;
-            }
-            DoDebugLog(bytes);
-            ProcessPacket(bytes.ToList());
-        }
-        void Device_OnPacketArrival_pcap(object sender, PacketCapture evt)
-        {
-            var rawpkt = evt.GetPacket();
-            var packet = PacketDotNet.Packet.ParsePacket(rawpkt.LinkLayerType, rawpkt.Data);
-            var ipPacket = packet.Extract<PacketDotNet.IPPacket>();
-            var tcpPacket = packet.Extract<PacketDotNet.TcpPacket>();
-            var bytes = tcpPacket.PayloadData;
-            
-            if (tcpPacket != null)
-            {
-                if (tcpPacket.SourcePort != 6040) return;
-#pragma warning disable CS0618 // Type or member is obsolete
-                var srcAddr = (uint)ipPacket.SourceAddress.Address;
-#pragma warning restore CS0618 // Type or member is obsolete
+                if (connection.RemotePort != 6040) return;
+                var srcAddr = connection.RemoteIP;
                 if (srcAddr != currentIpAddr)
                 {
                     if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && (OpCodes)BitConverter.ToUInt16(bytes, 2) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
                     {
                         onNewZone?.Invoke();
                         currentIpAddr = srcAddr;
-                        fileName = "logs\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
-                        loggedPacketCount = 0;
                     }
                     else return;
                 }
                 DoDebugLog(bytes);
                 ProcessPacket(bytes.ToList());
+            }
+        }
+        void Device_OnPacketArrival_pcap(object sender, PacketCapture evt)
+        {
+            if (pcap == null) return;
+            lock (lockPacketProcessing)
+            {
+                var rawpkt = evt.GetPacket();
+                var packet = PacketDotNet.Packet.ParsePacket(rawpkt.LinkLayerType, rawpkt.Data);
+                var ipPacket = packet.Extract<PacketDotNet.IPPacket>();
+                var tcpPacket = packet.Extract<PacketDotNet.TcpPacket>();
+                var bytes = tcpPacket.PayloadData;
+
+                if (tcpPacket != null)
+                {
+                    if (tcpPacket.SourcePort != 6040) return;
+#pragma warning disable CS0618 // Type or member is obsolete
+                    var srcAddr = (uint)ipPacket.SourceAddress.Address;
+#pragma warning restore CS0618 // Type or member is obsolete
+                    if (srcAddr != currentIpAddr)
+                    {
+                        if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && (OpCodes)BitConverter.ToUInt16(bytes, 2) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
+                        {
+                            onNewZone?.Invoke();
+                            currentIpAddr = srcAddr;
+                            fileName = "logs\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
+                            loggedPacketCount = 0;
+                        }
+                        else return;
+                    }
+                    DoDebugLog(bytes);
+                    ProcessPacket(bytes.ToList());
+                }
             }
         }
         private void Parser_onDamageEvent(LogInfo log)
