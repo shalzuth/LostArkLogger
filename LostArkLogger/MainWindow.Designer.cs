@@ -33,10 +33,10 @@
             this.weblink = new System.Windows.Forms.LinkLabel();
             this.overlayEnabled = new System.Windows.Forms.CheckBox();
             this.logEnabled = new System.Windows.Forms.CheckBox();
-            this.sniffModeLabel = new System.Windows.Forms.Label();
             this.debugLog = new System.Windows.Forms.CheckBox();
             this.versionLabel = new System.Windows.Forms.Label();
             this.checkUpdate = new System.Windows.Forms.Button();
+            this.sniffModeCheckbox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // loggedPacketCountLabel
@@ -85,16 +85,6 @@
             this.logEnabled.UseVisualStyleBackColor = true;
             this.logEnabled.CheckedChanged += new System.EventHandler(this.logEnabled_CheckedChanged);
             // 
-            // sniffModeLabel
-            // 
-            this.sniffModeLabel.AutoSize = true;
-            this.sniffModeLabel.Location = new System.Drawing.Point(149, 31);
-            this.sniffModeLabel.Name = "sniffModeLabel";
-            this.sniffModeLabel.Size = new System.Drawing.Size(61, 13);
-            this.sniffModeLabel.TabIndex = 8;
-            this.sniffModeLabel.Text = "rawsockets";
-            this.sniffModeLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
             // debugLog
             // 
             this.debugLog.AutoSize = true;
@@ -125,6 +115,17 @@
             this.checkUpdate.UseVisualStyleBackColor = true;
             this.checkUpdate.Click += new System.EventHandler(this.checkUpdate_Click);
             // 
+            // sniffModeCheckbox
+            // 
+            this.sniffModeCheckbox.AutoSize = true;
+            this.sniffModeCheckbox.Location = new System.Drawing.Point(144, 31);
+            this.sniffModeCheckbox.Name = "sniffModeCheckbox";
+            this.sniffModeCheckbox.Size = new System.Drawing.Size(75, 17);
+            this.sniffModeCheckbox.TabIndex = 9;
+            this.sniffModeCheckbox.Text = "Winpcap?";
+            this.sniffModeCheckbox.UseVisualStyleBackColor = true;
+            this.sniffModeCheckbox.CheckedChanged += new System.EventHandler(this.sniffModeCheckbox_CheckedChanged);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -133,7 +134,7 @@
             this.Controls.Add(this.checkUpdate);
             this.Controls.Add(this.versionLabel);
             this.Controls.Add(this.debugLog);
-            this.Controls.Add(this.sniffModeLabel);
+            this.Controls.Add(this.sniffModeCheckbox);
             this.Controls.Add(this.logEnabled);
             this.Controls.Add(this.overlayEnabled);
             this.Controls.Add(this.weblink);
@@ -154,10 +155,10 @@
         private System.Windows.Forms.LinkLabel weblink;
         private System.Windows.Forms.CheckBox overlayEnabled;
         public System.Windows.Forms.CheckBox logEnabled;
-        public System.Windows.Forms.Label sniffModeLabel;
         private System.Windows.Forms.CheckBox debugLog;
         private System.Windows.Forms.Label versionLabel;
         private System.Windows.Forms.Button checkUpdate;
+        private System.Windows.Forms.CheckBox sniffModeCheckbox;
     }
 }
 
