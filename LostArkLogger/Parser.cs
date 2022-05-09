@@ -79,14 +79,14 @@ namespace LostArkLogger
                                 }
                                 catch (Exception ex)
                                 {
-                                    Console.WriteLine("Exception while trying to listen to NIC {0}:\n{1}", device.Name, ex.ToString());
+                                    //Console.WriteLine("Exception while trying to listen to NIC {0}:\n{1}", device.Name, ex.ToString());
                                 }
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Sharppcap init failed, using rawsockets instead, exception:\n{0}", ex.ToString());
+                        //Console.WriteLine("Sharppcap init failed, using rawsockets instead, exception:\n{0}", ex.ToString());
                     }
                     // If we failed to find a pcap device, fall back to rawsockets.
                     if (!foundAdapter)
@@ -374,7 +374,7 @@ namespace LostArkLogger
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Exception while trying to stop capture on NIC {0}:\n{1}", pcap.Name, ex.ToString());
+                    //Console.WriteLine("Exception while trying to stop capture on NIC {0}:\n{1}", pcap.Name, ex.ToString());
                 }
             }
             tcp = null;

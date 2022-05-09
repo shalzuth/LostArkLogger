@@ -27,6 +27,10 @@ namespace LostArkLogger
                 ElectronConnection.Send("message", "Using winpcap");
                 sniffer.use_npcap = useWinpcap;
                 sniffer.InstallListener();
+                if (!sniffer.use_npcap)
+                {
+                    ElectronConnection.Send("message", "Failed to initialize winpcap, using raw sockets instead. You can try to restart the app.");
+                }
             }
 
             sniffer.onCombatEvent += (LogInfo logInfo) =>
