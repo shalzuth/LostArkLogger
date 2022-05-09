@@ -126,7 +126,7 @@ namespace LostArkLogger
                     var playerDmg = orderedRows.ElementAt(i);
                     var rowText = playerDmg.Key;
                     var barWidth = ((Single)playerDmg.Value / maxDamage) * Size.Width;
-                    if (barWidth < .3f) continue;
+                    //if (barWidth < .3f) continue;
                     e.Graphics.FillRectangle(brushes[i % brushes.Count], 0, (i + 1) * barHeight, barWidth, barHeight);
                     var dps = FormatNumber((ulong)(playerDmg.Value / elapsed));
                     var formattedDmg = FormatNumber(playerDmg.Value) + " (" + dps + ", " + (100f * playerDmg.Value / totalDamage).ToString("#.0") + "%)";
@@ -145,7 +145,9 @@ namespace LostArkLogger
                             nameOffset += 16;
                             e.Graphics.DrawImage((Bitmap)Properties.Resources.ResourceManager.GetObject(iconFile.ToLower()), new Rectangle(2, (i + 1) * barHeight + 2, barHeight - 4, barHeight - 4), GetSpriteLocation(iconIndex), GraphicsUnit.Pixel);
                         }*/
-                        rowText = Skill.GetSkillName(uint.Parse(rowText));
+                        var skillid = rowText.Substring(1);
+                        skillid = skillid.Substring(0, skillid.IndexOf(")"));
+                        rowText = Skill.GetSkillName(uint.Parse(skillid));
                     }
                     var edge = e.Graphics.MeasureString(formattedDmg, font);
                     e.Graphics.DrawString(rowText, font, black, nameOffset + 5, (i + 1) * barHeight + heightBuffer);
@@ -210,6 +212,7 @@ namespace LostArkLogger
         }
         void SwitchOverlay(Scope type)
         {
+            if (type != Scope.Player) SubEntity = null;
             scope = type;
             Invalidate();
         }

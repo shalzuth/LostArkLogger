@@ -51,7 +51,11 @@ namespace LostArkLogger
             if (sourceEntity.Type == Entity.EntityType.Summon)
                 sourceEntity = currentEncounter.Entities.GetOrAdd(sourceEntity.OwnerId);
             var className = Skill.GetClassFromSkill(damage.SkillId);
-            if (String.IsNullOrEmpty(sourceEntity.ClassName) && className != "UnknownClass") sourceEntity.ClassName = className; // for case where we don't know user's class yet            
+            if (String.IsNullOrEmpty(sourceEntity.ClassName) && className != "UnknownClass")
+            {
+                sourceEntity.Type = Entity.EntityType.Player;
+                sourceEntity.ClassName = className; // for case where we don't know user's class yet            
+            }
             if (String.IsNullOrEmpty(sourceEntity.Name)) sourceEntity.Name = damage.PlayerId.ToString("X");
             foreach (var dmgEvent in damage.Events) ProcessDamageEvent(sourceEntity, damage.SkillId, damage.SkillIdWithState, dmgEvent);
         }
