@@ -21,22 +21,10 @@ namespace LostArkLogger
         public event Action onNewZone;
         public event Action<int> onPacketTotalCount;
         public bool enableLogging = true;
-        public bool use_npcap = true;
+        public bool use_npcap = false;
         public Machina.Infrastructure.NetworkMonitorType? monitorType = null;
         public Parser()
         {
-            use_npcap = true;
-            // See if winpcap loads
-            try
-            {
-                pcap_strerror(1);
-            }
-            catch (Exception ex)
-            {
-                //Console.WriteLine(ex.ToString());
-                use_npcap = false; // Fall back to raw sockets
-            }
-
             Encounters.Add(currentEncounter);
             onCombatEvent += AppendLog;
             onCombatEvent += Parser_onDamageEvent;
@@ -49,6 +37,7 @@ namespace LostArkLogger
         {
             // If we have an installed listener, that needs to go away or we duplicate traffic
             UninstallListeners();
+
             // We default to using npcap, but the UI can also set this to false.
             if (use_npcap)
             {
@@ -59,6 +48,7 @@ namespace LostArkLogger
                 // listening on every device results in duplicate traffic, unfortunately, so we'll find the adapter used by the game here
                 try
                 {
+                    pcap_strerror(1); // verify winpcap works at all
                     gameInterface = NetworkUtil.GetAdapterUsedByProcess("LostArk");
                     foreach (var device in CaptureDeviceList.Instance)
                     {
