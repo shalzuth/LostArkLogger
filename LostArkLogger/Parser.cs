@@ -22,6 +22,7 @@ namespace LostArkLogger
         ILiveDevice pcap;
         public event Action<LogInfo> onCombatEvent;
         public event Action onNewZone;
+        public event Action<string> onBossEndNotify;
         public event Action<int> onPacketTotalCount;
         public bool enableLogging = true;
         public bool use_npcap = false;
@@ -230,6 +231,13 @@ namespace LostArkLogger
                     currentEncounter = new Encounter();
                     if (opcode == OpCodes.PKTRaidBossKillNotify || opcode == OpCodes.PKTTriggerBossBattleStatus) currentEncounter.Entities = Encounters.Last().Entities; // preserve entities 
                     Encounters.Add(currentEncounter);
+                    if (opcode == OpCodes.PKTTriggerBossBattleStatus)
+                    {
+                        onBossEndNotify?.Invoke("Wipe");
+                    } else
+                    {
+                        onBossEndNotify?.Invoke("Boss Killed");
+                    }
                 }
                 /*if ((OpCodes)BitConverter.ToUInt16(converted.ToArray(), 2) == OpCodes.PKTRemoveObject)
                 {

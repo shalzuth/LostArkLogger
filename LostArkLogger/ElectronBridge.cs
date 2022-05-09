@@ -23,6 +23,11 @@ namespace LostArkLogger
                 ElectronConnection.Send("new-zone", "1");
             };
 
+            sniffer.onBossEndNotify += (string reason) =>
+            {
+                ElectronConnection.Send("battle-ended", reason);
+            };
+
             ElectronConnection.Send("message", "All connections are ready.");
             ElectronConnection.Listen();
         }
