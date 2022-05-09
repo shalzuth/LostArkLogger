@@ -24,7 +24,6 @@ namespace LostArkLogger
             var sniffer = new Parser();
             if (useWinpcap)
             {
-                ElectronConnection.Send("message", "Using winpcap");
                 sniffer.use_npcap = useWinpcap;
                 sniffer.InstallListener();
                 if (useWinpcap && !sniffer.use_npcap)
