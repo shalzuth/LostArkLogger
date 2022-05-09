@@ -32,7 +32,8 @@ namespace LostArkLogger
                 return Infos.Where(i=>i.Stagger>0).GroupBy(i => i.SourceEntity.VisibleName).Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(j => (Single)j.Stagger))).ToDictionary(x => x.Key, x => x.Value);
             }
         }
-        public Dictionary<String, UInt64> GetDamages(Func<LogInfo, float> sum, Entity entity = default(Entity))
+        // Tuple<damage value, number of hits, number of crits>
+        public Dictionary<String, Tuple<UInt64, UInt32, UInt32>> GetDamages(Func<LogInfo, float> sum, Entity entity = default(Entity))
         {
             var baseSearch = Infos.Where(i => i.SourceEntity.Type == Entity.EntityType.Player);
             IEnumerable<IGrouping<String, LogInfo>> grouped;
@@ -40,7 +41,7 @@ namespace LostArkLogger
                 grouped = baseSearch.Where(i => i.SourceEntity == entity).GroupBy(i => "(" + i.SkillId + ") " + i.SkillName);
             else
                 grouped = baseSearch.GroupBy(i => i.SourceEntity.VisibleName);
-            return grouped.Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(sum))).ToDictionary(x => x.Key, x => x.Value);
+            return grouped.Select(i => new KeyValuePair<String, Tuple<UInt64, UInt32, UInt32>>(i.Key, Tuple.Create((UInt64)i.Sum(sum), (UInt32)i.Count(), (UInt32)i.Count(log => log.Crit) ))).ToDictionary(x => x.Key, x => x.Value);
             //return grouped.Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(j => (Single)j.Damage))).ToDictionary(x => x.Key, x => x.Value);
         }
     }
