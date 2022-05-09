@@ -80,7 +80,7 @@ namespace LostArkLogger
         public String[] ClassIconIndex = { "start1", "Destroyer", "unk", "Arcana", "Berserker", "Wardancer", "Deadeye", "MartialArtist", "Gunlancer", "Gunner", "Scrapper", "Mage", "Summoner", "Warrior",
          "Soulfist", "Sharpshooter", "Artillerist", "dummyfill", "Bard", "Glavier", "Assassin", "Deathblade", "Shadowhunter", "Paladin", "Scouter", "Reaper", "FemaleGunner", "Gunslinger", "MaleMartialArtist", "Striker", "Sorceress" };
         public Pen arrowPen = new Pen(Color.FromArgb(255, 255, 255, 255), 4) { StartCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor };
-        IOrderedEnumerable<KeyValuePair<String, UInt64>> orderedRows;
+        IOrderedEnumerable<KeyValuePair<String, Tuple<UInt64, UInt32, UInt32>>> orderedRows;
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -115,21 +115,25 @@ namespace LostArkLogger
                     level == Level.Heal ? i.Heal :
                     level == Level.Shield ? i.Shield : 0)), SubEntity);
                 if (level == Level.Damage) rows = encounter.GetDamages((i=>i.Damage), SubEntity);
-                else if (level == Level.Counterattacks) rows = encounter.Counterattacks;
-                else if (level == Level.Stagger) rows = encounter.Stagger;
+                else if (level == Level.Counterattacks) rows = encounter.Counterattacks.ToDictionary(x => x.Key, x => Tuple.Create(x.Value, 0u, 0u));
+                else if (level == Level.Stagger) rows = encounter.Stagger.ToDictionary(x => x.Key, x => Tuple.Create(x.Value, 0u, 0u));
                 var elapsed = ((encounter.End == default(DateTime) ? DateTime.Now : encounter.End) - encounter.Start).TotalSeconds;
-                var maxDamage = rows.Count == 0 ? 0 : rows.Max(b => b.Value);
-                var totalDamage = rows.Values.Sum(b => (Single)b);
+                var maxDamage = rows.Count == 0 ? 0 : rows.Max(b => b.Value.Item1);
+                var totalDamage = rows.Values.Sum(b => (Single)b.Item1);
                 orderedRows = rows.OrderByDescending(b => b.Value);
                 for (var i = 0; i < orderedRows.Count(); i++)
                 {
                     var playerDmg = orderedRows.ElementAt(i);
                     var rowText = playerDmg.Key;
-                    var barWidth = ((Single)playerDmg.Value / maxDamage) * Size.Width;
+                    var barWidth = ((Single)playerDmg.Value.Item1 / maxDamage) * Size.Width;
                     //if (barWidth < .3f) continue;
                     e.Graphics.FillRectangle(brushes[i % brushes.Count], 0, (i + 1) * barHeight, barWidth, barHeight);
-                    var dps = FormatNumber((ulong)(playerDmg.Value / elapsed));
-                    var formattedDmg = FormatNumber(playerDmg.Value) + " (" + dps + ", " + (100f * playerDmg.Value / totalDamage).ToString("#.0") + "%)";
+                    var dps = FormatNumber((ulong)(playerDmg.Value.Item1 / elapsed));
+                    var formattedDmg = FormatNumber(playerDmg.Value.Item1) + " (" + dps + ", " + (1f * playerDmg.Value.Item1 / totalDamage).ToString("P1");
+                    if (level == Level.Damage)
+                    {
+                        formattedDmg += " | H: " + playerDmg.Value.Item2 + " | C: " + (1f * playerDmg.Value.Item3 / playerDmg.Value.Item2).ToString("P1");
+                    }
                     var nameOffset = 0;
                     if (rowText.Contains("("))
                     {
