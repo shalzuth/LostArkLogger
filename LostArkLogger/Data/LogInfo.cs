@@ -29,5 +29,17 @@ namespace LostArkLogger
                    (FrontAttack ? "1" : "0") + "," +
                    (Counter ? "1" : "0");
         }
+
+        public string ElectronFormattedString()
+        {
+            return SourceEntity?.VisibleName + "|#|" +
+                   DestinationEntity?.VisibleName + "|#|" +
+                   SkillName + "|#|" +
+                   Damage + "|#|" +
+                   (Crit ? "1" : "0") + "|#|" +
+                   (BackAttack ? "1" : "0") + "|#|" +
+                   (FrontAttack ? "1" : "0") + "|#|" +
+                   (Counter ? "1" : "0");
+        }
     }
 }
