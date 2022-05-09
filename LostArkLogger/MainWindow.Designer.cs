@@ -85,20 +85,6 @@
             this.logEnabled.UseVisualStyleBackColor = true;
             this.logEnabled.CheckedChanged += new System.EventHandler(this.logEnabled_CheckedChanged);
             // 
-            // sniffModeCheckbox
-            // 
-            this.sniffModeCheckbox.AutoSize = true;
-            this.sniffModeCheckbox.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.sniffModeCheckbox.Checked = true;
-            this.sniffModeCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.sniffModeCheckbox.Location = new System.Drawing.Point(118, 28);
-            this.sniffModeCheckbox.Name = "sniffModeCheckbox";
-            this.sniffModeCheckbox.Size = new System.Drawing.Size(92, 17);
-            this.sniffModeCheckbox.TabIndex = 9;
-            this.sniffModeCheckbox.Text = "use winpcap?";
-            this.sniffModeCheckbox.UseVisualStyleBackColor = true;
-            this.sniffModeCheckbox.CheckedChanged += new System.EventHandler(this.sniffModeCheckbox_CheckedChanged);
-            // 
             // debugLog
             // 
             this.debugLog.AutoSize = true;
@@ -128,6 +114,19 @@
             this.checkUpdate.Text = "Check Update";
             this.checkUpdate.UseVisualStyleBackColor = true;
             this.checkUpdate.Click += new System.EventHandler(this.checkUpdate_Click);
+            // 
+            // sniffModeCheckbox
+            // 
+            this.sniffModeCheckbox.AutoSize = true;
+            this.sniffModeCheckbox.Checked = true;
+            this.sniffModeCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.sniffModeCheckbox.Location = new System.Drawing.Point(144, 31);
+            this.sniffModeCheckbox.Name = "sniffModeCheckbox";
+            this.sniffModeCheckbox.Size = new System.Drawing.Size(75, 17);
+            this.sniffModeCheckbox.TabIndex = 9;
+            this.sniffModeCheckbox.Text = "Winpcap?";
+            this.sniffModeCheckbox.UseVisualStyleBackColor = true;
+            this.sniffModeCheckbox.CheckedChanged += new System.EventHandler(this.sniffModeCheckbox_CheckedChanged);
             // 
             // MainWindow
             // 
