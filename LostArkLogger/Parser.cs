@@ -215,10 +215,13 @@ namespace LostArkLogger
                     currentEncounter.Entities.AddOrUpdate(new Entity { EntityId = pc.PlayerId, Name = "You", Type = Entity.EntityType.Player });
                     onNewZone?.Invoke();
                 }
-                else if (opcode == OpCodes.PKTRaidResult)
+                else if (opcode == OpCodes.PKTRaidResult // raid over
+                    || opcode == OpCodes.PKTRaidBossKillNotify // boss dead, includes argos phases
+                    || opcode == OpCodes.PKTTriggerBossBattleStatus) // wipe
                 {
                     currentEncounter.End = DateTime.Now;
                     currentEncounter = new Encounter();
+                    if (opcode == OpCodes.PKTRaidBossKillNotify || opcode == OpCodes.PKTTriggerBossBattleStatus) currentEncounter.Entities = Encounters.Last().Entities; // preserve entities 
                     Encounters.Add(currentEncounter);
                 }
                 /*if ((OpCodes)BitConverter.ToUInt16(converted.ToArray(), 2) == OpCodes.PKTRemoveObject)
