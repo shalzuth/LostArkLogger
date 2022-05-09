@@ -20,8 +20,8 @@ namespace LostArkLogger
         public override string ToString()
         {
             return Time.ToString("yy:MM:dd:HH:mm:ss.f") + "," +
-                   SourceEntity.VisibleName + "," +
-                   DestinationEntity.VisibleName + "," +
+                   SourceEntity?.VisibleName + "," +
+                   DestinationEntity?.VisibleName + "," +
                    SkillName + "," +
                    Damage + "," +
                    (Crit ? "1" : "0") + "," +

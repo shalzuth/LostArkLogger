@@ -177,12 +177,15 @@ namespace LostArkLogger
                     var stagger = new PKTParalyzationStateNotify(payload);
                     var enemy = currentEncounter.Entities.GetOrAdd(stagger.TargetId);
                     var lastInfo = currentEncounter.Infos.LastOrDefault(); // hope this works
-                    var player = lastInfo?.SourceEntity;
-                    var staggerAmount = stagger.ParalyzationPoint - enemy.Stagger;
-                    if (stagger.ParalyzationPoint == 0) staggerAmount = stagger.ParalyzationPointMax - enemy.Stagger;
-                    enemy.Stagger = stagger.ParalyzationPoint;
-                    var log = new LogInfo { Time = DateTime.Now, SourceEntity = player, DestinationEntity = enemy, SkillName = lastInfo?.SkillName, Stagger = staggerAmount };
-                    onCombatEvent?.Invoke(log);
+                    if (lastInfo != null) // there's no way to tell what is the source, so drop it for now
+                    {
+                        var player = lastInfo.SourceEntity;
+                        var staggerAmount = stagger.ParalyzationPoint - enemy.Stagger;
+                        if (stagger.ParalyzationPoint == 0) staggerAmount = stagger.ParalyzationPointMax - enemy.Stagger;
+                        enemy.Stagger = stagger.ParalyzationPoint;
+                        var log = new LogInfo { Time = DateTime.Now, SourceEntity = player, DestinationEntity = enemy, SkillName = lastInfo?.SkillName, Stagger = staggerAmount };
+                        onCombatEvent?.Invoke(log);
+                    }
                 }
                 else if (opcode == OpCodes.PKTCounterAttackNotify)
                 {
