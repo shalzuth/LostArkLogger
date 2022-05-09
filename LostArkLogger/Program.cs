@@ -21,9 +21,8 @@ namespace LostArkLogger
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-
             if (!AdminRelauncher()) return;
             AttemptFirewallPrompt();
 
@@ -36,6 +35,7 @@ namespace LostArkLogger
             else
             {
                 var electronBridge = new ElectronBridge();
+                electronBridge.args = args;
                 electronBridge.Run();
             }
         }
