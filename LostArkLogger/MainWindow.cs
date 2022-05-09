@@ -23,14 +23,13 @@ namespace LostArkLogger
             versionLabel.Text = "v" + System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString();
             Oodle.Init();
             if (!Directory.Exists("logs")) Directory.CreateDirectory("logs");
-            overlay = new Overlay();
-            overlay.sniffer = sniffer;
-            overlay.Show();
             sniffer = new Parser();
             sniffer.onPacketTotalCount += (int totalPacketCount) => {
                 this.loggedPacketCountLabel.Text = "Logged Packets : " + totalPacketCount;
             };
+            overlay = new Overlay();
             overlay.AddSniffer(sniffer);
+            overlay.Show();
 
             /*
             // RetroOverlay
