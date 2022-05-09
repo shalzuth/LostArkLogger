@@ -7,7 +7,7 @@ namespace LostArkLogger
     {
         public void Run()
         {
-            var ElectronConnection = new ConnectionBuilder().Build();
+            var ElectronConnection = new ConnectionBuilder().UsingEncoding(System.Text.Encoding.UTF8).Build();
 
             if (!Directory.Exists("logs")) Directory.CreateDirectory("logs");
             Oodle.Init();
