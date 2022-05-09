@@ -240,7 +240,7 @@ namespace LostArkLogger
                     ProcessSkillDamage(new PKTSkillDamageNotify(payload));
                 else if (opcode == OpCodes.PKTSkillDamageAbnormalMoveNotify)
                     ProcessSkillDamage(new PKTSkillDamageAbnormalMoveNotify(payload));
-                else if (opcode == OpCodes.PKTStatChangeOriginNotify) // bard heal
+                /*else if (opcode == OpCodes.PKTStatChangeOriginNotify) // bard heal
                 {
                     var health = new PKTStatChangeOriginNotify(payload);
                     //Console.WriteLine(health.HealAmount + " : " + health.NewHealth);
@@ -248,7 +248,7 @@ namespace LostArkLogger
                     var log = new LogInfo { Time = DateTime.Now, SourceEntity = currentEncounter.Entities.GetOrAdd(health.PlayerId), DestinationEntity = currentEncounter.Entities.GetOrAdd(health.PlayerId), Heal = health.HealAmount };
                     onCombatEvent?.Invoke(log);
                 }
-                else if (opcode == OpCodes.PKTParalyzationStateNotify)
+                else if (opcode == OpCodes.PKTParalyzationStateNotify) // stagger
                 {
                     var stagger = new PKTParalyzationStateNotify(payload);
                     var enemy = currentEncounter.Entities.GetOrAdd(stagger.TargetId);
@@ -262,7 +262,7 @@ namespace LostArkLogger
                         var log = new LogInfo { Time = DateTime.Now, SourceEntity = player, DestinationEntity = enemy, SkillName = lastInfo?.SkillName, Stagger = staggerAmount };
                         onCombatEvent?.Invoke(log);
                     }
-                }
+                }*/
                 else if (opcode == OpCodes.PKTCounterAttackNotify)
                 {
                     var counter = new PKTCounterAttackNotify(payload);
