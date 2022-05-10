@@ -46,6 +46,7 @@ namespace LostArkLogger
                 ids.Add(BitConverter.ToUInt32(bytes, startIndex + 3 + i * 4));
             }
             PlayerPartyId = BitConverter.ToUInt64(bytes, startIndex + 3 + Amount * 4);
+            BuffInstanceIds = ids;
         }
     }
 }
