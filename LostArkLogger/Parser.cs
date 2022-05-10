@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Snappy;
-using K4os.Compression.LZ4;
 using SharpPcap;
 using LostArkLogger.Utilities;
 using System.Net.NetworkInformation;
@@ -30,6 +28,13 @@ namespace LostArkLogger
         public List<Encounter> Encounters = new List<Encounter>();
         public Encounter currentEncounter = new Encounter();
         Byte[] fragmentedPacket = new Byte[0];
+        public enum Region : Byte
+        {
+            Steam,
+            Korea,
+            Russia
+        }
+        public Region region = Region.Steam;
         public Parser()
         {
             Encounters.Add(currentEncounter);
@@ -132,6 +137,19 @@ namespace LostArkLogger
             if (String.IsNullOrEmpty(sourceEntity.Name)) sourceEntity.Name = damage.PlayerId.ToString("X");
             foreach (var dmgEvent in damage.Events) ProcessDamageEvent(sourceEntity, damage.SkillId, damage.SkillIdWithState, dmgEvent);
         }
+        OpCodes GetOpCode(Byte[] packets)
+        {
+            var opcodeVal = BitConverter.ToUInt16(packets, 2);
+            var opCodeString = "";
+            if (region == Region.Steam) opCodeString = ((OpCodesSteam)opcodeVal).ToString();
+            if (region == Region.Russia) opCodeString = ((OpCodesRu)opcodeVal).ToString();
+            if (region == Region.Korea) opCodeString = ((OpCodesKr)opcodeVal).ToString();
+            return (OpCodes)Enum.Parse(typeof(OpCodes), opCodeString);
+        }
+        Byte[] XorTableSteam = ObjectSerialize.Decompress(Properties.Resources.xorSteam);
+        Byte[] XorTableRu = ObjectSerialize.Decompress(Properties.Resources.xorRu);
+        Byte[] XorTableKr = ObjectSerialize.Decompress(Properties.Resources.xorKr);
+        Byte[] XorTable { get { return region == Region.Steam ? XorTableSteam : region == Region.Russia ? XorTableRu : XorTableKr; } }
         void ProcessPacket(List<Byte> data)
         {
             var packets = data.ToArray();
@@ -149,7 +167,7 @@ namespace LostArkLogger
                     fragmentedPacket = packets.ToArray();
                     return;
                 }
-                var opcode = (OpCodes)BitConverter.ToUInt16(packets, 2);
+                var opcode =  GetOpCode(packets);
                 //Console.WriteLine(opcode);
                 var packetSize = BitConverter.ToUInt16(packets.ToArray(), 0);
                 if (packets[5] != 1 || 6 > packets.Length || packetSize < 7)
@@ -164,21 +182,18 @@ namespace LostArkLogger
                     return;
                 }
                 var payload = packets.Skip(6).Take(packetSize - 6).ToArray();
-                Xor.Cipher(payload, (UInt16)opcode);
+                Xor.Cipher(payload, (UInt16)opcode, XorTable);
                 switch (packets[4])
                 {
                     case 1: //LZ4
                         var buffer = new byte[0x11ff2];
-                        var result = LZ4Codec.Decode(payload, 0, payload.Length, buffer, 0,
-                            0x11ff2);
-                        if (result < 1)
-                            throw new Exception("LZ4 output buffer too small");
-                        payload = buffer.Take(result)
-                            .ToArray(); //TODO: check LZ4 payload and see if we should skip some data
+                        var result = LZ4Codec.Decode(payload, 0, payload.Length, buffer, 0, 0x11ff2);
+                        if (result < 1) throw new Exception("LZ4 output buffer too small");
+                        payload = buffer.Take(result).ToArray(); //TODO: check LZ4 payload and see if we should skip some data
                         break;
                     case 2: //Snappy
                         //https://github.com/robertvazan/snappy.net
-                        payload = SnappyCodec.Uncompress(payload).Skip(16).ToArray();
+                        payload = SnappyCodec.Uncompress(payload.Skip(region == Region.Russia ? 4 : 0).ToArray()).Skip(16).ToArray();
                         break;
                     case 3: //Oodle
                         payload = Oodle.Decompress(payload).Skip(16).ToArray();

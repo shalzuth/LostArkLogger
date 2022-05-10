@@ -27,6 +27,8 @@ namespace LostArkLogger
             sniffer.onPacketTotalCount += (int totalPacketCount) => {
                 this.loggedPacketCountLabel.Text = "Logged Packets : " + totalPacketCount;
             };
+            regionSelector.DataSource = Enum.GetValues(typeof(Parser.Region));
+            regionSelector.SelectedIndex = 0;
             overlay = new Overlay();
             overlay.AddSniffer(sniffer);
             overlay.Show();
@@ -91,6 +93,11 @@ namespace LostArkLogger
             // This will unset the checkbox if it fails to initialize
             this.sniffModeCheckbox.Checked = this.sniffer.use_npcap;
             this.sniffModeCheckbox.Enabled = true;
+        }
+
+        private void regionSelector_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            sniffer.region = (Parser.Region)Enum.Parse(typeof(Parser.Region), regionSelector.Text);
         }
     }
 }

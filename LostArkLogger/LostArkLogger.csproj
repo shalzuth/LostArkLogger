@@ -88,6 +88,9 @@
     <Compile Include="Overlay.Designer.cs">
       <DependentUpon>Overlay.cs</DependentUpon>
     </Compile>
+    <Compile Include="Packets\OpCodesKr.cs" />
+    <Compile Include="Packets\OpCodesRu.cs" />
+    <Compile Include="Packets\OpCodesSteam.cs" />
     <Compile Include="Packets\PKTStatChangeOriginNotify.cs" />
     <Compile Include="Packets\PKTCounterAttackNotify.cs" />
     <Compile Include="Packets\PKTSkillDamageAbnormalMoveNotify.cs" />
@@ -155,7 +158,9 @@
     <None Include="Resources\oodle_state.bin" />
     <None Include="Resources\Skill.bin" />
     <None Include="Resources\SkillEffect.bin" />
-    <None Include="Resources\xor.bin" />
+    <None Include="Resources\xorKr.bin" />
+    <None Include="Resources\xorRu.bin" />
+    <None Include="Resources\xorSteam.bin" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
