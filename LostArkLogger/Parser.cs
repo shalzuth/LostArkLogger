@@ -20,6 +20,7 @@ namespace LostArkLogger
         ILiveDevice pcap;
         public event Action<LogInfo> onCombatEvent;
         public event Action onNewZone;
+        public event Action<byte[]> onPacket;
         public event Action<int> onPacketTotalCount;
         public bool enableLogging = true;
         public bool use_npcap = false;
@@ -216,6 +217,8 @@ namespace LostArkLogger
                     }
                 }
                 */
+
+                onPacket?.Invoke(payload);
 
                 if (opcode == OpCodes.PKTNewProjectile)
                     currentEncounter.Entities.AddOrUpdate(new Entity { EntityId = BitConverter.ToUInt64(payload, 4), OwnerId = BitConverter.ToUInt64(payload, 4 + 8), Type = Entity.EntityType.Projectile });

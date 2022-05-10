@@ -23,6 +23,11 @@ namespace LostArkLogger
                 ElectronConnection.Send("new-zone", "1");
             };
 
+            sniffer.onPacket += (rawPacket) =>
+            {
+                ElectronConnection.Send("packet", rawPacket);
+            };
+
             ElectronConnection.Send("message", "All connections are ready.");
             ElectronConnection.Listen();
         }
