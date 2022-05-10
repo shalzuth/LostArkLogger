@@ -91,11 +91,16 @@
     <Compile Include="Packets\OpCodesKr.cs" />
     <Compile Include="Packets\OpCodesRu.cs" />
     <Compile Include="Packets\OpCodesSteam.cs" />
+    <Compile Include="Packets\PKTDeathNotify.cs" />
+    <Compile Include="Packets\PKTPartyStatusEffectAddNotify.cs" />
+    <Compile Include="Packets\PKTPartyStatusEffectRemoveNotify.cs" />
     <Compile Include="Packets\PKTStatChangeOriginNotify.cs" />
     <Compile Include="Packets\PKTCounterAttackNotify.cs" />
     <Compile Include="Packets\PKTSkillDamageAbnormalMoveNotify.cs" />
     <Compile Include="Packets\PKTAuctionSearchResult.cs" />
     <Compile Include="Packets\PKTParalyzationStateNotify.cs" />
+    <Compile Include="Packets\PKTStatusEffectAddNotify.cs" />
+    <Compile Include="Packets\PKTStatusEffectRemoveNotify.cs" />
     <Compile Include="RetroOverlay.cs">
       <SubType>Form</SubType>
     </Compile>
