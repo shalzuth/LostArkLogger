@@ -292,11 +292,17 @@ namespace LostArkLogger
                 packets = packets.Skip(packetSize).ToArray();
             }
         }
+
+        static string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+        static string loaPath = Path.Combine(documentsPath, "LOA Details");
+        static string logsPath = Path.Combine(loaPath, "Logs");
+
         public Boolean debugLog = false;
         BinaryWriter logger;
         FileStream logStream;
         UInt32 currentIpAddr = 0xdeadbeef;
-        string fileName = "logs\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
+        string fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
+        
         int loggedPacketCount = 0;
 
         void AppendLog(LogInfo s)
@@ -358,7 +364,7 @@ namespace LostArkLogger
                         {
                             onNewZone?.Invoke();
                             currentIpAddr = srcAddr;
-                            fileName = "logs\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
+                            fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
                             loggedPacketCount = 0;
                         }
                         else return;
