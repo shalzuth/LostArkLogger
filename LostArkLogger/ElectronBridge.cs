@@ -26,7 +26,6 @@ namespace LostArkLogger
             string loaPath = Path.Combine(documentsPath, "LOA Details");
             string logsPath = Path.Combine(loaPath, "Logs");
 
-            if (!Directory.Exists(documentsPath)) Directory.CreateDirectory(documentsPath);
             if (!Directory.Exists(loaPath)) Directory.CreateDirectory(loaPath);
             if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
 
