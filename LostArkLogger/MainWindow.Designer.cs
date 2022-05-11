@@ -37,6 +37,7 @@
             this.versionLabel = new System.Windows.Forms.Label();
             this.checkUpdate = new System.Windows.Forms.Button();
             this.sniffModeCheckbox = new System.Windows.Forms.CheckBox();
+            this.regionSelector = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // loggedPacketCountLabel
@@ -126,11 +127,22 @@
             this.sniffModeCheckbox.UseVisualStyleBackColor = true;
             this.sniffModeCheckbox.CheckedChanged += new System.EventHandler(this.sniffModeCheckbox_CheckedChanged);
             // 
+            // regionSelector
+            // 
+            this.regionSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.regionSelector.FormattingEnabled = true;
+            this.regionSelector.Location = new System.Drawing.Point(98, 83);
+            this.regionSelector.Name = "regionSelector";
+            this.regionSelector.Size = new System.Drawing.Size(121, 21);
+            this.regionSelector.TabIndex = 12;
+            this.regionSelector.SelectedIndexChanged += new System.EventHandler(this.regionSelector_SelectedIndexChanged);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(222, 84);
+            this.ClientSize = new System.Drawing.Size(222, 111);
+            this.Controls.Add(this.regionSelector);
             this.Controls.Add(this.checkUpdate);
             this.Controls.Add(this.versionLabel);
             this.Controls.Add(this.debugLog);
@@ -159,6 +171,7 @@
         private System.Windows.Forms.Label versionLabel;
         private System.Windows.Forms.Button checkUpdate;
         private System.Windows.Forms.CheckBox sniffModeCheckbox;
+        private System.Windows.Forms.ComboBox regionSelector;
     }
 }
 
