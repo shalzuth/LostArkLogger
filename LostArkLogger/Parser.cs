@@ -230,7 +230,7 @@ namespace LostArkLogger
                     {
                         OwnerId = BitConverter.ToUInt64(payload, 3),
                         EntityId = BitConverter.ToUInt64(payload,
-                            33 + (payload[31] == 1 ? BitConverter.ToUInt16(payload, 32) * 8 : 0) + 25),
+                            32 + (payload[31] == 1 ? 2 + BitConverter.ToUInt16(payload, 32) * 8 : 0) + 25),
                         Type = Entity.EntityType.Projectile
                     });
                 else if (opcode == OpCodes.PKTNewNpc)
