@@ -39,13 +39,53 @@ namespace LostArkLogger
         public PKTNewPC(Byte[] Bytes)
         {
             var bitReader = new BitReader(Bytes);
-            //bitReader.ReadByte();
-            PCTypeMaybe1 = bitReader.ReadByte();
-            UnkId = bitReader.ReadUInt64();
+            bitReader.ReadByte();
+            if (bitReader.ReadByte() == 1)
+                bitReader.ReadUInt32();
+            if (bitReader.ReadByte() == 1)
+            {
+                bitReader.ReadUInt32();
+                if (bitReader.ReadByte() == 1)
+                {
+                    bitReader.ReadBits(8 * 12);
+                }
+
+                bitReader.ReadBits(8 * 12);
+
+                bitReader.ReadUInt32();
+            }
+
+            if (bitReader.ReadByte() == 1)
+            {
+                bitReader.ReadBits(8 * 20);
+            }
+
+            //PlayerStruct
+            bitReader.ReadByte();
+            var count = bitReader.ReadUInt16();
+            if (count <= 30)
+            {
+                for (var i = 0; i < count; i++)
+                {
+                    var size = bitReader.ReadUInt16();
+                    if (size <= 3)
+                        bitReader.ReadBits(8 * 14 * size);
+                    bitReader.ReadUInt32();
+                    bitReader.ReadUInt16();
+                    bitReader.ReadUInt16();
+                    if ((bitReader.ReadUInt16() & 0xfff) < 0x81)
+                        bitReader.ReadBits(8 * 6);
+                }
+            }
+
+            bitReader.ReadUInt32();
+            bitReader.ReadByte();
+            bitReader.ReadUInt16();
+            bitReader.ReadBits(8 * 25);
             PlayerId = bitReader.ReadUInt64();
-            Name = ReadString(bitReader, true);
-            Two = bitReader.ReadByte();
-            ClassId = bitReader.ReadUInt16();
+            //TODO: get classId & name, update made it more complex, no priority
+            ClassId = 0;
+            Name = "Placeholder";
         }
     }
 }

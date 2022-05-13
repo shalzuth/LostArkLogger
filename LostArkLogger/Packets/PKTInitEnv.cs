@@ -8,7 +8,7 @@ namespace LostArkLogger
         public UInt64 PlayerId;
         public PKTInitEnv(Byte[] bytes)
         {
-            PlayerId = BitConverter.ToUInt64(bytes, 10);
+            PlayerId = BitConverter.ToUInt64(bytes, bytes.Length - 12);
         }
     }
 }
