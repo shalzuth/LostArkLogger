@@ -12,6 +12,9 @@ namespace LostArkLogger
         {
             // need to fix still
             var bitReader = new BitReader(Bytes);
+            Events = new List<PKTSkillDamageNotify.SkillDamageNotifyEvent>();
+            return; //TODO: haven't logged packets yet
+            /*
             PlayerId = bitReader.ReadUInt64();
             NumEvents = bitReader.ReadUInt16();
             Events = new List<PKTSkillDamageNotify.SkillDamageNotifyEvent>();
@@ -72,6 +75,7 @@ namespace LostArkLogger
             SkillIdWithState = bitReader.ReadUInt32();
             SkillId = bitReader.ReadUInt32();
             bitReader.ReadByte();
+            */
         }
     }
 }

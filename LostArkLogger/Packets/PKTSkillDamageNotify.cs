@@ -17,38 +17,48 @@ namespace LostArkLogger
         public class SkillDamageNotifyEvent
         {
             public UInt64 TargetId;
-            public UInt16 DamageBits;
             public UInt64 Damage;
-            public UInt16 FlagsMaybe; // 0x20 front, 0x10 back, 0x8 dot crit, 0x4 dot, 0x1 crit
-            public UInt32 Unk3; // 0a 00 00 01
+            public ModifierFlag Modifier;
         }
         public PKTSkillDamageNotify() { }
         public PKTSkillDamageNotify(Byte[] Bytes)
         {
             var bitReader = new BitReader(Bytes);
-            SkillIdWithState = bitReader.ReadUInt32();
-            bitReader.ReadByte();
             SkillId = bitReader.ReadUInt32();
             PlayerId = bitReader.ReadUInt64();
+            SkillIdWithState = bitReader.ReadUInt32();
+            bitReader.ReadByte();
             NumEvents = bitReader.ReadUInt16();
             Events = new List<SkillDamageNotifyEvent>();
             for (var i = 0; i < NumEvents; i++)
             {
                 var dmgEvent = new SkillDamageNotifyEvent();
+                dmgEvent.Damage = (ulong) bitReader._ReadInt64NBytes(bitReader.ReadByte());
+                if (bitReader.ReadByte() == 1)
+                    bitReader.ReadByte();
+                bitReader.ReadByte();
+                bitReader.ReadUInt16();
+                dmgEvent.Modifier = (ModifierFlag) bitReader.ReadByte();
+                bitReader._ReadInt64NBytes(bitReader.ReadByte());
+                bitReader._ReadInt64NBytes(bitReader.ReadByte());
                 dmgEvent.TargetId = bitReader.ReadUInt64();
-                dmgEvent.DamageBits = (UInt16)bitReader.ReadBits(4);
-                dmgEvent.Damage = bitReader.ReadBits(4 + dmgEvent.DamageBits * 4);
-                var a = (UInt16)bitReader.ReadBits(1);
-                var b = (UInt16)(bitReader.ReadBits(3) << 1);
-                var c = bitReader.ReadBits(4 + b * 4);
-                var d = (UInt16)bitReader.ReadBits(4);
-                bitReader.ReadBits(4 + d * 4);
-                dmgEvent.FlagsMaybe = bitReader.ReadUInt16();
-                dmgEvent.Unk3 = (UInt32)bitReader.ReadUInt16();
-                var extra = bitReader.ReadByte();
-                for (var j = 0; j < extra; j++) bitReader.ReadByte();
                 Events.Add(dmgEvent);
             }
+        }
+
+        [Flags]
+        public enum
+            ModifierFlag // 0b**FBKD*C with F: front attack, B: Back attack, K: bleed crit (dots ?), D: bleed not crit (dots ?), C: crit
+        {
+            None = 0,
+            SkillCrit = 1,
+            UnkModifier1 = 2,
+            DotNoCrit = 4,
+            DotCrit = 8,
+            BackAttack = 16,
+            FrontAttack = 32,
+            UnkModifier2 = 64,
+            UnkModifier3 = 128
         }
     }
 }
