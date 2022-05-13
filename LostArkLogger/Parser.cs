@@ -154,9 +154,9 @@ namespace LostArkLogger
             if (region == Region.Korea) opCodeString = ((OpCodesKr)opcodeVal).ToString();
             return (OpCodes)Enum.Parse(typeof(OpCodes), opCodeString);
         }
-        Byte[] XorTableSteam = Properties.Resources.xorSteam;
-        Byte[] XorTableRu = ObjectSerialize.Decompress(Properties.Resources.xorRu);
-        Byte[] XorTableKr = ObjectSerialize.Decompress(Properties.Resources.xorKr);
+        Byte[] XorTableSteam = ObjectSerialize.Decompress(Properties.Resources.xor_steam);
+        Byte[] XorTableRu = ObjectSerialize.Decompress(Properties.Resources.xor_ru);
+        Byte[] XorTableKr = ObjectSerialize.Decompress(Properties.Resources.xor_kr);
         Byte[] XorTable { get { return region == Region.Steam ? XorTableSteam : region == Region.Russia ? XorTableRu : XorTableKr; } }
         void ProcessPacket(List<Byte> data)
         {
