@@ -1,7 +1,7 @@
 using System;
 namespace LostArkLogger
 {
-    public enum OpCodesRu : UInt16
+    public enum OpCodes_ru : UInt16
     {
         PKTAbilityChangeNotify = 0x145,
         PKTAbilityEngraveItemResult = 0x3039,

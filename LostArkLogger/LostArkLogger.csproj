@@ -88,9 +88,9 @@
     <Compile Include="Overlay.Designer.cs">
       <DependentUpon>Overlay.cs</DependentUpon>
     </Compile>
-    <Compile Include="Packets\OpCodesKr.cs" />
-    <Compile Include="Packets\OpCodesRu.cs" />
-    <Compile Include="Packets\OpCodesSteam.cs" />
+    <Compile Include="Packets\OpCodes_kr.cs" />
+    <Compile Include="Packets\OpCodes_ru.cs" />
+    <Compile Include="Packets\OpCodes_steam.cs" />
     <Compile Include="Packets\PKTDeathNotify.cs" />
     <Compile Include="Packets\PKTPartyStatusEffectAddNotify.cs" />
     <Compile Include="Packets\PKTPartyStatusEffectRemoveNotify.cs" />
@@ -101,6 +101,11 @@
     <Compile Include="Packets\PKTParalyzationStateNotify.cs" />
     <Compile Include="Packets\PKTStatusEffectAddNotify.cs" />
     <Compile Include="Packets\PKTStatusEffectRemoveNotify.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="RetroOverlay.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -137,15 +142,10 @@
       <DependentUpon>Overlay.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <EmbeddedResource Include="RetroOverlay.resx">
       <DependentUpon>RetroOverlay.cs</DependentUpon>
     </EmbeddedResource>
@@ -160,12 +160,12 @@
     </Compile>
     <None Include="Resources\GameMsg_English.bin" />
     <None Include="Resources\Npc.bin" />
-    <None Include="Resources\oodle_state.bin" />
+    <None Include="Resources\oodle_state_ru.bin" />
     <None Include="Resources\Skill.bin" />
     <None Include="Resources\SkillEffect.bin" />
-    <None Include="Resources\xorKr.bin" />
-    <None Include="Resources\xorRu.bin" />
-    <None Include="Resources\xorSteam.bin" />
+    <None Include="Resources\xor_kr.bin" />
+    <None Include="Resources\xor_ru.bin" />
+    <None Include="Resources\xor_steam.bin" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -188,6 +188,8 @@
     <None Include="Resources\hk_skill_0.png" />
     <None Include="Resources\if_skill_0.png" />
     <None Include="Resources\lm_skill_0.png" />
+    <None Include="Resources\oodle_state_kr.bin" />
+    <None Include="Resources\oodle_state_steam.bin" />
     <None Include="Resources\po_skill_0.png" />
     <None Include="Resources\po_skill_1.png" />
     <None Include="Resources\rp_skill_0.png" />

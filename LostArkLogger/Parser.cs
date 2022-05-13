@@ -141,14 +141,14 @@ namespace LostArkLogger
         {
             var opcodeVal = BitConverter.ToUInt16(packets, 2);
             var opCodeString = "";
-            if (region == Region.Steam) opCodeString = ((OpCodesSteam)opcodeVal).ToString();
-            if (region == Region.Russia) opCodeString = ((OpCodesRu)opcodeVal).ToString();
-            if (region == Region.Korea) opCodeString = ((OpCodesKr)opcodeVal).ToString();
+            if (region == Region.Steam) opCodeString = ((OpCodes_steam)opcodeVal).ToString();
+            if (region == Region.Russia) opCodeString = ((OpCodes_ru)opcodeVal).ToString();
+            if (region == Region.Korea) opCodeString = ((OpCodes_kr)opcodeVal).ToString(); // broke atm
             return (OpCodes)Enum.Parse(typeof(OpCodes), opCodeString);
         }
-        Byte[] XorTableSteam = ObjectSerialize.Decompress(Properties.Resources.xorSteam);
-        Byte[] XorTableRu = ObjectSerialize.Decompress(Properties.Resources.xorRu);
-        Byte[] XorTableKr = ObjectSerialize.Decompress(Properties.Resources.xorKr);
+        Byte[] XorTableSteam = ObjectSerialize.Decompress(Properties.Resources.xor_steam);
+        Byte[] XorTableRu = ObjectSerialize.Decompress(Properties.Resources.xor_ru);
+        Byte[] XorTableKr = ObjectSerialize.Decompress(Properties.Resources.xor_kr);
         Byte[] XorTable { get { return region == Region.Steam ? XorTableSteam : region == Region.Russia ? XorTableRu : XorTableKr; } }
         void ProcessPacket(List<Byte> data)
         {
@@ -167,7 +167,7 @@ namespace LostArkLogger
                     fragmentedPacket = packets.ToArray();
                     return;
                 }
-                var opcode =  GetOpCode(packets);
+                var opcode = GetOpCode(packets);
                 //Console.WriteLine(opcode);
                 var packetSize = BitConverter.ToUInt16(packets.ToArray(), 0);
                 if (packets[5] != 1 || 6 > packets.Length || packetSize < 7)
@@ -202,7 +202,7 @@ namespace LostArkLogger
 
                 // write packets for analyzing, bypass common, useless packets
                 //if (opcode != OpCodes.PKTMoveError && opcode != OpCodes.PKTMoveNotify && opcode != OpCodes.PKTMoveNotifyList && opcode != OpCodes.PKTTransitStateNotify && opcode != OpCodes.PKTPing && opcode != OpCodes.PKTPong)
-                //    Console.WriteLine(opcode + " : " + BitConverter.ToString(payload));
+                //    Console.WriteLine(opcode + " : " + opcode.ToString("X") + " : " + BitConverter.ToString(payload));
 
                 /* Uncomment for auction house accessory sniffing
                 if (opcode == OpCodes.PKTAuctionSearchResult)
