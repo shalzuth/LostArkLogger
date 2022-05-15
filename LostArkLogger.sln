@@ -4,10 +4,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostArkLogger", "LostArkLogger\LostArkLogger.csproj", "{B0808A8B-3ADC-4BB1-8927-5BCB9A519131}"
+	ProjectSection(ProjectDependencies) = postProject
+		{36016980-5C0D-4E63-A1F4-1BB93A6198A8} = {36016980-5C0D-4E63-A1F4-1BB93A6198A8}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostArk_ACT_Plugin", "LostArk_ACT_Plugin\LostArk_ACT_Plugin.csproj", "{43D69193-428B-4F39-856D-B26A133F22F4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MachinaNetFramework", "MachinaNetFramework\MachinaNetFramework.csproj", "{E463D199-BA11-4B7A-A342-DD1916F8C771}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LostArk.Game.Messages", "LostArkLogger\LostArk.Game.Messages\LostArk.Game.Messages.csproj", "{36016980-5C0D-4E63-A1F4-1BB93A6198A8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +32,10 @@ Global
 		{E463D199-BA11-4B7A-A342-DD1916F8C771}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E463D199-BA11-4B7A-A342-DD1916F8C771}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E463D199-BA11-4B7A-A342-DD1916F8C771}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36016980-5C0D-4E63-A1F4-1BB93A6198A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36016980-5C0D-4E63-A1F4-1BB93A6198A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36016980-5C0D-4E63-A1F4-1BB93A6198A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36016980-5C0D-4E63-A1F4-1BB93A6198A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

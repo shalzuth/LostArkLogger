@@ -1,3 +1,6 @@
 [submodule "machina"]
 	path = machina
 	url = https://github.com/ravahn/machina
+[submodule "LostArkLogger/LostArk.Game.Messages"]
+	path = LostArkLogger/LostArk.Game.Messages
+	url = https://github.com/Herysia/LostArk.Game.Messages
