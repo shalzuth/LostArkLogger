@@ -91,16 +91,6 @@
     <Compile Include="Packets\OpCodes_kr.cs" />
     <Compile Include="Packets\OpCodes_ru.cs" />
     <Compile Include="Packets\OpCodes_steam.cs" />
-    <Compile Include="Packets\PKTDeathNotify.cs" />
-    <Compile Include="Packets\PKTPartyStatusEffectAddNotify.cs" />
-    <Compile Include="Packets\PKTPartyStatusEffectRemoveNotify.cs" />
-    <Compile Include="Packets\PKTStatChangeOriginNotify.cs" />
-    <Compile Include="Packets\PKTCounterAttackNotify.cs" />
-    <Compile Include="Packets\PKTSkillDamageAbnormalMoveNotify.cs" />
-    <Compile Include="Packets\PKTAuctionSearchResult.cs" />
-    <Compile Include="Packets\PKTParalyzationStateNotify.cs" />
-    <Compile Include="Packets\PKTStatusEffectAddNotify.cs" />
-    <Compile Include="Packets\PKTStatusEffectRemoveNotify.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -128,11 +118,7 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Packets\BitReader.cs" />
     <Compile Include="Packets\OpCodes.cs" />
-    <Compile Include="Packets\PKTInitEnv.cs" />
-    <Compile Include="Packets\PKTNewPC.cs" />
-    <Compile Include="Packets\PKTSkillDamageNotify.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainWindow.resx">
@@ -232,6 +218,10 @@
     <ProjectReference Include="..\MachinaNetFramework\MachinaNetFramework.csproj">
       <Project>{e463d199-ba11-4b7a-a342-dd1916f8c771}</Project>
       <Name>MachinaNetFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="LostArk.Game.Messages\LostArk.Game.Messages.csproj">
+      <Project>{36016980-5c0d-4e63-a1f4-1bb93a6198a8}</Project>
+      <Name>LostArk.Game.Messages</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
