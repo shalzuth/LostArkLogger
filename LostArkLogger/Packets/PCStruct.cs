@@ -45,7 +45,7 @@ namespace LostArkLogger
             field34 = reader.ReadUInt32();
             field35 = new Struct19(reader);
             field36 = reader.ReadByte();
-            field37 = new Struct20(reader);
+            statPair = new StatPair(reader);
             field38 = reader.ReadUInt32();
             field39 = reader.ReadByte();
             field40 = reader.ReadUInt32();
@@ -89,7 +89,7 @@ namespace LostArkLogger
         public UInt32 field34;
         public Struct19 field35;
         public Byte field36;
-        public Struct20 field37;
+        public StatPair statPair;
         public UInt32 field38;
         public Byte field39;
         public UInt32 field40;

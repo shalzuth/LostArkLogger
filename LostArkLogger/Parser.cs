@@ -233,7 +233,6 @@ namespace LostArkLogger
                         payload = Oodle.Decompress(payload).Skip(16).ToArray();
                         break;
                 }
-                Console.WriteLine(opcode + " : " + BitConverter.ToString(payload));
 
                 // write packets for analyzing, bypass common, useless packets
                 //if (opcode != OpCodes.PKTMoveError && opcode != OpCodes.PKTMoveNotify && opcode != OpCodes.PKTMoveNotifyList && opcode != OpCodes.PKTTransitStateNotify && opcode != OpCodes.PKTPing && opcode != OpCodes.PKTPong)
@@ -324,25 +323,26 @@ namespace LostArkLogger
                     ProcessSkillDamage(new PKTSkillDamageNotify(new BitReader(payload)));
                 else if (opcode == OpCodes.PKTSkillDamageAbnormalMoveNotify)
                     ProcessSkillDamage(new PKTSkillDamageAbnormalMoveNotify(new BitReader(payload)));
-                //TODO: we'll add them back once we named the fields
-                /*
-                else if (opcode == OpCodes.PKTStatChangeOriginNotify) // bard heal
+                else if (opcode == OpCodes.PKTStatChangeOriginNotify) // heal
                 {
-                    var health = new PKTStatChangeOriginNotify(payload);
-                    //Console.WriteLine(health.HealAmount + " : " + health.NewHealth);
-                    // need to figure out real source, right now it's the target.
+                    var health = new PKTStatChangeOriginNotify(new BitReader(payload));
                     var log = new LogInfo
                     {
-                        Time = DateTime.Now, SourceEntity = currentEncounter.Entities.GetOrAdd(health.PlayerId),
-                        DestinationEntity = currentEncounter.Entities.GetOrAdd(health.PlayerId),
-                        Heal = health.HealAmount
+                        Time = DateTime.Now, SourceEntity = currentEncounter.Entities.GetOrAdd(health.ObjectId),
+                        DestinationEntity = currentEncounter.Entities.GetOrAdd(health.ObjectId),
+                        Heal = (UInt32)health.StatPairChangedList.Values[0]
                     };
                     onCombatEvent?.Invoke(log);
                 }
+                else if (opcode == OpCodes.PKTStatusEffectAddNotify) // shield
+                {
+                    var buff = new PKTStatusEffectAddNotify(new BitReader(payload));
+                    //Console.WriteLine(buff.ObjectId.ToString("X") + " : " + buff.field2.ToString("X") + " : " + buff.statusEffectData.field2.ToString("X") + " : " + buff.statusEffectData.field3.ToString("X") + " : " + buff.statusEffectData.field10.ToString("X") + " : " + buff.statusEffectData.field5 + " : " + buff.statusEffectData.field9.num + " : " +( buff.statusEffectData.hasValue == 1 ? BitConverter.ToString(buff.statusEffectData.Value) : ""));
+                }
                 else if (opcode == OpCodes.PKTParalyzationStateNotify)
                 {
-                    var stagger = new PKTParalyzationStateNotify(payload);
-                    var enemy = currentEncounter.Entities.GetOrAdd(stagger.TargetId);
+                    var stagger = new PKTParalyzationStateNotify(new BitReader(payload));
+                    /*var enemy = currentEncounter.Entities.GetOrAdd(stagger.TargetId);
                     var lastInfo = currentEncounter.Infos.LastOrDefault(); // hope this works
                     if (lastInfo != null) // there's no way to tell what is the source, so drop it for now
                     {
@@ -357,35 +357,28 @@ namespace LostArkLogger
                             SkillName = lastInfo?.SkillName, Stagger = staggerAmount
                         };
                         onCombatEvent?.Invoke(log);
-                    }
+                    }*/
                 }
-                */
                 else if (opcode == OpCodes.PKTCounterAttackNotify)
                 {
-                    var counter = new PKTCounterAttackNotify(new BitReader(payload)).field0;
-                    var player = currentEncounter.Entities.GetOrAdd((ulong)BitConverter.ToInt64(counter, 5));
-                    var enemy = currentEncounter.Entities.GetOrAdd((ulong)BitConverter.ToInt64(counter, 14));
+                    var counter = new PKTCounterAttackNotify(new BitReader(payload));
                     var log = new LogInfo
                     {
-                        Time = DateTime.Now, SourceEntity = player, DestinationEntity = enemy, SkillName = "Counter",
+                        Time = DateTime.Now, SourceEntity = currentEncounter.Entities.GetOrAdd(counter.SourceId), DestinationEntity = currentEncounter.Entities.GetOrAdd(counter.TargetId), SkillName = "Counter",
                         Damage = 0, Counter = true
                     };
                     onCombatEvent?.Invoke(log);
                 }
-
-                /*
-                 //TODO: add back when we added NpcSummon type (size 39)
                 else if (opcode == OpCodes.PKTNewNpcSummon)
                 {
-                    var npc = new PKTNewNpcSummon(new LostArkMessageReader(message));
+                    var npc = new PKTNewNpcSummon(new BitReader(payload));
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
-                        EntityId = (ulong)npc.NpcStruct.GameId,
-                        OwnerId = new NpcSummon(npc.Unk1).Owner,
+                        EntityId = npc.npcStruct.NpcId,
+                        OwnerId = npc.OwnerId,
                         Type = Entity.EntityType.Summon
                     });
                 }
-                */
                 if (packets.Length < packetSize) throw new Exception("bad packet maybe");
                 packets = packets.Skip(packetSize).ToArray();
             }

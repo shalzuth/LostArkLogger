@@ -59,7 +59,7 @@ namespace LostArkLogger
             hasfield24 = reader.ReadByte();
             if (hasfield24 == 1)
                 field24 = reader.ReadUInt16();
-            field25 = new Struct20(reader);
+            statPair = new StatPair(reader);
             field26 = reader.ReadUInt32();
             field27 = reader.ReadByte();
             hasfield28 = reader.ReadByte();
@@ -112,7 +112,7 @@ namespace LostArkLogger
         public UInt64 field23;
         public Byte hasfield24;
         public UInt16 field24;
-        public Struct20 field25;
+        public StatPair statPair;
         public UInt32 field26;
         public Byte field27;
         public Byte hasfield28;

@@ -82,6 +82,8 @@
     <Compile Include="Data\ObjectSerialize.cs" />
     <Compile Include="Data\Skill.cs" />
     <Compile Include="Data\SkillEffect.cs" />
+    <Compile Include="Data\StatType.cs" />
+    <Compile Include="Data\StatusEffectType.cs" />
     <Compile Include="ElectronBridge.cs" />
     <Compile Include="Overlay.cs">
       <SubType>Form</SubType>
@@ -89,53 +91,7 @@
     <Compile Include="Overlay.Designer.cs">
       <DependentUpon>Overlay.cs</DependentUpon>
     </Compile>
-    <Compile Include="Packets\NpcStruct.cs" />
-    <Compile Include="Packets\OpCodes_kr.cs" />
-    <Compile Include="Packets\OpCodes_ru.cs" />
-    <Compile Include="Packets\OpCodes_steam.cs" />
-    <Compile Include="Packets\PCStruct.cs" />
-    <Compile Include="Packets\PKTCounterAttackNotify.cs" />
-    <Compile Include="Packets\PKTDeathNotify.cs" />
-    <Compile Include="Packets\PKTInitEnv.cs" />
-    <Compile Include="Packets\PKTInitPC.cs" />
-    <Compile Include="Packets\PKTNewNpc.cs" />
-    <Compile Include="Packets\PKTNewNpcSummon.cs" />
-    <Compile Include="Packets\PKTNewPC.cs" />
-    <Compile Include="Packets\PKTNewProjectile.cs" />
-    <Compile Include="Packets\PKTSkillDamageAbnormalMoveNotify.cs" />
-    <Compile Include="Packets\PKTSkillDamageNotify.cs" />
-    <Compile Include="Packets\PKTStatChangeOriginNotify.cs" />
-    <Compile Include="Packets\ProjectileInfo.cs" />
-    <Compile Include="Packets\SkillDamageEvent.cs" />
-    <Compile Include="Packets\SkillDamageEvents.cs" />
-    <Compile Include="Packets\SkillDamageMoveEvent.cs" />
-    <Compile Include="Packets\SkillDamageMoveEvents.cs" />
-    <Compile Include="Packets\Struct10.cs" />
-    <Compile Include="Packets\Struct11.cs" />
-    <Compile Include="Packets\Struct12.cs" />
-    <Compile Include="Packets\Struct13.cs" />
-    <Compile Include="Packets\Struct14.cs" />
-    <Compile Include="Packets\Struct15.cs" />
-    <Compile Include="Packets\Struct16.cs" />
-    <Compile Include="Packets\Struct17.cs" />
-    <Compile Include="Packets\Struct18.cs" />
-    <Compile Include="Packets\Struct19.cs" />
-    <Compile Include="Packets\Struct20.cs" />
-    <Compile Include="Packets\Struct23.cs" />
-    <Compile Include="Packets\Struct24.cs" />
-    <Compile Include="Packets\Struct35.cs" />
-    <Compile Include="Packets\Struct36.cs" />
-    <Compile Include="Packets\Struct37.cs" />
-    <Compile Include="Packets\Struct38.cs" />
-    <Compile Include="Packets\Struct43.cs" />
-    <Compile Include="Packets\Struct44.cs" />
-    <Compile Include="Packets\Struct45.cs" />
-    <Compile Include="Packets\Struct46.cs" />
-    <Compile Include="Packets\Struct47.cs" />
-    <Compile Include="Packets\Struct5.cs" />
-    <Compile Include="Packets\Struct7.cs" />
-    <Compile Include="Packets\Struct8.cs" />
-    <Compile Include="Packets\Struct9.cs" />
+    <Compile Include="Packets\*.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -164,7 +120,6 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Packets\OpCodes.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainWindow.resx">
