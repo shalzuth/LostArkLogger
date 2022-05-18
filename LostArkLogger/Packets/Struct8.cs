@@ -12,10 +12,10 @@ namespace LostArkLogger
             field3 = reader.ReadUInt16();
             field4 = reader.ReadSimpleInt();
         }
-        public Struct9 field0; //0
-        public UInt32 field1; //44
-        public UInt16 field2; //48
-        public UInt16 field3; //50
-        public UInt64 field4; //52
+        public Struct9 field0;
+        public UInt32 field1;
+        public UInt16 field2;
+        public UInt16 field3;
+        public UInt64 field4;
     }
 }

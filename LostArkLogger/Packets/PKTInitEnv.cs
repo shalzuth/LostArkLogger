@@ -15,13 +15,13 @@ namespace LostArkLogger
             PlayerId = reader.ReadUInt64();
             field7 = new Struct36(reader);
         }
-        public UInt32 field0; //24
-        public UInt64 field1; //32
-        public UInt64 field2; //40
-        public UInt32 field3; //48
-        public Struct35 field4; //52
-        public Byte field5; //310
-        public UInt64 PlayerId; //312
-        public Struct36 field7; //48
+        public UInt32 field0;
+        public UInt64 field1;
+        public UInt64 field2;
+        public UInt32 field3;
+        public Struct35 field4;
+        public Byte field5;
+        public UInt64 PlayerId;
+        public Struct36 field7;
     }
 }

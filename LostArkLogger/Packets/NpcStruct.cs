@@ -73,54 +73,54 @@ namespace LostArkLogger
             if (hasfield31 == 1)
                 field31 = reader.ReadByte();
         }
-        public UInt64 field0; //0
-        public Struct12 field1; //8
-        public UInt16 field2; //10890
-        public Byte hasfield3; //10893
-        public Byte field3; //10892
-        public Byte hasfield4; //10895
-        public Byte field4; //10894
-        public Byte hasfield5; //10986
-        public Struct23 field5; //10896
-        public Byte field6; //10987
-        public UInt32 NpcType; //10988
-        public Byte field8; //10992
-        public Byte hasfield9; //10994
-        public Byte field9; //10993
-        public Byte hasfield10; //10999
-        public UInt32 field10; //10995
-        public Byte hasfield11; //11004
-        public UInt32 field11; //11000
-        public Byte hasfield12; //11006
-        public Byte field12; //11005
-        public Byte field13; //11007
-        public Byte hasfield14; //11009
-        public Byte field14; //11008
-        public Byte hasfield15; //11108
-        public Struct24 field15; //11010
-        public Struct15 field16; //11109
-        public Byte hasfield17; //11392
-        public Byte field17; //11391
-        public Byte hasfield18; //11397
-        public UInt32 field18; //11393
-        public Byte hasfield19; //11402
-        public UInt32 field19; //11398
-        public Byte field20; //11403
-        public UInt64 NpcId; //11408
-        public UInt16 field22; //11416
-        public Byte hasfield23; //11426
-        public UInt64 field23; //11418
-        public Byte hasfield24; //11429
-        public UInt16 field24; //11427
-        public Struct20 field25; //64
-        public UInt32 field26; //15080
-        public Byte field27; //15084
-        public Byte hasfield28; //15089
-        public UInt32 field28; //15085
-        public Byte hasfield29; //15092
-        public UInt16 field29; //15090
-        public Byte field30; //15093
-        public Byte hasfield31; //1
-        public Byte field31; //0
+        public UInt64 field0;
+        public Struct12 field1;
+        public UInt16 field2;
+        public Byte hasfield3;
+        public Byte field3;
+        public Byte hasfield4;
+        public Byte field4;
+        public Byte hasfield5;
+        public Struct23 field5;
+        public Byte field6;
+        public UInt32 NpcType;
+        public Byte field8;
+        public Byte hasfield9;
+        public Byte field9;
+        public Byte hasfield10;
+        public UInt32 field10;
+        public Byte hasfield11;
+        public UInt32 field11;
+        public Byte hasfield12;
+        public Byte field12;
+        public Byte field13;
+        public Byte hasfield14;
+        public Byte field14;
+        public Byte hasfield15;
+        public Struct24 field15;
+        public Struct15 field16;
+        public Byte hasfield17;
+        public Byte field17;
+        public Byte hasfield18;
+        public UInt32 field18;
+        public Byte hasfield19;
+        public UInt32 field19;
+        public Byte field20;
+        public UInt64 NpcId;
+        public UInt16 field22;
+        public Byte hasfield23;
+        public UInt64 field23;
+        public Byte hasfield24;
+        public UInt16 field24;
+        public Struct20 field25;
+        public UInt32 field26;
+        public Byte field27;
+        public Byte hasfield28;
+        public UInt32 field28;
+        public Byte hasfield29;
+        public UInt16 field29;
+        public Byte field30;
+        public Byte hasfield31;
+        public Byte field31;
     }
 }

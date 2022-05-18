@@ -13,10 +13,10 @@ namespace LostArkLogger
             field2 = reader.ReadBytes(12);
             field3 = reader.ReadUInt32();
         }
-        public UInt32 field0; //0
-        public Byte hasfield1; //16
-        public Byte[] field1; //4
-        public Byte[] field2; //20
-        public UInt32 field3; //32
+        public UInt32 field0;
+        public Byte hasfield1;
+        public Byte[] field1;
+        public Byte[] field2;
+        public UInt32 field3;
     }
 }

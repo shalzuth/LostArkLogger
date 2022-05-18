@@ -51,48 +51,48 @@ namespace LostArkLogger
             field40 = reader.ReadUInt32();
             field41 = reader.ReadByte();
         }
-        public Byte field0; //0
-        public Struct7 field1; //1
-        public UInt32 field2; //1804
-        public Byte field3; //1808
-        public UInt16 field4; //1810
-        public Byte[] field5; //1812
-        public UInt64 field6; //1840
-        public Byte field7; //1848
-        public Struct10 field8; //64
-        public Struct12 field9; //7451
-        public Byte field10; //18333
-        public UInt64 field11; //18334
-        public UInt32 field12; //18342
-        public UInt16 field13; //18346
-        public Byte field14; //18348
-        public String field15; //18349
-        public Byte field16; //18391
-        public Byte field17; //18392
-        public Struct15 field18; //18393
-        public UInt32 field19; //18676
-        public UInt16 ClassId; //18680
-        public UInt32 field21; //18684
-        public Byte hasfield22; //18700
-        public Byte[] field22; //18688
-        public UInt32 field23; //18704
-        public UInt16 field24; //18708
-        public UInt32 field25; //18712
-        public Struct17 field26; //18716
-        public Struct18 field27; //19518
-        public UInt32 field28; //20060
-        public Byte field29; //20064
-        public UInt64 PlayerId; //20072
-        public Byte field31; //20080
-        public UInt16 field32; //20082
-        public String Name; //20084
-        public UInt32 field34; //20128
-        public Struct19 field35; //20132
-        public Byte field36; //20648
-        public Struct20 field37; //64
-        public UInt32 field38; //24300
-        public Byte field39; //24304
-        public UInt32 field40; //24308
-        public Byte field41; //24312
+        public Byte field0;
+        public Struct7 field1;
+        public UInt32 field2;
+        public Byte field3;
+        public UInt16 field4;
+        public Byte[] field5;
+        public UInt64 field6;
+        public Byte field7;
+        public Struct10 field8;
+        public Struct12 field9;
+        public Byte field10;
+        public UInt64 field11;
+        public UInt32 field12;
+        public UInt16 field13;
+        public Byte field14;
+        public String field15;
+        public Byte field16;
+        public Byte field17;
+        public Struct15 field18;
+        public UInt32 field19;
+        public UInt16 ClassId;
+        public UInt32 field21;
+        public Byte hasfield22;
+        public Byte[] field22;
+        public UInt32 field23;
+        public UInt16 field24;
+        public UInt32 field25;
+        public Struct17 field26;
+        public Struct18 field27;
+        public UInt32 field28;
+        public Byte field29;
+        public UInt64 PlayerId;
+        public Byte field31;
+        public UInt16 field32;
+        public String Name;
+        public UInt32 field34;
+        public Struct19 field35;
+        public Byte field36;
+        public Struct20 field37;
+        public UInt32 field38;
+        public Byte field39;
+        public UInt32 field40;
+        public Byte field41;
     }
 }

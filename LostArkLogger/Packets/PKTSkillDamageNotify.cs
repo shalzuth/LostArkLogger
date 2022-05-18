@@ -12,10 +12,10 @@ namespace LostArkLogger
             field3 = reader.ReadByte();
             skillDamageEvents = new SkillDamageEvents(reader);
         }
-        public UInt32 SkillId; //24
-        public UInt64 SourceId; //32
-        public UInt32 SkillEffectId; //40
-        public Byte field3; //44
-        public SkillDamageEvents skillDamageEvents; //45
+        public UInt32 SkillId;
+        public UInt64 SourceId;
+        public UInt32 SkillEffectId;
+        public Byte field3;
+        public SkillDamageEvents skillDamageEvents;
     }
 }

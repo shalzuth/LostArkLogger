@@ -22,16 +22,16 @@ namespace LostArkLogger
             if (hasfield6 == 1)
                 field6 = reader.ReadBytes(12);
         }
-        public Byte field0; //24
-        public Byte hasfield1; //29
-        public UInt32 field1; //25
-        public Byte hasfield2; //66
-        public Struct5 field2; //30
-        public Byte hasfield3; //87
-        public Byte[] field3; //67
-        public PCStruct pCStruct; //88
-        public Byte field5; //24408
-        public Byte hasfield6; //24421
-        public Byte[] field6; //24409
+        public Byte field0;
+        public Byte hasfield1;
+        public UInt32 field1;
+        public Byte hasfield2;
+        public Struct5 field2;
+        public Byte hasfield3;
+        public Byte[] field3;
+        public PCStruct pCStruct;
+        public Byte field5;
+        public Byte hasfield6;
+        public Byte[] field6;
     }
 }

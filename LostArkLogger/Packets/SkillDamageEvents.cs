@@ -9,10 +9,10 @@ namespace LostArkLogger
             num = reader.ReadUInt16();
             for(var i = 0; i < num; i++)
             {
-                skillDamageEvent.Add(new SkillDamageEvent(reader));
+                skillDamageEvents.Add(new SkillDamageEvent(reader));
             }
         }
-        public UInt16 num; //0
-        public List<SkillDamageEvent> skillDamageEvent = new List<SkillDamageEvent>(); //2
+        public UInt16 num;
+        public List<SkillDamageEvent> skillDamageEvents = new List<SkillDamageEvent>();
     }
 }

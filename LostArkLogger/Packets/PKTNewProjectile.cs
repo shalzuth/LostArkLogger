@@ -8,6 +8,6 @@ namespace LostArkLogger
         {
             Info = new ProjectileInfo(reader);
         }
-        public ProjectileInfo Info; //0
+        public ProjectileInfo Info;
     }
 }

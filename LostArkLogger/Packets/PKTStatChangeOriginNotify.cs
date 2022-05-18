@@ -14,11 +14,11 @@ namespace LostArkLogger
                 field3 = reader.ReadUInt32();
             field4 = reader.ReadByte();
         }
-        public Struct20 field0; //64
-        public Struct20 field1; //64
-        public UInt64 field2; //7328
-        public Byte hasfield3; //7340
-        public UInt32 field3; //7336
-        public Byte field4; //7341
+        public Struct20 field0;
+        public Struct20 field1;
+        public UInt64 field2;
+        public Byte hasfield3;
+        public UInt32 field3;
+        public Byte field4;
     }
 }

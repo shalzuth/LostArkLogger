@@ -9,12 +9,12 @@ namespace LostArkLogger
             num = reader.ReadUInt16();
             for(var i = 0; i < num; i++)
             {
-                field0.Add(reader.ReadPackedInt());
-                field1.Add(reader.ReadByte());
+                field0s.Add(reader.ReadPackedInt());
+                field1s.Add(reader.ReadByte());
             }
         }
-        public UInt16 num; //0
-        public List<Int64> field0 = new List<Int64>(); //0
-        public List<Byte> field1 = new List<Byte>(); //16
+        public UInt16 num;
+        public List<Int64> field0s = new List<Int64>();
+        public List<Byte> field1s = new List<Byte>();
     }
 }

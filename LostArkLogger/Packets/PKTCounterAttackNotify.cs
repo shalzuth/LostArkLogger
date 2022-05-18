@@ -8,6 +8,6 @@ namespace LostArkLogger
         {
             field0 = reader.ReadBytes(22);
         }
-        public Byte[] field0; //24
+        public Byte[] field0;
     }
 }

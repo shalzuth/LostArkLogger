@@ -148,7 +148,7 @@ namespace LostArkLogger
             }
 
             if (String.IsNullOrEmpty(sourceEntity.Name)) sourceEntity.Name = damage.SourceId.ToString("X");
-            foreach (var dmgEvent in damage.skillDamageEvents.skillDamageEvent)
+            foreach (var dmgEvent in damage.skillDamageEvents.skillDamageEvents)
                 ProcessDamageEvent(sourceEntity, (uint) damage.SkillId, (uint) damage.SkillEffectId, dmgEvent);
         }
 
@@ -167,7 +167,7 @@ namespace LostArkLogger
             }
 
             if (String.IsNullOrEmpty(sourceEntity.Name)) sourceEntity.Name = damage.SourceId.ToString("X");
-            foreach (var dmgEvent in damage.skillDamageMoveEvent.skillDamageMoveEvents)
+            foreach (var dmgEvent in damage.skillDamageMoveEvents.skillDamageMoveEvents)
                 ProcessDamageEvent(sourceEntity, (uint)damage.SkillId, (uint)damage.SkillEffectId, dmgEvent.skillDamageEvent);
         }
 

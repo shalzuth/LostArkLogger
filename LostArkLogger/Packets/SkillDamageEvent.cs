@@ -17,14 +17,14 @@ namespace LostArkLogger
             MaxHealth = reader.ReadPackedInt();
             TargetId = reader.ReadUInt64();
         }
-        public Int64 Damage; //0
-        public Byte hasfield1; //17
-        public Byte field1; //16
-        public Byte field2; //18
-        public UInt16 field3; //20
-        public Byte Modifier; //22
-        public Int64 CurrentHealth; //24
-        public Int64 MaxHealth; //40
-        public UInt64 TargetId; //56
+        public Int64 Damage;
+        public Byte hasfield1;
+        public Byte field1;
+        public Byte field2;
+        public UInt16 field3;
+        public Byte Modifier;
+        public Int64 CurrentHealth;
+        public Int64 MaxHealth;
+        public UInt64 TargetId;
     }
 }

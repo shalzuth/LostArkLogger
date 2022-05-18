@@ -15,11 +15,11 @@ namespace LostArkLogger
                 field2 = reader.ReadByte();
             npc = new NpcStruct(reader);
         }
-        public Byte field0; //24
-        public Byte hasfield1; //33
-        public UInt64 field1; //25
-        public Byte hasfield2; //35
-        public Byte field2; //34
-        public NpcStruct npc; //40
+        public Byte field0;
+        public Byte hasfield1;
+        public UInt64 field1;
+        public Byte hasfield2;
+        public Byte field2;
+        public NpcStruct npc;
     }
 }
