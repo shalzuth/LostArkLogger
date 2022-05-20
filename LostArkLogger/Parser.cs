@@ -286,8 +286,7 @@ namespace LostArkLogger
                     currentEncounter = new Encounter();
                     Encounters.Add(currentEncounter);
 
-                    currentEncounter.Entities.AddOrUpdate(new Entity
-                        {EntityId = (ulong) env.PlayerId, Name = _localPlayerName, Type = Entity.EntityType.Player});
+                    currentEncounter.Entities.AddOrUpdate(new Entity {EntityId = (ulong) env.PlayerId, Name = _localPlayerName, Type = Entity.EntityType.Player});
                     onNewZone?.Invoke();
                 }
                 else if (opcode == OpCodes.PKTInitPC)

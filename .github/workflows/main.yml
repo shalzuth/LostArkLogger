@@ -31,14 +31,6 @@ jobs:
      
     - name: Restore NuGet Packages
       run: nuget restore LostArkLogger.sln
- 
-    - name: Download ACT
-      shell: powershell
-      run: Invoke-WebRequest -Uri "https://advancedcombattracker.com/download.php?id=57" -OutFile "ACT.zip"    
-
-    - name: Unzip ACT
-      shell: cmd
-      run: 7z x -y ACT.zip
         
     - name: Build
       run: msbuild LostArkLogger.sln /p:Configuration=Debug
@@ -58,12 +50,6 @@ jobs:
       run: |
         $codeSigningCert = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert | Select-Object -First 1
         Set-AuthenticodeSignature -Certificate $codeSigningCert -FilePath "bin\Debug\LostArkLogger.exe" -TimestampServer "http://timestamp.digicert.com"
-          
-    - name: Upload exe Artifact
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: LostArk_ACT_Plugin.dll
-        path: bin\Debug\LostArk_ACT_Plugin.dll
         
     - name: Upload dll Artifact
       uses: actions/upload-artifact@v1.0.0
@@ -77,4 +63,3 @@ jobs:
       with:
         files: |
           bin\Debug\LostArkLogger.exe
-          bin\Debug\LostArk_ACT_Plugin.dll
