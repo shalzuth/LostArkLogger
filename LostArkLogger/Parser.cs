@@ -20,6 +20,7 @@ namespace LostArkLogger
         ILiveDevice pcap;
         public event Action<LogInfo> onCombatEvent;
         public event Action onNewZone;
+        public event Action<string> onDebug;
         public event Action<int> onPacketTotalCount;
         public bool enableLogging = true;
         public bool use_npcap = false;
@@ -435,6 +436,9 @@ namespace LostArkLogger
                 var srcAddr = connection.RemoteIP;
                 if (srcAddr != currentIpAddr)
                 {
+                    onDebug?.Invoke((bytes.Length > 4).ToString() + ", "  + BitConverter.ToUInt16(bytes, 2).ToString() + ", " + OpCodes.PKTAuthTokenResult + ", " + (bytes[0] == 0x1e).ToString());
+                    //Console.WriteLine((OpCodes)BitConverter.ToUInt16(bytes, 2));
+                    //Console.WriteLine(BitConverter.ToString(bytes));
                     if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && (OpCodes)BitConverter.ToUInt16(bytes, 2) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
                     {
                         onNewZone?.Invoke();

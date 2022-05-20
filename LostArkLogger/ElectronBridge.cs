@@ -65,6 +65,11 @@ namespace LostArkLogger
                 ElectronConnection.Send("new-zone", "1");
             };
 
+            sniffer.onDebug += (string message) =>
+            {
+                ElectronConnection.Send("debug", message);
+            };
+
             ElectronConnection.Send("message", "All connections are ready.");
             ElectronConnection.Listen();
         }
