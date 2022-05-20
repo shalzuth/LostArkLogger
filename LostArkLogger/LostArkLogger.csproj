@@ -73,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\AuctionItem.cs" />
+    <Compile Include="Data\DamageModifierFlags.cs" />
     <Compile Include="Data\Encounter.cs" />
     <Compile Include="Data\Entity.cs" />
     <Compile Include="Data\GameMsg_English.cs" />
@@ -81,6 +82,8 @@
     <Compile Include="Data\ObjectSerialize.cs" />
     <Compile Include="Data\Skill.cs" />
     <Compile Include="Data\SkillEffect.cs" />
+    <Compile Include="Data\StatType.cs" />
+    <Compile Include="Data\StatusEffectType.cs" />
     <Compile Include="ElectronBridge.cs" />
     <Compile Include="Overlay.cs">
       <SubType>Form</SubType>
@@ -88,19 +91,7 @@
     <Compile Include="Overlay.Designer.cs">
       <DependentUpon>Overlay.cs</DependentUpon>
     </Compile>
-    <Compile Include="Packets\OpCodes_kr.cs" />
-    <Compile Include="Packets\OpCodes_ru.cs" />
-    <Compile Include="Packets\OpCodes_steam.cs" />
-    <Compile Include="Packets\PKTDeathNotify.cs" />
-    <Compile Include="Packets\PKTPartyStatusEffectAddNotify.cs" />
-    <Compile Include="Packets\PKTPartyStatusEffectRemoveNotify.cs" />
-    <Compile Include="Packets\PKTStatChangeOriginNotify.cs" />
-    <Compile Include="Packets\PKTCounterAttackNotify.cs" />
-    <Compile Include="Packets\PKTSkillDamageAbnormalMoveNotify.cs" />
-    <Compile Include="Packets\PKTAuctionSearchResult.cs" />
-    <Compile Include="Packets\PKTParalyzationStateNotify.cs" />
-    <Compile Include="Packets\PKTStatusEffectAddNotify.cs" />
-    <Compile Include="Packets\PKTStatusEffectRemoveNotify.cs" />
+    <Compile Include="Packets\*.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -117,6 +108,7 @@
     <Compile Include="RetroUtil\MyColorTable.cs" />
     <Compile Include="RetroUtil\PropertyComparer.cs" />
     <Compile Include="RetroUtil\SortableBindingList.cs" />
+    <Compile Include="Utilities\BitReader.cs" />
     <Compile Include="Utilities\ManagedIpHelper.cs" />
     <Compile Include="Utilities\NetworkUtil.cs" />
     <Compile Include="Utilities\Oodle.cs" />
@@ -128,11 +120,6 @@
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Packets\BitReader.cs" />
-    <Compile Include="Packets\OpCodes.cs" />
-    <Compile Include="Packets\PKTInitEnv.cs" />
-    <Compile Include="Packets\PKTNewPC.cs" />
-    <Compile Include="Packets\PKTSkillDamageNotify.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainWindow.resx">

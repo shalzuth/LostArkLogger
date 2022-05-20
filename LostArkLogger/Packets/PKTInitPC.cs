@@ -1,0 +1,118 @@
+using System;
+using System.Collections.Generic;
+namespace LostArkLogger
+{
+    public class PKTInitPC
+    {
+        public PKTInitPC(BitReader reader)
+        {
+            field0 = reader.ReadUInt32();
+            field1 = reader.ReadUInt32();
+            field2 = reader.ReadUInt16();
+            field3 = reader.ReadByte();
+            field4 = reader.ReadByte();
+            field5 = reader.ReadUInt16();
+            field6 = reader.ReadByte();
+            field7 = reader.ReadByte();
+            field8 = new Struct43(reader);
+            field9 = reader.ReadUInt32();
+            field10 = reader.ReadBytes(25);
+            field11 = reader.ReadByte();
+            field12 = reader.ReadUInt16();
+            field13 = reader.ReadByte();
+            field14 = reader.ReadUInt32();
+            field15 = reader.ReadUInt32();
+            field16 = reader.ReadUInt32();
+            field17 = reader.ReadUInt32();
+            field18 = reader.ReadByte();
+            field19 = reader.ReadUInt64();
+            field20 = new Struct44(reader);
+            field21 = new Struct13(reader);
+            field22 = reader.ReadUInt64();
+            field23 = reader.ReadBytes(35);
+            Name = reader.ReadString();
+            statPair = new StatPair(reader);
+            field26 = new Struct16(reader);
+            field27 = reader.ReadUInt32();
+            field28 = reader.ReadByte();
+            field29 = reader.ReadUInt16();
+            field30 = reader.ReadByte();
+            field31 = reader.ReadByte();
+            field32 = reader.ReadByte();
+            field33 = reader.ReadByte();
+            field34 = reader.ReadByte();
+            field35 = reader.ReadUInt32();
+            field36 = reader.ReadUInt32();
+            field37 = reader.ReadUInt64();
+            field38 = reader.ReadByte();
+            field39 = reader.ReadBytes(112);
+            field40 = reader.ReadByte();
+            field41 = reader.ReadByte();
+            field42 = reader.ReadByte();
+            hasfield43 = reader.ReadByte();
+            if (hasfield43 == 1)
+                field43 = reader.ReadUInt32();
+            field44 = reader.ReadByte();
+            field45 = reader.ReadUInt32();
+            PlayerId = reader.ReadUInt64();
+            field47 = new Struct45(reader);
+            field48 = reader.ReadUInt32();
+            field49 = reader.ReadUInt16();
+            field50 = reader.ReadByte();
+            field51 = reader.ReadUInt16();
+        }
+        public UInt32 field0;
+        public UInt32 field1;
+        public UInt16 field2;
+        public Byte field3;
+        public Byte field4;
+        public UInt16 field5;
+        public Byte field6;
+        public Byte field7;
+        public Struct43 field8;
+        public UInt32 field9;
+        public Byte[] field10;
+        public Byte field11;
+        public UInt16 field12;
+        public Byte field13;
+        public UInt32 field14;
+        public UInt32 field15;
+        public UInt32 field16;
+        public UInt32 field17;
+        public Byte field18;
+        public UInt64 field19;
+        public Struct44 field20;
+        public Struct13 field21;
+        public UInt64 field22;
+        public Byte[] field23;
+        public String Name;
+        public StatPair statPair;
+        public Struct16 field26;
+        public UInt32 field27;
+        public Byte field28;
+        public UInt16 field29;
+        public Byte field30;
+        public Byte field31;
+        public Byte field32;
+        public Byte field33;
+        public Byte field34;
+        public UInt32 field35;
+        public UInt32 field36;
+        public UInt64 field37;
+        public Byte field38;
+        public Byte[] field39;
+        public Byte field40;
+        public Byte field41;
+        public Byte field42;
+        public Byte hasfield43;
+        public UInt32 field43;
+        public Byte field44;
+        public UInt32 field45;
+        public UInt64 PlayerId;
+        public Struct45 field47;
+        public UInt32 field48;
+        public UInt16 field49;
+        public Byte field50;
+        public UInt16 field51;
+    }
+}

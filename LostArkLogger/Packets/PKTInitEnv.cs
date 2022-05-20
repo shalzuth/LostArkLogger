@@ -1,14 +1,27 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 namespace LostArkLogger
 {
     public class PKTInitEnv
     {
-        //01-00-00-FC-FF-FF-FF-00-00-00-00-37-5C-2C-07-00-00-00-00-03-00-55-00-54-00-43-00-E1-89-05-21-00-00-00-00-E6-47-76-BE-06-5B-00-00
-        public String UTC;
-        public UInt64 PlayerId;
-        public PKTInitEnv(Byte[] bytes)
+        public PKTInitEnv(BitReader reader)
         {
-            PlayerId = BitConverter.ToUInt64(bytes, bytes.Length - 12);
+            field0 = new Struct35(reader);
+            PlayerId = reader.ReadUInt64();
+            field2 = reader.ReadUInt64();
+            field3 = reader.ReadSimpleInt();
+            field4 = reader.ReadByte();
+            field5 = reader.ReadUInt32();
+            field6 = new Struct37(reader);
+            field7 = reader.ReadUInt32();
         }
+        public Struct35 field0;
+        public UInt64 PlayerId;
+        public UInt64 field2;
+        public UInt64 field3;
+        public Byte field4;
+        public UInt32 field5;
+        public Struct37 field6;
+        public UInt32 field7;
     }
 }

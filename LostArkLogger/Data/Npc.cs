@@ -32,6 +32,7 @@ namespace LostArkLogger
             if (id == 401) return "Assassin";
             if (id == 501) return "Gunner";
             if (id == 102) return "Berserker";
+            if (id == 103) return "Destroyer";
             if (id == 104) return "Gunlancer";
             if (id == 105) return "Paladin";
             if (id == 204) return "Bard";

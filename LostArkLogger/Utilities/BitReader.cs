@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LostArkLogger
 {
@@ -73,12 +75,56 @@ namespace LostArkLogger
 
             return Value;
         }
-        public UInt64 ReadPackedInt()
+        public Int64 ReadPackedInt()
         {
-            var valBits = (UInt16)ReadBits(4);
-            return ReadBits(4 + valBits * 4);
+            var flag = ReadByte();
+            var bytes = ReadBytes((flag >> 1) & 7);
+            if (bytes.Length < 8) bytes = bytes.Concat(new Byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }).ToArray();
+            var result = (BitConverter.ToInt64(bytes, 0) << 4) | (uint)(flag >> 4);
+            return (flag & 1) == 0 ? result : -result;
+            //var valBits = (UInt16)ReadBits(4);
+            //return ReadBits(4 + valBits * 4);
         }
-
+        public UInt64 ReadSimpleInt()
+        {
+            var s = ReadUInt16();
+            if ((s & 0xfff) < 0x81f)
+            {
+                ByteOffset -= 2;
+                return ReadUInt64();
+            }
+            else return (UInt64)(s & 0xFFF | 0x11000);
+        }
+        // todo fix
+        public UInt64 ReadFlag()
+        {
+            var flag = ReadByte();
+            for(var i = 0; i < 6; i++) if (((flag >> i) & 1) != 0) ReadUInt32();
+            if (((flag >> 6) & 1) != 0) ReadBytes(ReadUInt16());
+            return 0;
+        }
+        public String ReadString()
+        {
+            var unicode = true;
+            var stringBytes = new List<Byte>();
+            var stringByte = 0u;
+            var length = ReadUInt16();
+            for (var i = 0; i < length; i++)
+            {
+                if (unicode)
+                {
+                    stringByte = ReadUInt16();
+                    stringBytes.AddRange(BitConverter.GetBytes((UInt16)stringByte));
+                }
+                else
+                {
+                    stringByte = ReadByte();
+                    stringBytes.Add((Byte)stringByte);
+                }
+            }
+            var finalStringParsed = unicode ? System.Text.Encoding.Unicode.GetString(stringBytes.ToArray()) : System.Text.Encoding.UTF8.GetString(stringBytes.ToArray());
+            return finalStringParsed;
+        }
         public UInt32 BitReverse(UInt32 value, Byte numBits)
         {
             UInt32 a = 0;
@@ -91,7 +137,6 @@ namespace LostArkLogger
         {
             return (Byte)ReadBits(8);
         }
-
         public Byte[] ReadBytes(int count)
         {
             var bytes = new byte[count];
@@ -102,7 +147,6 @@ namespace LostArkLogger
 
             return bytes;
         }
-
         public UInt16 ReadUInt16()
         {
             return (UInt16)ReadBits(16);
@@ -115,27 +159,6 @@ namespace LostArkLogger
         {
             return (UInt64)ReadBits(64);
         }
-
-        private long _bytesToInt64(byte[] bytes)
-        {
-            if (bytes.Length == 0)
-                return 0;
-            if (bytes.Length > 8)
-                throw new Exception(
-                    $"_bytesToInt64(byte[]) cannot be called with more than 8 bytes (Called with: {bytes.Length} bytes)");
-            var value = new byte[8];
-            Buffer.BlockCopy(bytes, 0, value, 0, bytes.Length);
-            return BitConverter.ToInt64(value, 0);
-        }
-
-        public long _ReadInt64NBytes(byte flag)
-        {
-            var byteCount = (flag >> 1) & 7;
-            var bytes = ReadBytes(byteCount);
-            var result = (_bytesToInt64(bytes) << 4) | (uint) (flag >> 4);
-            return (flag & 1) == 0 ? result : -result;
-        }
-
         public void SkipBits(Int32 Count)
         {
             BitOffset += Count % 8;

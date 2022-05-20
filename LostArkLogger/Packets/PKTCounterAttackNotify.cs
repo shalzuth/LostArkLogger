@@ -1,20 +1,19 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace LostArkLogger
 {
     public class PKTCounterAttackNotify
     {
-        // 00-4C-B2-6D-65-02-00-00-00-D6-11-00-00-AC-95-EE-64-02-00-00-00-00
-        public UInt64 EnemyId;
-        public UInt64 PlayerId;
-        public PKTCounterAttackNotify(Byte[] Bytes)
+        public PKTCounterAttackNotify(BitReader reader)
         {
-            EnemyId = BitConverter.ToUInt64(Bytes, 1);
-            PlayerId = BitConverter.ToUInt64(Bytes, 13);
+            field0 = reader.ReadByte();
+            TargetId = reader.ReadUInt64();
+            field2 = reader.ReadBytes(6);
+            SourceId = reader.ReadUInt64();
         }
+        public Byte field0;
+        public UInt64 TargetId;
+        public Byte[] field2;
+        public UInt64 SourceId;
     }
 }
