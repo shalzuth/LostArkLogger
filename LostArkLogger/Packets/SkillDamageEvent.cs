@@ -7,24 +7,24 @@ namespace LostArkLogger
         public SkillDamageEvent(BitReader reader)
         {
             Damage = reader.ReadPackedInt();
-            hasfield1 = reader.ReadByte();
-            if (hasfield1 == 1)
-                field1 = reader.ReadByte();
-            field2 = reader.ReadByte();
-            field3 = reader.ReadUInt16();
-            Modifier = reader.ReadByte();
             CurrentHealth = reader.ReadPackedInt();
-            MaxHealth = reader.ReadPackedInt();
+            field2 = reader.ReadByte();
             TargetId = reader.ReadUInt64();
+            hasfield4 = reader.ReadByte();
+            if (hasfield4 == 1)
+                field4 = reader.ReadByte();
+            Modifier = reader.ReadByte();
+            MaxHealth = reader.ReadPackedInt();
+            field7 = reader.ReadUInt16();
         }
         public Int64 Damage;
-        public Byte hasfield1;
-        public Byte field1;
-        public Byte field2;
-        public UInt16 field3;
-        public Byte Modifier;
         public Int64 CurrentHealth;
-        public Int64 MaxHealth;
+        public Byte field2;
         public UInt64 TargetId;
+        public Byte hasfield4;
+        public Byte field4;
+        public Byte Modifier;
+        public Int64 MaxHealth;
+        public UInt16 field7;
     }
 }

@@ -6,14 +6,14 @@ namespace LostArkLogger
     {
         public PKTStatusEffectAddNotify(BitReader reader)
         {
-            New = reader.ReadByte();
+            statusEffectData = new StatusEffectData(reader);
             ObjectId = reader.ReadUInt64();
             field2 = reader.ReadUInt64();
-            statusEffectData = new StatusEffectData(reader);
+            New = reader.ReadByte();
         }
-        public Byte New;
+        public StatusEffectData statusEffectData;
         public UInt64 ObjectId;
         public UInt64 field2;
-        public StatusEffectData statusEffectData;
+        public Byte New;
     }
 }

@@ -216,7 +216,7 @@ namespace LostArkLogger
                     return;
                 }
                 var payload = packets.Skip(6).Take(packetSize - 6).ToArray();
-                Xor.Cipher(payload, (UInt16)opcode, XorTable);
+                Xor.Cipher(payload, BitConverter.ToUInt16(packets, 2), XorTable);
                 switch (packets[4])
                 {
                     case 1: //LZ4
@@ -262,7 +262,7 @@ namespace LostArkLogger
                 }
                 else if (opcode == OpCodes.PKTNewNpc)
                 {
-                    var npc = new PKTNewNpc(new BitReader(payload)).npc;
+                    var npc = new PKTNewNpc(new BitReader(payload)).npcStruct;
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
                         EntityId = (ulong) npc.NpcId,
@@ -339,10 +339,10 @@ namespace LostArkLogger
                     var buff = new PKTStatusEffectAddNotify(new BitReader(payload));
                     //Console.WriteLine(buff.ObjectId.ToString("X") + " : " + buff.field2.ToString("X") + " : " + buff.statusEffectData.field2.ToString("X") + " : " + buff.statusEffectData.field3.ToString("X") + " : " + buff.statusEffectData.field10.ToString("X") + " : " + buff.statusEffectData.field5 + " : " + buff.statusEffectData.field9.num + " : " +( buff.statusEffectData.hasValue == 1 ? BitConverter.ToString(buff.statusEffectData.Value) : ""));
                 }
-                else if (opcode == OpCodes.PKTParalyzationStateNotify)
+                /*else if (opcode == OpCodes.PKTParalyzationStateNotify)
                 {
                     var stagger = new PKTParalyzationStateNotify(new BitReader(payload));
-                    /*var enemy = currentEncounter.Entities.GetOrAdd(stagger.TargetId);
+                    var enemy = currentEncounter.Entities.GetOrAdd(stagger.TargetId);
                     var lastInfo = currentEncounter.Infos.LastOrDefault(); // hope this works
                     if (lastInfo != null) // there's no way to tell what is the source, so drop it for now
                     {
@@ -357,8 +357,8 @@ namespace LostArkLogger
                             SkillName = lastInfo?.SkillName, Stagger = staggerAmount
                         };
                         onCombatEvent?.Invoke(log);
-                    }*/
-                }
+                    }
+                }*/
                 else if (opcode == OpCodes.PKTCounterAttackNotify)
                 {
                     var counter = new PKTCounterAttackNotify(new BitReader(payload));

@@ -6,19 +6,19 @@ namespace LostArkLogger
     {
         public PKTStatChangeOriginNotify(BitReader reader)
         {
+            hasfield0 = reader.ReadByte();
+            if (hasfield0 == 1)
+                field0 = reader.ReadUInt32();
             StatPairList = new StatPair(reader);
-            StatPairChangedList = new StatPair(reader);
+            field2 = reader.ReadByte();
             ObjectId = reader.ReadUInt64();
-            hasfield3 = reader.ReadByte();
-            if (hasfield3 == 1)
-                field3 = reader.ReadUInt32();
-            field4 = reader.ReadByte();
+            StatPairChangedList = new StatPair(reader);
         }
+        public Byte hasfield0;
+        public UInt32 field0;
         public StatPair StatPairList;
-        public StatPair StatPairChangedList;
+        public Byte field2;
         public UInt64 ObjectId;
-        public Byte hasfield3;
-        public UInt32 field3;
-        public Byte field4;
+        public StatPair StatPairChangedList;
     }
 }

@@ -6,13 +6,13 @@ namespace LostArkLogger
     {
         public Struct19(BitReader reader)
         {
-            num = reader.ReadUInt32();
+            num = reader.ReadUInt16();
             for(var i = 0; i < num; i++)
             {
-                field0s.Add(reader.ReadByte());
+                field0s.Add(reader.ReadUInt32());
             }
         }
-        public UInt32 num;
-        public List<Byte> field0s = new List<Byte>();
+        public UInt16 num;
+        public List<UInt32> field0s = new List<UInt32>();
     }
 }

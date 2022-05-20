@@ -6,121 +6,126 @@ namespace LostArkLogger
     {
         public NpcStruct(BitReader reader)
         {
-            field0 = reader.ReadUInt64();
-            field1 = new Struct12(reader);
-            field2 = reader.ReadUInt16();
+            NpcId = reader.ReadUInt64();
+            hasfield1 = reader.ReadByte();
+            if (hasfield1 == 1)
+                field1 = reader.ReadByte();
+            hasfield2 = reader.ReadByte();
+            if (hasfield2 == 1)
+                field2 = reader.ReadByte();
             hasfield3 = reader.ReadByte();
             if (hasfield3 == 1)
-                field3 = reader.ReadByte();
+                field3 = reader.ReadUInt16();
             hasfield4 = reader.ReadByte();
             if (hasfield4 == 1)
                 field4 = reader.ReadByte();
             hasfield5 = reader.ReadByte();
             if (hasfield5 == 1)
-                field5 = new Struct23(reader);
+                field5 = reader.ReadUInt32();
             field6 = reader.ReadByte();
-            NpcType = reader.ReadUInt32();
-            field8 = reader.ReadByte();
+            hasfield7 = reader.ReadByte();
+            if (hasfield7 == 1)
+                field7 = new Struct23(reader);
+            hasfield8 = reader.ReadByte();
+            if (hasfield8 == 1)
+                field8 = reader.ReadUInt32();
             hasfield9 = reader.ReadByte();
             if (hasfield9 == 1)
-                field9 = reader.ReadByte();
-            hasfield10 = reader.ReadByte();
-            if (hasfield10 == 1)
-                field10 = reader.ReadUInt32();
-            hasfield11 = reader.ReadByte();
-            if (hasfield11 == 1)
-                field11 = reader.ReadUInt32();
+                field9 = reader.ReadUInt64();
+            field10 = reader.ReadUInt16();
+            field11 = new Struct13(reader);
             hasfield12 = reader.ReadByte();
             if (hasfield12 == 1)
-                field12 = reader.ReadByte();
-            field13 = reader.ReadByte();
-            hasfield14 = reader.ReadByte();
-            if (hasfield14 == 1)
-                field14 = reader.ReadByte();
+                field12 = new Struct24(reader);
+            NpcType = reader.ReadUInt32();
+            statPair = new StatPair(reader);
             hasfield15 = reader.ReadByte();
             if (hasfield15 == 1)
-                field15 = new Struct24(reader);
-            field16 = new Struct15(reader);
-            hasfield17 = reader.ReadByte();
-            if (hasfield17 == 1)
-                field17 = reader.ReadByte();
+                field15 = reader.ReadByte();
+            field16 = reader.ReadByte();
+            field17 = reader.ReadByte();
             hasfield18 = reader.ReadByte();
             if (hasfield18 == 1)
                 field18 = reader.ReadUInt32();
-            hasfield19 = reader.ReadByte();
-            if (hasfield19 == 1)
-                field19 = reader.ReadUInt32();
-            field20 = reader.ReadByte();
-            NpcId = reader.ReadUInt64();
-            field22 = reader.ReadUInt16();
-            hasfield23 = reader.ReadByte();
-            if (hasfield23 == 1)
-                field23 = reader.ReadUInt64();
-            hasfield24 = reader.ReadByte();
-            if (hasfield24 == 1)
-                field24 = reader.ReadUInt16();
-            statPair = new StatPair(reader);
-            field26 = reader.ReadUInt32();
-            field27 = reader.ReadByte();
-            hasfield28 = reader.ReadByte();
-            if (hasfield28 == 1)
-                field28 = reader.ReadUInt32();
+            field19 = reader.ReadUInt32();
+            hasfield20 = reader.ReadByte();
+            if (hasfield20 == 1)
+                field20 = reader.ReadByte();
+            hasfield21 = reader.ReadByte();
+            if (hasfield21 == 1)
+                field21 = reader.ReadUInt32();
+            field22 = new Struct16(reader);
+            field23 = reader.ReadByte();
+            field24 = reader.ReadUInt16();
+            field25 = reader.ReadUInt64();
+            field26 = reader.ReadByte();
+            hasfield27 = reader.ReadByte();
+            if (hasfield27 == 1)
+                field27 = new Struct25(reader);
+            field28 = reader.ReadByte();
             hasfield29 = reader.ReadByte();
             if (hasfield29 == 1)
-                field29 = reader.ReadUInt16();
-            field30 = reader.ReadByte();
+                field29 = reader.ReadByte();
+            hasfield30 = reader.ReadByte();
+            if (hasfield30 == 1)
+                field30 = reader.ReadByte();
             hasfield31 = reader.ReadByte();
             if (hasfield31 == 1)
-                field31 = reader.ReadByte();
+                field31 = reader.ReadUInt32();
+            hasfield32 = reader.ReadByte();
+            if (hasfield32 == 1)
+                field32 = reader.ReadUInt16();
         }
-        public UInt64 field0;
-        public Struct12 field1;
-        public UInt16 field2;
+        public UInt64 NpcId;
+        public Byte hasfield1;
+        public Byte field1;
+        public Byte hasfield2;
+        public Byte field2;
         public Byte hasfield3;
-        public Byte field3;
+        public UInt16 field3;
         public Byte hasfield4;
         public Byte field4;
         public Byte hasfield5;
-        public Struct23 field5;
+        public UInt32 field5;
         public Byte field6;
-        public UInt32 NpcType;
-        public Byte field8;
+        public Byte hasfield7;
+        public Struct23 field7;
+        public Byte hasfield8;
+        public UInt32 field8;
         public Byte hasfield9;
-        public Byte field9;
-        public Byte hasfield10;
-        public UInt32 field10;
-        public Byte hasfield11;
-        public UInt32 field11;
+        public UInt64 field9;
+        public UInt16 field10;
+        public Struct13 field11;
         public Byte hasfield12;
-        public Byte field12;
-        public Byte field13;
-        public Byte hasfield14;
-        public Byte field14;
+        public Struct24 field12;
+        public UInt32 NpcType;
+        public StatPair statPair;
         public Byte hasfield15;
-        public Struct24 field15;
-        public Struct15 field16;
-        public Byte hasfield17;
+        public Byte field15;
+        public Byte field16;
         public Byte field17;
         public Byte hasfield18;
         public UInt32 field18;
-        public Byte hasfield19;
         public UInt32 field19;
+        public Byte hasfield20;
         public Byte field20;
-        public UInt64 NpcId;
-        public UInt16 field22;
-        public Byte hasfield23;
-        public UInt64 field23;
-        public Byte hasfield24;
+        public Byte hasfield21;
+        public UInt32 field21;
+        public Struct16 field22;
+        public Byte field23;
         public UInt16 field24;
-        public StatPair statPair;
-        public UInt32 field26;
-        public Byte field27;
-        public Byte hasfield28;
-        public UInt32 field28;
+        public UInt64 field25;
+        public Byte field26;
+        public Byte hasfield27;
+        public Struct25 field27;
+        public Byte field28;
         public Byte hasfield29;
-        public UInt16 field29;
+        public Byte field29;
+        public Byte hasfield30;
         public Byte field30;
         public Byte hasfield31;
-        public Byte field31;
+        public UInt32 field31;
+        public Byte hasfield32;
+        public UInt16 field32;
     }
 }

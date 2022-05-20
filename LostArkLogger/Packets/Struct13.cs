@@ -2,17 +2,17 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class Struct46
+    public class Struct13
     {
-        public Struct46(BitReader reader)
+        public Struct13(BitReader reader)
         {
             num = reader.ReadUInt16();
             for(var i = 0; i < num; i++)
             {
-                field0s.Add(reader.ReadByte());
+                statusEffectDatas.Add(new StatusEffectData(reader));
             }
         }
         public UInt16 num;
-        public List<Byte> field0s = new List<Byte>();
+        public List<StatusEffectData> statusEffectDatas = new List<StatusEffectData>();
     }
 }
