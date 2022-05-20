@@ -1,13 +1,13 @@
 ﻿using K4os.Compression.LZ4;
+using LostArkLogger.Utilities;
+using SharpPcap;
 using Snappy;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using SharpPcap;
-using LostArkLogger.Utilities;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
 
 namespace LostArkLogger
 {
@@ -118,29 +118,35 @@ namespace LostArkLogger
         void ProcessDamageEvent(Entity sourceEntity, UInt32 skillId, UInt32 subSkillId, SkillDamageEvent dmgEvent)
         {
             var skillName = Skill.GetSkillName(skillId, subSkillId);
-            var targetEntity = currentEncounter.Entities.GetOrAdd((uint) dmgEvent.TargetId);
+            var targetEntity = currentEncounter.Entities.GetOrAdd((uint)dmgEvent.TargetId);
             var destinationName = targetEntity != null ? targetEntity.VisibleName : dmgEvent.TargetId.ToString("X");
             //var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = sourceName.Contains("("), Destination = destinationName, SkillName = skillName, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
             var log = new LogInfo
             {
-                Time = DateTime.Now, SourceEntity = sourceEntity, DestinationEntity = targetEntity, SkillId = skillId,
-                SkillSubId = subSkillId, SkillName = skillName, Damage = (ulong) dmgEvent.Damage, Crit =
-                    ((DamageModifierFlags) dmgEvent.Modifier &
+                Time = DateTime.Now,
+                SourceEntity = sourceEntity,
+                DestinationEntity = targetEntity,
+                SkillId = skillId,
+                SkillSubId = subSkillId,
+                SkillName = skillName,
+                Damage = (ulong)dmgEvent.Damage,
+                Crit =
+                    ((DamageModifierFlags)dmgEvent.Modifier &
                      (DamageModifierFlags.DotCrit |
                       DamageModifierFlags.SkillCrit)) > 0,
-                BackAttack = ((DamageModifierFlags) dmgEvent.Modifier & (DamageModifierFlags.BackAttack)) > 0,
-                FrontAttack = ((DamageModifierFlags) dmgEvent.Modifier & (DamageModifierFlags.FrontAttack)) > 0
+                BackAttack = ((DamageModifierFlags)dmgEvent.Modifier & (DamageModifierFlags.BackAttack)) > 0,
+                FrontAttack = ((DamageModifierFlags)dmgEvent.Modifier & (DamageModifierFlags.FrontAttack)) > 0
             };
             onCombatEvent?.Invoke(log);
         }
         void ProcessSkillDamage(PKTSkillDamageNotify damage)
         {
-            var sourceEntity = currentEncounter.Entities.GetOrAdd((ulong) damage.SourceId);
+            var sourceEntity = currentEncounter.Entities.GetOrAdd((ulong)damage.SourceId);
             if (sourceEntity.Type == Entity.EntityType.Projectile)
                 sourceEntity = currentEncounter.Entities.GetOrAdd(sourceEntity.OwnerId);
             if (sourceEntity.Type == Entity.EntityType.Summon)
                 sourceEntity = currentEncounter.Entities.GetOrAdd(sourceEntity.OwnerId);
-            var className = Skill.GetClassFromSkill((uint) damage.SkillId);
+            var className = Skill.GetClassFromSkill((uint)damage.SkillId);
             if (String.IsNullOrEmpty(sourceEntity.ClassName) && className != "UnknownClass")
             {
                 sourceEntity.Type = Entity.EntityType.Player;
@@ -149,7 +155,7 @@ namespace LostArkLogger
 
             if (String.IsNullOrEmpty(sourceEntity.Name)) sourceEntity.Name = damage.SourceId.ToString("X");
             foreach (var dmgEvent in damage.skillDamageEvents.skillDamageEvents)
-                ProcessDamageEvent(sourceEntity, (uint) damage.SkillId, (uint) damage.SkillEffectId, dmgEvent);
+                ProcessDamageEvent(sourceEntity, (uint)damage.SkillId, (uint)damage.SkillEffectId, dmgEvent);
         }
 
         void ProcessSkillDamage(PKTSkillDamageAbnormalMoveNotify damage)
@@ -255,8 +261,8 @@ namespace LostArkLogger
                     var projectile = new PKTNewProjectile(new BitReader(payload)).Info;
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
-                        OwnerId = (ulong) projectile.OwnerId,
-                        EntityId = (ulong) projectile.ProjectileId,
+                        OwnerId = (ulong)projectile.OwnerId,
+                        EntityId = (ulong)projectile.ProjectileId,
                         Type = Entity.EntityType.Projectile
                     });
                 }
@@ -265,8 +271,9 @@ namespace LostArkLogger
                     var npc = new PKTNewNpc(new BitReader(payload)).npcStruct;
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
-                        EntityId = (ulong) npc.NpcId,
-                        Name = Npc.GetNpcName((uint) npc.NpcType), Type = Entity.EntityType.Npc
+                        EntityId = (ulong)npc.NpcId,
+                        Name = Npc.GetNpcName((uint)npc.NpcType),
+                        Type = Entity.EntityType.Npc
                     });
                 }
                 else if (opcode == OpCodes.PKTNewPC)
@@ -274,8 +281,9 @@ namespace LostArkLogger
                     var pc = new PKTNewPC(new BitReader(payload)).pCStruct;
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
-                        EntityId = (ulong) pc.PlayerId, Name = pc.Name,
-                        ClassName = Npc.GetPcClass((uint) pc.ClassId),
+                        EntityId = (ulong)pc.PlayerId,
+                        Name = pc.Name,
+                        ClassName = Npc.GetPcClass((uint)pc.ClassId),
                         Type = Entity.EntityType.Player
                     });
                 }
@@ -287,7 +295,7 @@ namespace LostArkLogger
                     Encounters.Add(currentEncounter);
 
                     currentEncounter.Entities.AddOrUpdate(new Entity
-                        {EntityId = (ulong) env.PlayerId, Name = _localPlayerName, Type = Entity.EntityType.Player});
+                    { EntityId = (ulong)env.PlayerId, Name = _localPlayerName, Type = Entity.EntityType.Player });
                     onNewZone?.Invoke();
                 }
                 else if (opcode == OpCodes.PKTInitPC)
@@ -299,7 +307,8 @@ namespace LostArkLogger
                     _localPlayerName = pc.Name;
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
-                        EntityId = (ulong) pc.PlayerId, Name = _localPlayerName,
+                        EntityId = (ulong)pc.PlayerId,
+                        Name = _localPlayerName,
                         Type = Entity.EntityType.Player
                     });
                     onNewZone?.Invoke();
@@ -322,23 +331,24 @@ namespace LostArkLogger
                 else if (opcode == OpCodes.PKTSkillDamageNotify)
                     ProcessSkillDamage(new PKTSkillDamageNotify(new BitReader(payload)));
                 else if (opcode == OpCodes.PKTSkillDamageAbnormalMoveNotify)
-                    ProcessSkillDamage(new PKTSkillDamageAbnormalMoveNotify(payload));
-                /*else if (opcode == OpCodes.PKTStatChangeOriginNotify) // bard heal
+                    ProcessSkillDamage(new PKTSkillDamageAbnormalMoveNotify(new BitReader(payload)));
+                /*else if (opcode == OpCodes.PKTStatChangeOriginNotify) // heal
                 {
                     var health = new PKTStatChangeOriginNotify(new BitReader(payload));
                     var log = new LogInfo
                     {
-                        Time = DateTime.Now, SourceEntity = currentEncounter.Entities.GetOrAdd(health.ObjectId),
+                        Time = DateTime.Now,
+                        SourceEntity = currentEncounter.Entities.GetOrAdd(health.ObjectId),
                         DestinationEntity = currentEncounter.Entities.GetOrAdd(health.ObjectId),
                         Heal = (UInt32)health.StatPairChangedList.Values[0]
                     };
                     onCombatEvent?.Invoke(log);
                 }
-                else if (opcode == OpCodes.PKTParalyzationStateNotify) // stagger
+                else if (opcode == OpCodes.PKTStatusEffectAddNotify) // shield
                 {
                     var buff = new PKTStatusEffectAddNotify(new BitReader(payload));
                     //Console.WriteLine(buff.ObjectId.ToString("X") + " : " + buff.field2.ToString("X") + " : " + buff.statusEffectData.field2.ToString("X") + " : " + buff.statusEffectData.field3.ToString("X") + " : " + buff.statusEffectData.field10.ToString("X") + " : " + buff.statusEffectData.field5 + " : " + buff.statusEffectData.field9.num + " : " +( buff.statusEffectData.hasValue == 1 ? BitConverter.ToString(buff.statusEffectData.Value) : ""));
-                }
+                }*/
                 /*else if (opcode == OpCodes.PKTParalyzationStateNotify)
                 {
                     var stagger = new PKTParalyzationStateNotify(new BitReader(payload));
@@ -364,8 +374,12 @@ namespace LostArkLogger
                     var counter = new PKTCounterAttackNotify(new BitReader(payload));
                     var log = new LogInfo
                     {
-                        Time = DateTime.Now, SourceEntity = currentEncounter.Entities.GetOrAdd(counter.SourceId), DestinationEntity = currentEncounter.Entities.GetOrAdd(counter.TargetId), SkillName = "Counter",
-                        Damage = 0, Counter = true
+                        Time = DateTime.Now,
+                        SourceEntity = currentEncounter.Entities.GetOrAdd(counter.SourceId),
+                        DestinationEntity = currentEncounter.Entities.GetOrAdd(counter.TargetId),
+                        SkillName = "Counter",
+                        Damage = 0,
+                        Counter = true
                     };
                     onCombatEvent?.Invoke(log);
                 }
@@ -393,14 +407,14 @@ namespace LostArkLogger
         FileStream logStream;
         UInt32 currentIpAddr = 0xdeadbeef;
         string fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
-        
         int loggedPacketCount = 0;
 
         void AppendLog(LogInfo s)
         {
             if (enableLogging) File.AppendAllText(fileName, s.ToString() + "\n");
         }
-        void DoDebugLog(byte[] bytes) {
+        void DoDebugLog(byte[] bytes)
+        {
             if (debugLog)
             {
                 if (logger == null)
