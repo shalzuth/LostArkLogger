@@ -18,7 +18,7 @@ namespace LostArkLogger
             field7 = reader.ReadUInt32();
             hasfield8 = reader.ReadByte();
             if (hasfield8 == 1)
-                field8 = new Struct25(reader);
+                field8 = reader.ReadList<UInt64>();
             field9 = reader.ReadUInt32();
             field10 = reader.ReadUInt32();
             field11 = reader.ReadByte();
@@ -41,7 +41,7 @@ namespace LostArkLogger
         public UInt64 field6;
         public UInt32 field7;
         public Byte hasfield8;
-        public Struct25 field8;
+        public List<UInt64> field8;
         public UInt32 field9;
         public UInt32 field10;
         public Byte field11;

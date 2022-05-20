@@ -6,7 +6,7 @@ namespace LostArkLogger
     {
         public PKTStatusEffectAddNotify(BitReader reader)
         {
-            statusEffectData = new StatusEffectData(reader);
+            statusEffectData = reader.Read<StatusEffectData>();
             ObjectId = reader.ReadUInt64();
             field2 = reader.ReadUInt64();
             New = reader.ReadByte();

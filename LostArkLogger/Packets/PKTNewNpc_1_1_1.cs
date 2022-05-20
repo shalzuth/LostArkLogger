@@ -2,17 +2,17 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class Struct37
+    public class PKTNewNpc_1_1_1
     {
-        public Struct37(BitReader reader)
+        public PKTNewNpc_1_1_1(BitReader reader)
         {
-            num = reader.ReadUInt16();
+            num = reader.ReadUInt32();
             for(var i = 0; i < num; i++)
             {
                 field0s.Add(reader.ReadByte());
             }
         }
-        public UInt16 num;
+        public UInt32 num;
         public List<Byte> field0s = new List<Byte>();
     }
 }
