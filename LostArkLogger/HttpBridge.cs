@@ -95,9 +95,7 @@ namespace LostArkLogger
             this.thread = new Thread(this.Run);
             this.thread.Start();
 
-#if DEBUG
             Console.ReadLine();
-#endif
         }
 
         private void EnqueueMessage(string channel, string message)
@@ -111,8 +109,9 @@ namespace LostArkLogger
             {
                 if (this.messageQueue.TryDequeue(out var sendMessage))
                 {
+#if DEBUG
                     Console.WriteLine("Sending: " + sendMessage);
-
+#endif
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:" + Port);
                     request.Content = new StringContent(sendMessage);
                     request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
