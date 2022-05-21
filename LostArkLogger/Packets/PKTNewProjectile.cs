@@ -6,8 +6,8 @@ namespace LostArkLogger
     {
         public PKTNewProjectile(BitReader reader)
         {
-            Info = new ProjectileInfo(reader);
+            projectileInfo = reader.Read<ProjectileInfo>();
         }
-        public ProjectileInfo Info;
+        public ProjectileInfo projectileInfo;
     }
 }

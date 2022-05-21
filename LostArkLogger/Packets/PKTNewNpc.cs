@@ -10,7 +10,7 @@ namespace LostArkLogger
             hasfield1 = reader.ReadByte();
             if (hasfield1 == 1)
                 field1 = reader.ReadUInt64();
-            npcStruct = new NpcStruct(reader);
+            npcStruct = reader.Read<NpcStruct>();
             hasfield3 = reader.ReadByte();
             if (hasfield3 == 1)
                 field3 = reader.ReadByte();

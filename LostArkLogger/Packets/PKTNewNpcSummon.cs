@@ -10,7 +10,7 @@ namespace LostArkLogger
             OwnerId = reader.ReadUInt64();
             subfield1 = reader.ReadByte();
             field1 = reader.ReadByte();
-            npcStruct = new NpcStruct(reader);
+            npcStruct = reader.Read<NpcStruct>();
         }
         public Byte[] subfield0;
         public UInt64 OwnerId;

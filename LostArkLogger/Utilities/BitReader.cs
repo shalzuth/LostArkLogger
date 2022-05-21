@@ -125,6 +125,23 @@ namespace LostArkLogger
             var finalStringParsed = unicode ? System.Text.Encoding.Unicode.GetString(stringBytes.ToArray()) : System.Text.Encoding.UTF8.GetString(stringBytes.ToArray());
             return finalStringParsed;
         }
+        public T Read<T>(int byteArraySize = 0)
+        {
+            if (typeof(T) == typeof(Byte)) return (T)(Object)ReadByte();
+            if (typeof(T) == typeof(UInt16)) return (T)(Object)ReadUInt16();
+            if (typeof(T) == typeof(UInt32)) return (T)(Object)ReadUInt32();
+            if (typeof(T) == typeof(UInt64)) return (T)(Object)ReadUInt64();
+            if (typeof(T) == typeof(Byte[])) return (T)(Object)ReadBytes(byteArraySize);
+            return (T)Activator.CreateInstance(typeof(T), this);
+        }
+        public List<T> ReadList<T>(int byteArraySize = 0)
+        {
+            var num = ReadUInt16();
+            var list = new List<T>();
+            for(var i = 0; i < num; i++)
+                list.Add(Read<T>(byteArraySize));
+            return list;
+        }
         public UInt32 BitReverse(UInt32 value, Byte numBits)
         {
             UInt32 a = 0;

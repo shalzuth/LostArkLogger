@@ -18,6 +18,13 @@ namespace LostArkLogger
 
         public MainWindow()
         {
+            var res = MessageBox.Show("The game director has instructed Amazon Game Studios to ban users using a DPS Meter.\n\nAt this time, please refrain from using the DPS Meter.\n\nSelect \"Retry\" to voice your feedback, as this is not a hack nor a solution that should violate TOS", "Warning!", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Warning);
+            if (res == DialogResult.Abort) Environment.Exit(0);
+            if (res == DialogResult.Retry)
+            {
+                System.Diagnostics.Process.Start("https://forums.playlostark.com/t/talk-to-us-already-about-the-dps-meter/370558");            
+                Environment.Exit(0);
+            };
             Control.CheckForIllegalCrossThreadCalls = false;
             InitializeComponent();
             versionLabel.Text = "v" + System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString();

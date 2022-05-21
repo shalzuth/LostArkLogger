@@ -155,8 +155,8 @@ namespace LostArkLogger
             }
 
             if (String.IsNullOrEmpty(sourceEntity.Name)) sourceEntity.Name = damage.SourceId.ToString("X");
-            foreach (var dmgEvent in damage.skillDamageEvents.skillDamageEvents)
-                ProcessDamageEvent(sourceEntity, (uint)damage.SkillId, (uint)damage.SkillEffectId, dmgEvent);
+            foreach (var dmgEvent in damage.skillDamageEvents)
+                ProcessDamageEvent(sourceEntity, (uint) damage.SkillId, (uint) damage.SkillEffectId, dmgEvent);
         }
 
         void ProcessSkillDamage(PKTSkillDamageAbnormalMoveNotify damage)
@@ -174,7 +174,7 @@ namespace LostArkLogger
             }
 
             if (String.IsNullOrEmpty(sourceEntity.Name)) sourceEntity.Name = damage.SourceId.ToString("X");
-            foreach (var dmgEvent in damage.skillDamageMoveEvents.skillDamageMoveEvents)
+            foreach (var dmgEvent in damage.skillDamageMoveEvents)
                 ProcessDamageEvent(sourceEntity, (uint)damage.SkillId, (uint)damage.SkillEffectId, dmgEvent.skillDamageEvent);
         }
 
@@ -259,7 +259,7 @@ namespace LostArkLogger
                 */
                 if (opcode == OpCodes.PKTNewProjectile)
                 {
-                    var projectile = new PKTNewProjectile(new BitReader(payload)).Info;
+                    var projectile = new PKTNewProjectile(new BitReader(payload)).projectileInfo;
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
                         OwnerId = (ulong)projectile.OwnerId,
@@ -272,9 +272,8 @@ namespace LostArkLogger
                     var npc = new PKTNewNpc(new BitReader(payload)).npcStruct;
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
-                        EntityId = (ulong)npc.NpcId,
-                        Name = Npc.GetNpcName((uint)npc.NpcType),
-                        Type = Entity.EntityType.Npc
+                        EntityId = npc.NpcId,
+                        Name = Npc.GetNpcName(npc.NpcType), Type = Entity.EntityType.Npc
                     });
                 }
                 else if (opcode == OpCodes.PKTNewPC)
@@ -282,9 +281,8 @@ namespace LostArkLogger
                     var pc = new PKTNewPC(new BitReader(payload)).pCStruct;
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
-                        EntityId = (ulong)pc.PlayerId,
-                        Name = pc.Name,
-                        ClassName = Npc.GetPcClass((uint)pc.ClassId),
+                        EntityId = pc.PlayerId, Name = pc.Name,
+                        ClassName = Npc.GetPcClass(pc.ClassId),
                         Type = Entity.EntityType.Player
                     });
                 }
@@ -295,8 +293,7 @@ namespace LostArkLogger
                     currentEncounter = new Encounter();
                     Encounters.Add(currentEncounter);
 
-                    currentEncounter.Entities.AddOrUpdate(new Entity
-                    { EntityId = (ulong)env.PlayerId, Name = _localPlayerName, Type = Entity.EntityType.Player });
+                    currentEncounter.Entities.AddOrUpdate(new Entity {EntityId = (ulong) env.PlayerId, Name = _localPlayerName, Type = Entity.EntityType.Player});
                     onNewZone?.Invoke();
                 }
                 else if (opcode == OpCodes.PKTInitPC)
@@ -308,8 +305,7 @@ namespace LostArkLogger
                     _localPlayerName = pc.Name;
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
-                        EntityId = (ulong)pc.PlayerId,
-                        Name = _localPlayerName,
+                        EntityId = pc.PlayerId, Name = _localPlayerName,
                         Type = Entity.EntityType.Player
                     });
                     onNewZone?.Invoke();
@@ -341,7 +337,7 @@ namespace LostArkLogger
                         Time = DateTime.Now,
                         SourceEntity = currentEncounter.Entities.GetOrAdd(health.ObjectId),
                         DestinationEntity = currentEncounter.Entities.GetOrAdd(health.ObjectId),
-                        Heal = (UInt32)health.StatPairChangedList.Values[0]
+                        Heal = (UInt32)health.StatPairChangedList.Value[0]
                     };
                     onCombatEvent?.Invoke(log);
                 }
@@ -439,7 +435,7 @@ namespace LostArkLogger
                     onDebug?.Invoke((bytes.Length > 4).ToString() + ", "  + BitConverter.ToUInt16(bytes, 2).ToString() + ", " + OpCodes.PKTAuthTokenResult + ", " + (bytes[0] == 0x1e).ToString());
                     //Console.WriteLine((OpCodes)BitConverter.ToUInt16(bytes, 2));
                     //Console.WriteLine(BitConverter.ToString(bytes));
-                    if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && (OpCodes)BitConverter.ToUInt16(bytes, 2) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
+                    if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && GetOpCode(bytes) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
                     {
                         onNewZone?.Invoke();
                         currentIpAddr = srcAddr;
@@ -469,7 +465,8 @@ namespace LostArkLogger
 #pragma warning restore CS0618 // Type or member is obsolete
                     if (srcAddr != currentIpAddr)
                     {
-                        if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && (OpCodes)BitConverter.ToUInt16(bytes, 2) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
+                        var opcode = GetOpCode(bytes);
+                        if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && GetOpCode(bytes) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
                         {
                             onNewZone?.Invoke();
                             currentIpAddr = srcAddr;

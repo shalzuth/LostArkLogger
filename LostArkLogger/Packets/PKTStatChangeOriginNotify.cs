@@ -9,10 +9,10 @@ namespace LostArkLogger
             hasfield0 = reader.ReadByte();
             if (hasfield0 == 1)
                 field0 = reader.ReadUInt32();
-            StatPairList = new StatPair(reader);
+            StatPairList = reader.Read<StatPair>();
             field2 = reader.ReadByte();
             ObjectId = reader.ReadUInt64();
-            StatPairChangedList = new StatPair(reader);
+            StatPairChangedList = reader.Read<StatPair>();
         }
         public Byte hasfield0;
         public UInt32 field0;

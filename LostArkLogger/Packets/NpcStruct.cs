@@ -25,7 +25,7 @@ namespace LostArkLogger
             field6 = reader.ReadByte();
             hasfield7 = reader.ReadByte();
             if (hasfield7 == 1)
-                field7 = new Struct23(reader);
+                pKTNewNpc_1_1 = reader.Read<PKTNewNpc_1_1>();
             hasfield8 = reader.ReadByte();
             if (hasfield8 == 1)
                 field8 = reader.ReadUInt32();
@@ -33,12 +33,12 @@ namespace LostArkLogger
             if (hasfield9 == 1)
                 field9 = reader.ReadUInt64();
             field10 = reader.ReadUInt16();
-            field11 = new Struct13(reader);
+            statusEffectDatas = reader.ReadList<StatusEffectData>();
             hasfield12 = reader.ReadByte();
             if (hasfield12 == 1)
-                field12 = new Struct24(reader);
+                field12 = reader.ReadList<UInt32>();
             NpcType = reader.ReadUInt32();
-            statPair = new StatPair(reader);
+            statPair = reader.Read<StatPair>();
             hasfield15 = reader.ReadByte();
             if (hasfield15 == 1)
                 field15 = reader.ReadByte();
@@ -54,14 +54,14 @@ namespace LostArkLogger
             hasfield21 = reader.ReadByte();
             if (hasfield21 == 1)
                 field21 = reader.ReadUInt32();
-            field22 = new Struct16(reader);
+            pKTNewNpc_1_5_1s = reader.ReadList<PKTNewNpc_1_5_1>();
             field23 = reader.ReadByte();
             field24 = reader.ReadUInt16();
             field25 = reader.ReadUInt64();
             field26 = reader.ReadByte();
             hasfield27 = reader.ReadByte();
             if (hasfield27 == 1)
-                field27 = new Struct25(reader);
+                field27 = reader.ReadList<UInt64>();
             field28 = reader.ReadByte();
             hasfield29 = reader.ReadByte();
             if (hasfield29 == 1)
@@ -89,15 +89,15 @@ namespace LostArkLogger
         public UInt32 field5;
         public Byte field6;
         public Byte hasfield7;
-        public Struct23 field7;
+        public PKTNewNpc_1_1 pKTNewNpc_1_1;
         public Byte hasfield8;
         public UInt32 field8;
         public Byte hasfield9;
         public UInt64 field9;
         public UInt16 field10;
-        public Struct13 field11;
+        public List<StatusEffectData> statusEffectDatas;
         public Byte hasfield12;
-        public Struct24 field12;
+        public List<UInt32> field12;
         public UInt32 NpcType;
         public StatPair statPair;
         public Byte hasfield15;
@@ -111,13 +111,13 @@ namespace LostArkLogger
         public Byte field20;
         public Byte hasfield21;
         public UInt32 field21;
-        public Struct16 field22;
+        public List<PKTNewNpc_1_5_1> pKTNewNpc_1_5_1s;
         public Byte field23;
         public UInt16 field24;
         public UInt64 field25;
         public Byte field26;
         public Byte hasfield27;
-        public Struct25 field27;
+        public List<UInt64> field27;
         public Byte field28;
         public Byte hasfield29;
         public Byte field29;

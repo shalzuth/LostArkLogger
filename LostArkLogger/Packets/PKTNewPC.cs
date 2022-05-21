@@ -7,7 +7,7 @@ namespace LostArkLogger
         public PKTNewPC(BitReader reader)
         {
             field0 = reader.ReadByte();
-            pCStruct = new PCStruct(reader);
+            pCStruct = reader.Read<PCStruct>();
             field2 = reader.ReadByte();
             hasfield3 = reader.ReadByte();
             if (hasfield3 == 1)
@@ -20,7 +20,7 @@ namespace LostArkLogger
                 field5 = reader.ReadBytes(20);
             hasfield6 = reader.ReadByte();
             if (hasfield6 == 1)
-                field6 = new Struct20(reader);
+                pKTNewPC_2 = reader.Read<PKTNewPC_2>();
         }
         public Byte field0;
         public PCStruct pCStruct;
@@ -32,6 +32,6 @@ namespace LostArkLogger
         public Byte hasfield5;
         public Byte[] field5;
         public Byte hasfield6;
-        public Struct20 field6;
+        public PKTNewPC_2 pKTNewPC_2;
     }
 }

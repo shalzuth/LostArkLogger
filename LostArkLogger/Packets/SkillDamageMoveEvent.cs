@@ -13,7 +13,7 @@ namespace LostArkLogger
             field4 = reader.ReadUInt16();
             field5 = reader.ReadUInt64();
             field6 = reader.ReadUInt64();
-            skillDamageEvent = new SkillDamageEvent(reader);
+            skillDamageEvent = reader.Read<SkillDamageEvent>();
             field8 = reader.ReadUInt16();
         }
         public UInt64 field0;
