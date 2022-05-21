@@ -45,10 +45,11 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>winged-sword.ico</ApplicationIcon>
@@ -84,7 +85,7 @@
     <Compile Include="Data\SkillEffect.cs" />
     <Compile Include="Data\StatType.cs" />
     <Compile Include="Data\StatusEffectType.cs" />
-    <Compile Include="ElectronBridge.cs" />
+    <Compile Include="HttpBridge.cs" />
     <Compile Include="Overlay.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -227,9 +228,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="ElectronCgi.DotNet">
-      <Version>1.0.3</Version>
-    </PackageReference>
     <PackageReference Include="K4os.Compression.LZ4">
       <Version>1.2.16</Version>
     </PackageReference>
@@ -238,6 +236,9 @@
     </PackageReference>
     <PackageReference Include="Snappy.NET">
       <Version>1.1.1.8</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Http">
+      <Version>4.3.4</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
