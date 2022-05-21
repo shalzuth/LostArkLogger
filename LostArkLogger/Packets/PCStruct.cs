@@ -17,13 +17,13 @@ namespace LostArkLogger
             if (hasfield7 == 1)
                 field7 = reader.ReadBytes(12);
             field8 = reader.ReadList<UInt32>();
-            pKTNewNpc_1_1_2_1s = reader.ReadList<PKTNewNpc_1_1_2_1>();
+            itemInfos = reader.ReadList<ItemInfo>();
             field10 = reader.ReadByte();
             field11 = reader.ReadByte();
             field12 = reader.ReadUInt32();
             pKTNewNpc_1_1_1 = reader.Read<PKTNewNpc_1_1_1>();
-            pKTNewNpc_1_1_2_1s = reader.ReadList<PKTNewNpc_1_1_2_1>();
-            field15 = reader.ReadString();
+            EquippedItems = reader.ReadList<ItemInfo>();
+            Guild = reader.ReadString();
             field16 = reader.ReadUInt32();
             field17 = reader.ReadUInt32();
             field18 = reader.ReadUInt32();
@@ -43,13 +43,13 @@ namespace LostArkLogger
             field32 = reader.ReadUInt64();
             field33 = reader.ReadByte();
             field34 = reader.ReadByte();
-            field35 = reader.ReadUInt16();
+            Level = reader.ReadUInt16();
             ClassId = reader.ReadUInt16();
             field37 = reader.ReadUInt16();
             field38 = reader.ReadUInt32();
             field39 = reader.ReadUInt16();
             field40 = reader.ReadByte();
-            pKTNewPC_1_3 = reader.Read<PKTNewPC_1_3>();
+            skillRunes = reader.Read<SkillRunes>();
             field42 = reader.ReadUInt16();
             field43 = reader.ReadByte();
         }
@@ -63,13 +63,13 @@ namespace LostArkLogger
         public Byte hasfield7;
         public Byte[] field7;
         public List<UInt32> field8;
-        public List<PKTNewNpc_1_1_2_1> pKTNewNpc_1_1_2_1s;
+        public List<ItemInfo> itemInfos;
         public Byte field10;
         public Byte field11;
         public UInt32 field12;
         public PKTNewNpc_1_1_1 pKTNewNpc_1_1_1;
-        public List<PKTNewNpc_1_1_2_1> pKTNewNpc_1_1_2_1s2;
-        public String field15;
+        public List<ItemInfo> EquippedItems;
+        public String Guild;
         public UInt32 field16;
         public UInt32 field17;
         public UInt32 field18;
@@ -89,13 +89,13 @@ namespace LostArkLogger
         public UInt64 field32;
         public Byte field33;
         public Byte field34;
-        public UInt16 field35;
+        public UInt16 Level;
         public UInt16 ClassId;
         public UInt16 field37;
         public UInt32 field38;
         public UInt16 field39;
         public Byte field40;
-        public PKTNewPC_1_3 pKTNewPC_1_3;
+        public SkillRunes skillRunes;
         public UInt16 field42;
         public Byte field43;
     }

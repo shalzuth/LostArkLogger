@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class PKTNewNpc_1_1_2_1
+    public class ItemInfo
     {
-        public PKTNewNpc_1_1_2_1(BitReader reader)
+        public ItemInfo(BitReader reader)
         {
             field0 = reader.ReadList<Byte[]>(14);
             field1 = reader.ReadUInt16();

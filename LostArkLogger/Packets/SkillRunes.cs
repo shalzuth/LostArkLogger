@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class PKTNewPC_1_3
+    public class SkillRunes
     {
-        public PKTNewPC_1_3(BitReader reader)
+        public SkillRunes(BitReader reader)
         {
             num = reader.ReadUInt16();
             for(var i = 0; i < num; i++)

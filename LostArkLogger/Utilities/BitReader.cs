@@ -139,7 +139,7 @@ namespace LostArkLogger
             var num = ReadUInt16();
             var list = new List<T>();
             for(var i = 0; i < num; i++)
-                list.Add(Read<T>());
+                list.Add(Read<T>(byteArraySize));
             return list;
         }
         public UInt32 BitReverse(UInt32 value, Byte numBits)
