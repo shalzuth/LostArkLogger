@@ -16,6 +16,9 @@ namespace LostArkLogger
         PKTSkillDamageAbnormalMoveNotify = 0x790,
         PKTSkillDamageNotify = 0x2580,
         PKTStatChangeOriginNotify = 0x9FC3,
-        PKTStatusEffectAddNotify = 0x1CC2,
+        PKTStatusEffectAddNotify = 0x1CC2,        
+        PKTRaidResult = 0x8c57,
+        PKTRaidBossKillNotify = 0x4529,
+        PKTTriggerBossBattleStatus = 0x78cf,
     }
 }
