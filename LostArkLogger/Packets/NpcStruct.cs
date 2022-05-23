@@ -36,7 +36,7 @@ namespace LostArkLogger
             statusEffectDatas = reader.ReadList<StatusEffectData>();
             hasfield12 = reader.ReadByte();
             if (hasfield12 == 1)
-                field12 = reader.ReadList<UInt32>();
+                field12 = reader.ReadList<Byte[]>(12);
             NpcType = reader.ReadUInt32();
             statPair = reader.Read<StatPair>();
             hasfield15 = reader.ReadByte();
@@ -97,7 +97,7 @@ namespace LostArkLogger
         public UInt16 field10;
         public List<StatusEffectData> statusEffectDatas;
         public Byte hasfield12;
-        public List<UInt32> field12;
+        public List<Byte[]> field12;
         public UInt32 NpcType;
         public StatPair statPair;
         public Byte hasfield15;

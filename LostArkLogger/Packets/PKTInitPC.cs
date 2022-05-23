@@ -55,7 +55,7 @@ namespace LostArkLogger
             field44 = reader.ReadByte();
             field45 = reader.ReadUInt32();
             PlayerId = reader.ReadUInt64();
-            field47 = reader.ReadList<Byte>();
+            field47 = reader.ReadList<UInt16>();
             field48 = reader.ReadUInt32();
             field49 = reader.ReadUInt16();
             field50 = reader.ReadByte();
@@ -109,7 +109,7 @@ namespace LostArkLogger
         public Byte field44;
         public UInt32 field45;
         public UInt64 PlayerId;
-        public List<Byte> field47;
+        public List<UInt16> field47;
         public UInt32 field48;
         public UInt16 field49;
         public Byte field50;
