@@ -42,7 +42,7 @@ namespace LostArkLogger
             field33 = reader.ReadByte();
             field34 = reader.ReadByte();
             field35 = reader.ReadUInt32();
-            field36 = reader.ReadUInt32();
+            GearLevel = reader.ReadUInt32();
             field37 = reader.ReadUInt64();
             field38 = reader.ReadByte();
             field39 = reader.ReadBytes(112);
@@ -97,7 +97,7 @@ namespace LostArkLogger
         public Byte field33;
         public Byte field34;
         public UInt32 field35;
-        public UInt32 field36;
+        public UInt32 GearLevel;
         public UInt64 field37;
         public Byte field38;
         public Byte[] field39;

@@ -38,7 +38,7 @@ namespace LostArkLogger
             field27 = reader.ReadByte();
             pKTNewNpc_1_5_1s = reader.ReadList<PKTNewNpc_1_5_1>();
             field29 = reader.ReadByte();
-            field30 = reader.ReadUInt32();
+            GearLevel = reader.ReadUInt32();
             field31 = reader.ReadUInt32();
             field32 = reader.ReadUInt64();
             field33 = reader.ReadByte();
@@ -84,7 +84,7 @@ namespace LostArkLogger
         public Byte field27;
         public List<PKTNewNpc_1_5_1> pKTNewNpc_1_5_1s;
         public Byte field29;
-        public UInt32 field30;
+        public UInt32 GearLevel;
         public UInt32 field31;
         public UInt64 field32;
         public Byte field33;

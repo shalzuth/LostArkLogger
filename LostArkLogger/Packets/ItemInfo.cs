@@ -7,7 +7,7 @@ namespace LostArkLogger
         public ItemInfo(BitReader reader)
         {
             field0 = reader.ReadList<Byte[]>(14);
-            field1 = reader.ReadUInt16();
+            Level = reader.ReadUInt16();
             hasfield2 = reader.ReadByte();
             if (hasfield2 == 1)
                 field2 = reader.ReadByte();
@@ -16,7 +16,7 @@ namespace LostArkLogger
             field5 = reader.ReadSimpleInt();
         }
         public List<Byte[]> field0;
-        public UInt16 field1;
+        public UInt16 Level;
         public Byte hasfield2;
         public Byte field2;
         public UInt16 field3;

@@ -29,6 +29,7 @@ namespace LostArkLogger
         public Encounter currentEncounter = new Encounter();
         Byte[] fragmentedPacket = new Byte[0];
         private string _localPlayerName = "You";
+        private uint _localGearLevel = 0;
 
         public enum Region : Byte
         {
@@ -276,7 +277,8 @@ namespace LostArkLogger
                     {
                         EntityId = pc.PlayerId, Name = pc.Name,
                         ClassName = Npc.GetPcClass(pc.ClassId),
-                        Type = Entity.EntityType.Player
+                        Type = Entity.EntityType.Player,
+                        GearLevel = pc.GearLevel
                     });
                 }
                 else if (opcode == OpCodes.PKTInitEnv)
@@ -286,7 +288,13 @@ namespace LostArkLogger
                     currentEncounter = new Encounter();
                     Encounters.Add(currentEncounter);
 
-                    currentEncounter.Entities.AddOrUpdate(new Entity {EntityId = (ulong) env.PlayerId, Name = _localPlayerName, Type = Entity.EntityType.Player});
+                    currentEncounter.Entities.AddOrUpdate(new Entity
+                    {
+                        EntityId = (ulong)env.PlayerId,
+                        Name = _localPlayerName,
+                        Type = Entity.EntityType.Player,
+                        GearLevel = _localGearLevel
+                    });
                     onNewZone?.Invoke();
                 }
                 else if (opcode == OpCodes.PKTInitPC)
@@ -296,10 +304,13 @@ namespace LostArkLogger
                     currentEncounter = new Encounter();
                     Encounters.Add(currentEncounter);
                     _localPlayerName = pc.Name;
+                    _localGearLevel = pc.GearLevel;
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
-                        EntityId = pc.PlayerId, Name = _localPlayerName,
-                        Type = Entity.EntityType.Player
+                        EntityId = pc.PlayerId,
+                        Name = _localPlayerName,
+                        Type = Entity.EntityType.Player,
+                        GearLevel = _localGearLevel
                     });
                     onNewZone?.Invoke();
                 }

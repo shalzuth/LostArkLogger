@@ -130,15 +130,15 @@ namespace LostArkLogger
                     e.Graphics.FillRectangle(brushes[i % brushes.Count], 0, (i + 1) * barHeight, barWidth, barHeight);
                     var dps = FormatNumber((ulong)(playerDmg.Value.Item1 / elapsed));
                     var formattedDmg = FormatNumber(playerDmg.Value.Item1) + " (" + dps + ", " + (1f * playerDmg.Value.Item1 / totalDamage).ToString("P1");
-                    if (level == Level.Damage)
+                    if (level == Level.Damage && Width > 450)
                     {
                         formattedDmg += " | H: " + playerDmg.Value.Item2 + " | C: " + (1f * playerDmg.Value.Item3 / playerDmg.Value.Item2).ToString("P1");
                     }
                     var nameOffset = 0;
-                    if (rowText.Contains("("))
+                    if (rowText.Contains("(") && scope == Scope.TopLevel)
                     {
                         var className = rowText.Substring(rowText.IndexOf("(") + 1);
-                        className = className.Substring(0, className.IndexOf(")"));
+                        className = className.Substring(0, className.IndexOf(")")).Split(' ')[1];
                         e.Graphics.DrawImage(Properties.Resources.class_symbol_0, new Rectangle(2, (i + 1) * barHeight + 2, barHeight - 4, barHeight - 4), GetSpriteLocation(Array.IndexOf(ClassIconIndex, className)), GraphicsUnit.Pixel);
                         nameOffset += 16;
                     }

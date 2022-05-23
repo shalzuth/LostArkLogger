@@ -11,7 +11,18 @@ namespace LostArkLogger
         public String ClassName = "";
         public EntityType Type = EntityType.Npc;
         public UInt32 Stagger;
-        public String VisibleName { get { return Name + (String.IsNullOrEmpty(ClassName) ? "" :" (" + ClassName + ")"); } }
+        public UInt32 GearLevel;
+        public String GearScore
+        {
+            get
+            {
+                return BitConverter.ToSingle(BitConverter.GetBytes(GearLevel), 0).ToString("0.##");
+            }
+        }
+        public String VisibleName
+        {
+            get { return Name + (String.IsNullOrEmpty(ClassName) ? "" : " (" + GearScore + " " + ClassName + ")"); }
+        }
         public enum EntityType
         {
             Unknown,
