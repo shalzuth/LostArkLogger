@@ -87,14 +87,14 @@ namespace LostArkLogger
                                 }
                                 catch (Exception ex)
                                 {
-                                    //Console.WriteLine("Exception while trying to listen to NIC {0}:\n{1}", device.Name, ex.ToString());
+                                    Console.WriteLine("Exception while trying to listen to NIC {0}:\n{1}", device.Name, ex.ToString());
                                 }
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        //Console.WriteLine("Sharppcap init failed, using rawsockets instead, exception:\n{0}", ex.ToString());
+                        Console.WriteLine("Sharppcap init failed, using rawsockets instead, exception:\n{0}", ex.ToString());
                     }
                     // If we failed to find a pcap device, fall back to rawsockets.
                     if (!foundAdapter)
@@ -156,7 +156,7 @@ namespace LostArkLogger
 
             if (String.IsNullOrEmpty(sourceEntity.Name)) sourceEntity.Name = damage.SourceId.ToString("X");
             foreach (var dmgEvent in damage.skillDamageEvents)
-                ProcessDamageEvent(sourceEntity, (uint) damage.SkillId, (uint) damage.SkillEffectId, dmgEvent);
+                ProcessDamageEvent(sourceEntity, (uint)damage.SkillId, (uint)damage.SkillEffectId, dmgEvent);
         }
 
         void ProcessSkillDamage(PKTSkillDamageAbnormalMoveNotify damage)
@@ -273,7 +273,8 @@ namespace LostArkLogger
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
                         EntityId = npc.NpcId,
-                        Name = Npc.GetNpcName(npc.NpcType), Type = Entity.EntityType.Npc
+                        Name = Npc.GetNpcName(npc.NpcType),
+                        Type = Entity.EntityType.Npc
                     });
                 }
                 else if (opcode == OpCodes.PKTNewPC)
@@ -281,7 +282,8 @@ namespace LostArkLogger
                     var pc = new PKTNewPC(new BitReader(payload)).pCStruct;
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
-                        EntityId = pc.PlayerId, Name = pc.Name,
+                        EntityId = pc.PlayerId,
+                        Name = pc.Name,
                         ClassName = Npc.GetPcClass(pc.ClassId),
                         Type = Entity.EntityType.Player
                     });
@@ -293,7 +295,7 @@ namespace LostArkLogger
                     currentEncounter = new Encounter();
                     Encounters.Add(currentEncounter);
 
-                    currentEncounter.Entities.AddOrUpdate(new Entity {EntityId = (ulong) env.PlayerId, Name = _localPlayerName, Type = Entity.EntityType.Player});
+                    currentEncounter.Entities.AddOrUpdate(new Entity { EntityId = (ulong)env.PlayerId, Name = _localPlayerName, Type = Entity.EntityType.Player });
                     onNewZone?.Invoke();
                 }
                 else if (opcode == OpCodes.PKTInitPC)
@@ -305,7 +307,8 @@ namespace LostArkLogger
                     _localPlayerName = pc.Name;
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
-                        EntityId = pc.PlayerId, Name = _localPlayerName,
+                        EntityId = pc.PlayerId,
+                        Name = _localPlayerName,
                         Type = Entity.EntityType.Player
                     });
                     onNewZone?.Invoke();
@@ -329,7 +332,7 @@ namespace LostArkLogger
                     ProcessSkillDamage(new PKTSkillDamageNotify(new BitReader(payload)));
                 else if (opcode == OpCodes.PKTSkillDamageAbnormalMoveNotify)
                     ProcessSkillDamage(new PKTSkillDamageAbnormalMoveNotify(new BitReader(payload)));
-                /*else if (opcode == OpCodes.PKTStatChangeOriginNotify) // heal
+                else if (opcode == OpCodes.PKTStatChangeOriginNotify) // heal
                 {
                     var health = new PKTStatChangeOriginNotify(new BitReader(payload));
                     var log = new LogInfo
@@ -339,13 +342,13 @@ namespace LostArkLogger
                         DestinationEntity = currentEncounter.Entities.GetOrAdd(health.ObjectId),
                         Heal = (UInt32)health.StatPairChangedList.Value[0]
                     };
-                    onCombatEvent?.Invoke(log);
+                    //onCombatEvent?.Invoke(log);
                 }
                 else if (opcode == OpCodes.PKTStatusEffectAddNotify) // shield
                 {
                     var buff = new PKTStatusEffectAddNotify(new BitReader(payload));
                     //Console.WriteLine(buff.ObjectId.ToString("X") + " : " + buff.field2.ToString("X") + " : " + buff.statusEffectData.field2.ToString("X") + " : " + buff.statusEffectData.field3.ToString("X") + " : " + buff.statusEffectData.field10.ToString("X") + " : " + buff.statusEffectData.field5 + " : " + buff.statusEffectData.field9.num + " : " +( buff.statusEffectData.hasValue == 1 ? BitConverter.ToString(buff.statusEffectData.Value) : ""));
-                }*/
+                }
                 /*else if (opcode == OpCodes.PKTParalyzationStateNotify)
                 {
                     var stagger = new PKTParalyzationStateNotify(new BitReader(payload));
@@ -499,7 +502,7 @@ namespace LostArkLogger
                 }
                 catch (Exception ex)
                 {
-                    //Console.WriteLine("Exception while trying to stop capture on NIC {0}:\n{1}", pcap.Name, ex.ToString());
+                    Console.WriteLine("Exception while trying to stop capture on NIC {0}:\n{1}", pcap.Name, ex.ToString());
                 }
             }
             tcp = null;
