@@ -64,6 +64,10 @@ namespace LostArkLogger
                 {
                     EnqueueMessage("message", "Failed to initialize Npcap, using raw sockets instead. You can try to restart the app.");
                 }
+                else
+                {
+                    EnqueueMessage("message", "Using Npcap!");
+                }
 
             }
 

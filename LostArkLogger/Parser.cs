@@ -432,13 +432,12 @@ namespace LostArkLogger
                 var srcAddr = connection.RemoteIP;
                 if (srcAddr != currentIpAddr)
                 {
-                    //onDebug?.Invoke((bytes.Length > 4).ToString() + ", "  + BitConverter.ToUInt16(bytes, 2).ToString() + ", " + OpCodes.PKTAuthTokenResult + ", " + (bytes[0] == 0x1e).ToString());
-                    //Console.WriteLine((OpCodes)BitConverter.ToUInt16(bytes, 2));
-                    //Console.WriteLine(BitConverter.ToString(bytes));
                     if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && GetOpCode(bytes) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
                     {
                         onNewZone?.Invoke();
                         currentIpAddr = srcAddr;
+                        fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
+                        loggedPacketCount = 0;
                     }
                     else return;
                 }
@@ -465,7 +464,6 @@ namespace LostArkLogger
 #pragma warning restore CS0618 // Type or member is obsolete
                     if (srcAddr != currentIpAddr)
                     {
-                        var opcode = GetOpCode(bytes);
                         if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && GetOpCode(bytes) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
                         {
                             onNewZone?.Invoke();
