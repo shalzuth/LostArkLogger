@@ -8,12 +8,12 @@ namespace LostArkLogger
         {
             Damage = reader.ReadPackedInt();
             CurrentHealth = reader.ReadPackedInt();
-            field2 = reader.ReadByte();
+            Modifier = reader.ReadByte();
             TargetId = reader.ReadUInt64();
             hasfield4 = reader.ReadByte();
             if (hasfield4 == 1)
                 field4 = reader.ReadByte();
-            Modifier = reader.ReadByte();
+            field2 = reader.ReadByte();
             MaxHealth = reader.ReadPackedInt();
             field7 = reader.ReadUInt16();
         }
