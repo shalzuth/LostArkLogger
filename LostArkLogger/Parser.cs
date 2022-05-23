@@ -436,6 +436,8 @@ namespace LostArkLogger
                     {
                         onNewZone?.Invoke();
                         currentIpAddr = srcAddr;
+                        fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
+                        loggedPacketCount = 0;
                     }
                     else return;
                 }
