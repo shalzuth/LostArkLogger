@@ -9,9 +9,10 @@ namespace LostArkLogger
     {
         public DateTime Start = DateTime.Now;
         public DateTime End;
-        public UInt32 deaths = 0;
+        public UInt32 EDeaths = 0;
         public ConcurrentDictionary<UInt64, Entity> Entities = new ConcurrentDictionary<UInt64, Entity>();
         public ConcurrentBag<LogInfo> Infos = new ConcurrentBag<LogInfo>();
+        public ConcurrentBag<LogInfo> MaintainedInfo = new ConcurrentBag<LogInfo>();
         public String EncounterName
         {
             get
@@ -24,6 +25,13 @@ namespace LostArkLogger
             get
             {
                 return Infos.Where(i=>i.Counter).GroupBy(i => i.SourceEntity.VisibleName).Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(j => j.Counter ? 1 : 0))).ToDictionary(x => x.Key, x => x.Value);
+            }
+        }
+        public Dictionary<String, UInt64> Deaths
+        {
+            get
+            {
+                return MaintainedInfo.Where(i => i.Death).GroupBy(i => i.SourceEntity.VisibleName).Select(i => new KeyValuePair<String, UInt64>(i.Key, (UInt64)i.Sum(j => j.Death ? 1 : 0))).ToDictionary(x => x.Key, x => x.Value);
             }
         }
         public Dictionary<String, UInt64> Stagger

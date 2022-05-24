@@ -321,7 +321,10 @@ namespace LostArkLogger
                     currentEncounter.End = DateTime.Now;
                     currentEncounter = new Encounter();
                     if (opcode == OpCodes.PKTRaidBossKillNotify || opcode == OpCodes.PKTTriggerBossBattleStatus)
+                    {
                         currentEncounter.Entities = Encounters.Last().Entities; // preserve entities 
+                        currentEncounter.MaintainedInfo = Encounters.Last().MaintainedInfo;
+                    }
                     Encounters.Add(currentEncounter);
                     
                 }
@@ -380,25 +383,26 @@ namespace LostArkLogger
                     };
                     onCombatEvent?.Invoke(log);
                 }
-                else if (opcode == OpCodes.PKTDeathNotify) // todo: provide a UI to set death limit and add death counter to meter
+                else if (opcode == OpCodes.PKTDeathNotify) // todo: provide a UI to set death limit
                 {
                     var Max_deaths = 2; 
 
 
                     var Death = new PKTDeathNotify(new BitReader(payload));
                     var Target = currentEncounter.Entities.GetOrAdd(Death.target);
-                    if ((currentEncounter.deaths < Max_deaths) & (Target.Type == Entity.EntityType.Player))
+                    if ((currentEncounter.EDeaths < Max_deaths) & (Target.Type == Entity.EntityType.Player))
                     {
                         var log = new LogInfo
                         {
                             Time = DateTime.Now,
-                            SourceEntity = currentEncounter.Entities.GetOrAdd(Death.target),
-                            DestinationEntity = Target,
+                            SourceEntity = Target,
+                            DestinationEntity = currentEncounter.Entities.GetOrAdd(Death.source),
                             SkillName = "Death",
                             Damage = 0,
-                            Counter = false
+                            Counter = false,
+                            Death = true
                         };
-                        currentEncounter.deaths++;
+                        currentEncounter.EDeaths++;
                         onCombatEvent?.Invoke(log);
                     }
                 }
@@ -495,8 +499,14 @@ namespace LostArkLogger
         }
         private void Parser_onDamageEvent(LogInfo log)
         {
+            if (log.Death)
+            {
+                currentEncounter.MaintainedInfo.Add(log);
+            }
             currentEncounter.Infos.Add(log);
+
         }
+
         private void Parser_onNewZone()
         {
         }

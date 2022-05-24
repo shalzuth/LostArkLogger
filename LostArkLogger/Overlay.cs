@@ -18,6 +18,7 @@ namespace LostArkLogger
             Stagger,
             Heal,
             Shield,
+            Death,
             Max
         }
         enum Scope // need better state, suboverlay type/etc.
@@ -113,9 +114,11 @@ namespace LostArkLogger
                     level == Level.Stagger ? i.Stagger :
                     level == Level.Counterattacks ? (i.Counter ? 1u : 0) :
                     level == Level.Heal ? i.Heal :
-                    level == Level.Shield ? i.Shield : 0)), SubEntity);
-                if (level == Level.Damage) rows = encounter.GetDamages((i=>i.Damage), SubEntity);
+                    level == Level.Shield ? i.Shield : 
+                    level == Level.Death ? (i.Death ? 1u : 0) : 0)), SubEntity);
+                if (level == Level.Damage) rows = encounter.GetDamages((i => i.Damage), SubEntity);
                 else if (level == Level.Counterattacks) rows = encounter.Counterattacks.ToDictionary(x => x.Key, x => Tuple.Create(x.Value, 0u, 0u));
+                else if (level == Level.Death) rows = encounter.Deaths.ToDictionary(x => x.Key, x => Tuple.Create(x.Value,0u, 0u));
                 else if (level == Level.Stagger) rows = encounter.Stagger.ToDictionary(x => x.Key, x => Tuple.Create(x.Value, 0u, 0u));
                 var elapsed = ((encounter.End == default(DateTime) ? DateTime.Now : encounter.End) - encounter.Start).TotalSeconds;
                 var maxDamage = rows.Count == 0 ? 0 : rows.Max(b => b.Value.Item1);

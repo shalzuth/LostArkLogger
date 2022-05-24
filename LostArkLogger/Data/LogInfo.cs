@@ -17,6 +17,7 @@ namespace LostArkLogger
         public Boolean BackAttack { get; set; }
         public Boolean FrontAttack { get; set; }
         public Boolean Counter { get; set; }
+        public Boolean Death { get; set; }
         public override string ToString()
         {
             return Time.ToString("yy:MM:dd:HH:mm:ss.f") + "," +
