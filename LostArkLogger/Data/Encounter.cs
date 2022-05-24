@@ -9,6 +9,7 @@ namespace LostArkLogger
     {
         public DateTime Start = DateTime.Now;
         public DateTime End;
+        public UInt32 deaths = 0;
         public ConcurrentDictionary<UInt64, Entity> Entities = new ConcurrentDictionary<UInt64, Entity>();
         public ConcurrentBag<LogInfo> Infos = new ConcurrentBag<LogInfo>();
         public String EncounterName

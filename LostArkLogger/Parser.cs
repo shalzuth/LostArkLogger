@@ -323,6 +323,7 @@ namespace LostArkLogger
                     if (opcode == OpCodes.PKTRaidBossKillNotify || opcode == OpCodes.PKTTriggerBossBattleStatus)
                         currentEncounter.Entities = Encounters.Last().Entities; // preserve entities 
                     Encounters.Add(currentEncounter);
+                    
                 }
                 /*if ((OpCodes)BitConverter.ToUInt16(converted.ToArray(), 2) == OpCodes.PKTRemoveObject)
                 {
@@ -378,6 +379,28 @@ namespace LostArkLogger
                         Damage = 0, Counter = true
                     };
                     onCombatEvent?.Invoke(log);
+                }
+                else if (opcode == OpCodes.PKTDeathNotify) // todo: provide a UI to set death limit and add death counter to meter
+                {
+                    var Max_deaths = 2; 
+
+
+                    var Death = new PKTDeathNotify(new BitReader(payload));
+                    var Target = currentEncounter.Entities.GetOrAdd(Death.target);
+                    if ((currentEncounter.deaths < Max_deaths) & (Target.Type == Entity.EntityType.Player))
+                    {
+                        var log = new LogInfo
+                        {
+                            Time = DateTime.Now,
+                            SourceEntity = currentEncounter.Entities.GetOrAdd(Death.target),
+                            DestinationEntity = Target,
+                            SkillName = "Death",
+                            Damage = 0,
+                            Counter = false
+                        };
+                        currentEncounter.deaths++;
+                        onCombatEvent?.Invoke(log);
+                    }
                 }
                 else if (opcode == OpCodes.PKTNewNpcSummon)
                 {
