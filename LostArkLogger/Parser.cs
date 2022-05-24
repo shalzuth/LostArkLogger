@@ -385,12 +385,10 @@ namespace LostArkLogger
                 }
                 else if (opcode == OpCodes.PKTDeathNotify) // todo: provide a UI to set death limit
                 {
-                    var Max_deaths = 2; 
-
 
                     var Death = new PKTDeathNotify(new BitReader(payload));
                     var Target = currentEncounter.Entities.GetOrAdd(Death.target);
-                    if ((currentEncounter.EDeaths < Max_deaths) & (Target.Type == Entity.EntityType.Player))
+                    if (Target.Type == Entity.EntityType.Player)
                     {
                         var log = new LogInfo
                         {
@@ -499,7 +497,9 @@ namespace LostArkLogger
         }
         private void Parser_onDamageEvent(LogInfo log)
         {
-            if (log.Death)
+            var Max_deaths = 2;
+
+            if (log.Death && currentEncounter.EDeaths <= Max_deaths)
             {
                 currentEncounter.MaintainedInfo.Add(log);
             }
