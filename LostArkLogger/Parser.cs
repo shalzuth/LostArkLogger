@@ -41,7 +41,6 @@ namespace LostArkLogger
         public Parser()
         {
             Encounters.Add(currentEncounter);
-            onCombatEvent += AppendLog;
             onCombatEvent += Parser_onDamageEvent;
             onNewZone += Parser_onNewZone;
 
@@ -133,6 +132,7 @@ namespace LostArkLogger
                 FrontAttack = ((DamageModifierFlags) dmgEvent.Modifier & (DamageModifierFlags.FrontAttack)) > 0
             };
             onCombatEvent?.Invoke(log);
+            AppendLog(0, "");
         }
         void ProcessSkillDamage(PKTSkillDamageNotify damage)
         {
@@ -261,26 +261,6 @@ namespace LostArkLogger
                         Type = Entity.EntityType.Projectile
                     });
                 }
-                else if (opcode == OpCodes.PKTNewNpc)
-                {
-                    var npc = new PKTNewNpc(new BitReader(payload)).npcStruct;
-                    currentEncounter.Entities.AddOrUpdate(new Entity
-                    {
-                        EntityId = npc.NpcId,
-                        Name = Npc.GetNpcName(npc.NpcType), Type = Entity.EntityType.Npc
-                    });
-                }
-                else if (opcode == OpCodes.PKTNewPC)
-                {
-                    var pc = new PKTNewPC(new BitReader(payload)).pCStruct;
-                    currentEncounter.Entities.AddOrUpdate(new Entity
-                    {
-                        EntityId = pc.PlayerId, Name = pc.Name,
-                        ClassName = Npc.GetPcClass(pc.ClassId),
-                        Type = Entity.EntityType.Player,
-                        GearLevel = pc.GearLevel
-                    });
-                }
                 else if (opcode == OpCodes.PKTInitEnv)
                 {
                     var env = new PKTInitEnv(new BitReader(payload));
@@ -296,6 +276,7 @@ namespace LostArkLogger
                         GearLevel = _localGearLevel
                     });
                     onNewZone?.Invoke();
+                    AppendLog(1, env.PlayerId.ToString("X"));
                 }
                 else if (opcode == OpCodes.PKTInitPC)
                 {
@@ -313,6 +294,38 @@ namespace LostArkLogger
                         GearLevel = _localGearLevel
                     });
                     onNewZone?.Invoke();
+                    AppendLog(2, pc.Name, pc.GearLevel.ToString());
+                }
+                else if (opcode == OpCodes.PKTNewPC)
+                {
+                    var pc = new PKTNewPC(new BitReader(payload)).pCStruct;
+                    currentEncounter.Entities.AddOrUpdate(new Entity
+                    {
+                        EntityId = pc.PlayerId,
+                        Name = pc.Name,
+                        ClassName = Npc.GetPcClass(pc.ClassId),
+                        Type = Entity.EntityType.Player,
+                        GearLevel = pc.GearLevel
+                    });
+                    AppendLog(3, pc.PlayerId.ToString("X"), pc.Name, pc.ClassId.ToString(), pc.Level.ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_HP)].ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_MAX_HP)].ToString());
+                }
+                else if (opcode == OpCodes.PKTNewNpc)
+                {
+                    var npc = new PKTNewNpc(new BitReader(payload)).npcStruct;
+                    currentEncounter.Entities.AddOrUpdate(new Entity
+                    {
+                        EntityId = npc.NpcId,
+                        Name = Npc.GetNpcName(npc.NpcType),
+                        Type = Entity.EntityType.Npc
+                    });
+                    AppendLog(4, npc.NpcId.ToString("X"), npc.NpcType.ToString(), Npc.GetNpcName(npc.NpcType), npc.statPair.Value[npc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_HP)].ToString(), npc.statPair.Value[npc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_MAX_HP)].ToString());
+                }
+                else if (opcode == OpCodes.PKTRemoveObject)
+                {
+                    var obj = new PKTRemoveObject(new BitReader(payload));
+                    var obj2 = new PKTRemoveObject(new BitReader(payload));
+                    //var projectile = new PKTRemoveObject { Bytes = converted };
+                    //ProjectileOwner.Remove(projectile.ProjectileId, projectile.OwnerId);
                 }
                 else if (opcode == OpCodes.PKTRaidResult // raid over
                          || opcode == OpCodes.PKTRaidBossKillNotify // boss dead, includes argos phases
@@ -324,11 +337,6 @@ namespace LostArkLogger
                         currentEncounter.Entities = Encounters.Last().Entities; // preserve entities 
                     Encounters.Add(currentEncounter);
                 }
-                /*if ((OpCodes)BitConverter.ToUInt16(converted.ToArray(), 2) == OpCodes.PKTRemoveObject)
-                {
-                    var projectile = new PKTRemoveObject { Bytes = converted };
-                    ProjectileOwner.Remove(projectile.ProjectileId, projectile.OwnerId);
-                }*/
                 else if (opcode == OpCodes.PKTSkillDamageNotify)
                     ProcessSkillDamage(new PKTSkillDamageNotify(new BitReader(payload)));
                 else if (opcode == OpCodes.PKTSkillDamageAbnormalMoveNotify)
@@ -403,6 +411,16 @@ namespace LostArkLogger
         void AppendLog(LogInfo s)
         {
             if (enableLogging) File.AppendAllText(fileName, s.ToString() + "\n");
+        }
+        System.Security.Cryptography.MD5 hash = System.Security.Cryptography.MD5.Create();
+        void AppendLog(int id, params string[] elements)
+        {
+            if (enableLogging)
+            {
+                var log = id + "|" + DateTime.Now.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'") + "|" + String.Join("|", elements);
+                var logHash = string.Concat(hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(log)).Select(x => x.ToString("x2")));
+                File.AppendAllText(fileName, log + "|" + logHash + "\n");
+            }
         }
         void DoDebugLog(byte[] bytes) {
             if (debugLog)
