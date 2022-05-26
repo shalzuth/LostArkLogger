@@ -124,6 +124,18 @@ namespace LostArkLogger
 
         void ProcessDamageEvent(Entity sourceEntity, UInt32 skillId, UInt32 skillEffectId, SkillDamageEvent dmgEvent)
         {
+            // damage dealer is a player
+            if(sourceEntity.ClassName != "UnknownClass")
+            {
+                // player hasn't been announced on logs before. possibly because user opened logger after they got into a zone
+                if (!currentEncounter.LoggedEntities.ContainsKey(sourceEntity.EntityId))
+                {
+                    // classId is unknown, can be fixed
+                    // level, currenthp and maxhp is unknown
+                    AppendLog(3, sourceEntity.EntityId.ToString("X"), sourceEntity.Name, "0", sourceEntity.ClassName, "1", "0", "0");
+                    currentEncounter.LoggedEntities.TryAdd(sourceEntity.EntityId, true);
+                }
+            }
             var skillName = Skill.GetSkillName(skillId, skillEffectId);
             var targetEntity = currentEncounter.Entities.GetOrAdd(dmgEvent.TargetId);
             var destinationName = targetEntity != null ? targetEntity.VisibleName : dmgEvent.TargetId.ToString("X");
@@ -311,6 +323,7 @@ namespace LostArkLogger
                     Encounters.Add(currentEncounter);
                     _localPlayerName = pc.Name;
                     _localGearLevel = pc.GearLevel;
+
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
                         EntityId = pc.PlayerId,
@@ -319,8 +332,14 @@ namespace LostArkLogger
                         Type = Entity.EntityType.Player,
                         GearLevel = _localGearLevel
                     });
+                    currentEncounter.Entities.AddOrUpdate(new Entity { ClassName = Npc.GetPcClass(pc.ClassId) });
                     onNewZone?.Invoke();
-                    AppendLog(3, pc.PlayerId.ToString("X"), pc.Name, pc.ClassId.ToString(), Npc.GetPcClass(pc.ClassId), pc.Level.ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_HP)].ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_MAX_HP)].ToString());
+
+                    if (!currentEncounter.LoggedEntities.ContainsKey(pc.PlayerId))
+                    {
+                        AppendLog(3, pc.PlayerId.ToString("X"), pc.Name, pc.ClassId.ToString(), Npc.GetPcClass(pc.ClassId), pc.Level.ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_HP)].ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_MAX_HP)].ToString());
+                        currentEncounter.LoggedEntities.TryAdd(pc.PlayerId, true);
+                    }
                 }
                 else if (opcode == OpCodes.PKTNewPC)
                 {
@@ -333,7 +352,12 @@ namespace LostArkLogger
                         Type = Entity.EntityType.Player,
                         GearLevel = pc.GearLevel
                     });
-                    AppendLog(3, pc.PlayerId.ToString("X"), pc.Name, pc.ClassId.ToString(), Npc.GetPcClass(pc.ClassId), pc.Level.ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_HP)].ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_MAX_HP)].ToString());
+
+                    if (!currentEncounter.LoggedEntities.ContainsKey(pc.PlayerId))
+                    {
+                        AppendLog(3, pc.PlayerId.ToString("X"), pc.Name, pc.ClassId.ToString(), Npc.GetPcClass(pc.ClassId), pc.Level.ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_HP)].ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_MAX_HP)].ToString());
+                        currentEncounter.LoggedEntities.TryAdd(pc.PlayerId, true);
+                    }
                 }
                 else if (opcode == OpCodes.PKTNewNpc)
                 {
