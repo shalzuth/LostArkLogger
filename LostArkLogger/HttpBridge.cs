@@ -109,7 +109,7 @@ namespace LostArkLogger
                     mediaTypeHeaderValue.CharSet = "utf-8";
                     request.Content.Headers.ContentType = mediaTypeHeaderValue;
 
-                    //await this.http.SendAsync(request);
+                    await this.http.SendAsync(request);
                 }
                 else
                 {
