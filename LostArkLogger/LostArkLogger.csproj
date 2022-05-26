@@ -81,6 +81,7 @@
     <Compile Include="Data\Npc.cs" />
     <Compile Include="Data\ObjectSerialize.cs" />
     <Compile Include="Data\Skill.cs" />
+    <Compile Include="Data\SkillBuff.cs" />
     <Compile Include="Data\SkillEffect.cs" />
     <Compile Include="Data\StatType.cs" />
     <Compile Include="Data\StatusEffectType.cs" />
@@ -149,6 +150,7 @@
     <None Include="Resources\Npc.bin" />
     <None Include="Resources\oodle_state_ru.bin" />
     <None Include="Resources\Skill.bin" />
+    <None Include="Resources\SkillBuff.bin" />
     <None Include="Resources\SkillEffect.bin" />
     <None Include="Resources\xor_kr.bin" />
     <None Include="Resources\xor_ru.bin" />

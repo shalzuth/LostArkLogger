@@ -253,26 +253,6 @@ namespace LostArkLogger.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static byte[] oodle_state_kr {
-            get {
-                object obj = ResourceManager.GetObject("oodle_state_kr", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] oodle_state_ru {
-            get {
-                object obj = ResourceManager.GetObject("oodle_state_ru", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         public static byte[] oodle_state_steam {
             get {
                 object obj = ResourceManager.GetObject("oodle_state_steam", resourceCulture);
@@ -343,6 +323,16 @@ namespace LostArkLogger.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        public static byte[] SkillBuff {
+            get {
+                object obj = ResourceManager.GetObject("SkillBuff", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         public static byte[] SkillEffect {
             get {
                 object obj = ResourceManager.GetObject("SkillEffect", resourceCulture);
@@ -367,26 +357,6 @@ namespace LostArkLogger.Properties {
             get {
                 object obj = ResourceManager.GetObject("so_skill_0", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] xor_kr {
-            get {
-                object obj = ResourceManager.GetObject("xor_kr", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        public static byte[] xor_ru {
-            get {
-                object obj = ResourceManager.GetObject("xor_ru", resourceCulture);
-                return ((byte[])(obj));
             }
         }
         

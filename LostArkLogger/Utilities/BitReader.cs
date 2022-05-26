@@ -103,6 +103,14 @@ namespace LostArkLogger
             if (((flag >> 6) & 1) != 0) ReadBytes(ReadUInt16());
             return 0;
         }
+        public List<Object> ReadPackedValues(params int[] sizes)
+        {
+            var packedValues = new List<Object>();
+            var flag = ReadByte();
+            packedValues.Add(flag);
+            for (var i = 0; i < 7; i++) if (((flag >> i) & 1) != 0) packedValues.Add(ReadBytes(sizes[i]));
+            return packedValues;
+        }
         public String ReadString()
         {
             var unicode = true;

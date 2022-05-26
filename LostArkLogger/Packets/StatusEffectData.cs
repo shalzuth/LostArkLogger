@@ -6,13 +6,13 @@ namespace LostArkLogger
     {
         public StatusEffectData(BitReader reader)
         {
-            field0 = reader.ReadUInt32();
+            BuffId = reader.ReadUInt32();
             field1 = reader.ReadByte();
-            field2 = reader.ReadUInt64();
+            SourceId = reader.ReadUInt64();
             field3 = reader.ReadUInt32();
-            StartTime = reader.ReadUInt64();
-            BuffId = reader.ReadByte();
-            if (BuffId == 1)
+            InstanceId = reader.ReadUInt64();
+            hasfield5 = reader.ReadByte();
+            if (hasfield5 == 1)
                 Value = reader.ReadBytes(16);
             field6 = reader.ReadSimpleInt();
             field7 = reader.ReadUInt32();
@@ -22,12 +22,12 @@ namespace LostArkLogger
             field9 = reader.ReadByte();
             field10 = reader.ReadList<Byte[]>(7);
         }
-        public UInt32 field0;
+        public UInt32 BuffId;
         public Byte field1;
-        public UInt64 field2;
+        public UInt64 SourceId;
         public UInt32 field3;
-        public UInt64 StartTime;
-        public Byte BuffId;
+        public UInt64 InstanceId;
+        public Byte hasfield5;
         public Byte[] Value;
         public UInt64 field6;
         public UInt32 field7;
