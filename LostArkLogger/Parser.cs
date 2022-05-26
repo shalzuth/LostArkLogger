@@ -125,7 +125,7 @@ namespace LostArkLogger
         void ProcessDamageEvent(Entity sourceEntity, UInt32 skillId, UInt32 skillEffectId, SkillDamageEvent dmgEvent)
         {
             // damage dealer is a player
-            if (sourceEntity.ClassName != "UnknownClass")
+            if (!String.IsNullOrEmpty(sourceEntity.ClassName) && sourceEntity.ClassName != "UnknownClass")
             {
                 // player hasn't been announced on logs before. possibly because user opened logger after they got into a zone
                 if (!currentEncounter.LoggedEntities.ContainsKey(sourceEntity.EntityId))
@@ -136,6 +136,7 @@ namespace LostArkLogger
                     currentEncounter.LoggedEntities.TryAdd(sourceEntity.EntityId, true);
                 }
             }
+
             var skillName = Skill.GetSkillName(skillId, skillEffectId);
             var targetEntity = currentEncounter.Entities.GetOrAdd(dmgEvent.TargetId);
             var destinationName = targetEntity != null ? targetEntity.VisibleName : dmgEvent.TargetId.ToString("X");
