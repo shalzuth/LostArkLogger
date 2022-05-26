@@ -1,13 +1,13 @@
 ﻿using K4os.Compression.LZ4;
+using LostArkLogger.Utilities;
+using SharpPcap;
 using Snappy;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using SharpPcap;
-using LostArkLogger.Utilities;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
 
 namespace LostArkLogger
 {
@@ -20,6 +20,7 @@ namespace LostArkLogger
         ILiveDevice pcap;
         public event Action<LogInfo> onCombatEvent;
         public event Action onNewZone;
+        public event Action<string> onLogAppend;
         public event Action<int> onPacketTotalCount;
         public bool enableLogging = true;
         public bool use_npcap = false;
@@ -40,6 +41,8 @@ namespace LostArkLogger
         public Region region = Region.Steam;
         public Parser()
         {
+            if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
+
             Encounters.Add(currentEncounter);
             onCombatEvent += Parser_onDamageEvent;
             onNewZone += Parser_onNewZone;
@@ -86,14 +89,18 @@ namespace LostArkLogger
                                 }
                                 catch (Exception ex)
                                 {
-                                    Console.WriteLine("Exception while trying to listen to NIC {0}:\n{1}", device.Name, ex.ToString());
+                                    var exceptionMessage = "Exception while trying to listen to NIC " + device.Name + "\n" + ex.ToString();
+                                    Console.WriteLine(exceptionMessage);
+                                    AppendLog(0, exceptionMessage);
                                 }
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Sharppcap init failed, using rawsockets instead, exception:\n{0}", ex.ToString());
+                        var exceptionMessage = "Sharppcap init failed, using rawsockets instead, exception:\n" + ex.ToString();
+                        Console.WriteLine(exceptionMessage);
+                        AppendLog(0, exceptionMessage);
                     }
                     // If we failed to find a pcap device, fall back to rawsockets.
                     if (!foundAdapter)
@@ -123,13 +130,19 @@ namespace LostArkLogger
             //var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = sourceName.Contains("("), Destination = destinationName, SkillName = skillName, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
             var log = new LogInfo
             {
-                Time = DateTime.Now, SourceEntity = sourceEntity, DestinationEntity = targetEntity, SkillId = skillId,
-                SkillEffectId = skillEffectId, SkillName = skillName, Damage = (ulong) dmgEvent.Damage, Crit =
-                    ((DamageModifierFlags) dmgEvent.Modifier &
+                Time = DateTime.Now,
+                SourceEntity = sourceEntity,
+                DestinationEntity = targetEntity,
+                SkillId = skillId,
+                SkillEffectId = skillEffectId,
+                SkillName = skillName,
+                Damage = (ulong)dmgEvent.Damage,
+                Crit =
+                    ((DamageModifierFlags)dmgEvent.Modifier &
                      (DamageModifierFlags.DotCrit |
                       DamageModifierFlags.SkillCrit)) > 0,
-                BackAttack = ((DamageModifierFlags) dmgEvent.Modifier & (DamageModifierFlags.BackAttack)) > 0,
-                FrontAttack = ((DamageModifierFlags) dmgEvent.Modifier & (DamageModifierFlags.FrontAttack)) > 0
+                BackAttack = ((DamageModifierFlags)dmgEvent.Modifier & (DamageModifierFlags.BackAttack)) > 0,
+                FrontAttack = ((DamageModifierFlags)dmgEvent.Modifier & (DamageModifierFlags.FrontAttack)) > 0
             };
             onCombatEvent?.Invoke(log);
             AppendLog(8, sourceEntity.EntityId.ToString("X"), sourceEntity.Name, skillId.ToString(), Skill.GetSkillName(skillId), skillEffectId.ToString(), Skill.GetSkillEffectName(skillEffectId), targetEntity.EntityId.ToString("X"), targetEntity.Name, dmgEvent.Damage.ToString(), dmgEvent.Modifier.ToString("X"), dmgEvent.CurrentHealth.ToString(), dmgEvent.MaxHealth.ToString());
@@ -380,7 +393,8 @@ namespace LostArkLogger
                     var entity = currentEncounter.Entities.GetOrAdd(health.ObjectId);
                     var log = new LogInfo
                     {
-                        Time = DateTime.Now, SourceEntity = entity,
+                        Time = DateTime.Now,
+                        SourceEntity = entity,
                         DestinationEntity = entity,
                         Heal = (UInt32)health.StatPairChangedList.Value[0]
                     };
@@ -421,8 +435,12 @@ namespace LostArkLogger
                     var target = currentEncounter.Entities.GetOrAdd(counter.TargetId);
                     var log = new LogInfo
                     {
-                        Time = DateTime.Now, SourceEntity = currentEncounter.Entities.GetOrAdd(counter.SourceId), DestinationEntity = currentEncounter.Entities.GetOrAdd(counter.TargetId), SkillName = "Counter",
-                        Damage = 0, Counter = true
+                        Time = DateTime.Now,
+                        SourceEntity = currentEncounter.Entities.GetOrAdd(counter.SourceId),
+                        DestinationEntity = currentEncounter.Entities.GetOrAdd(counter.TargetId),
+                        SkillName = "Counter",
+                        Damage = 0,
+                        Counter = true
                     };
                     onCombatEvent?.Invoke(log);
                     AppendLog(11, source.EntityId.ToString("X"), source.Name, target.EntityId.ToString("X"), target.Name);
@@ -441,11 +459,15 @@ namespace LostArkLogger
                 packets = packets.Skip(packetSize).ToArray();
             }
         }
+
+        static string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+        static string logsPath = Path.Combine(documentsPath, "Lost Ark Logs");
+
         public Boolean debugLog = false;
         BinaryWriter logger;
         FileStream logStream;
         UInt32 currentIpAddr = 0xdeadbeef;
-        string fileName = "logs\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
+        string fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
         int loggedPacketCount = 0;
 
         void AppendLog(LogInfo s)
@@ -460,9 +482,11 @@ namespace LostArkLogger
                 var log = id + "|" + DateTime.Now.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'") + "|" + String.Join("|", elements);
                 var logHash = string.Concat(hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(log)).Select(x => x.ToString("x2")));
                 File.AppendAllText(fileName, log + "|" + logHash + "\n");
+                onLogAppend?.Invoke(log + "\n");
             }
         }
-        void DoDebugLog(byte[] bytes) {
+        void DoDebugLog(byte[] bytes)
+        {
             if (debugLog)
             {
                 if (logger == null)
@@ -513,12 +537,11 @@ namespace LostArkLogger
 #pragma warning restore CS0618 // Type or member is obsolete
                     if (srcAddr != currentIpAddr)
                     {
-                        var opcode = GetOpCode(bytes);
                         if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && GetOpCode(bytes) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
                         {
                             onNewZone?.Invoke();
                             currentIpAddr = srcAddr;
-                            fileName = "logs\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
+                            fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
                             loggedPacketCount = 0;
                         }
                         else return;
@@ -549,7 +572,9 @@ namespace LostArkLogger
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Exception while trying to stop capture on NIC {0}:\n{1}", pcap.Name, ex.ToString());
+                    var exceptionMessage = "Exception while trying to stop capture on NIC " + pcap.Name + "\n" + ex.ToString();
+                    Console.WriteLine(exceptionMessage);
+                    AppendLog(0, exceptionMessage);
                 }
             }
             tcp = null;
