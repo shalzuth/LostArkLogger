@@ -7,7 +7,7 @@ namespace LostArkLogger
         public Entity SourceEntity { get; set; }
         public Entity DestinationEntity { get; set; }
         public UInt32 SkillId { get; set; }
-        public UInt32 SkillSubId { get; set; }
+        public UInt32 SkillEffectId { get; set; }
         public String SkillName { get; set; }
         public UInt64 Damage { get; set; }
         public UInt64 Heal { get; set; }

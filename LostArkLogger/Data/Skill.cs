@@ -33,7 +33,7 @@ namespace LostArkLogger
         public static String GetSkillName(UInt32 id)
         {
             if (id == 0) return "Bleed"; // ?? someone fix this
-            var skillName = "";
+            var skillName = "UnknownSkill";
             if (Items.ContainsKey((int)id))
             {
                 var skill = Items[(int)id];
@@ -41,9 +41,14 @@ namespace LostArkLogger
                 {
                     if (GameMsg_English.Items.ContainsKey(skill[0])) skillName = GameMsg_English.Items[skill[0]];
                 }
-                if (skillName.Length == 0) skillName = skill[1];
+                if (skillName == "UnknownSkill") skillName = skill[1];
             }
             return skillName;
+        }
+        public static String GetSkillEffectName(UInt32 id)
+        {
+            if (SkillEffect.Items.ContainsKey((int)id)) return SkillEffect.Items[(int)id];
+            return "UnknownSkillEffect";
         }
         public static Boolean GetSkillIcon(UInt32 id, out String iconFile, out Int32 iconIndex)
         {

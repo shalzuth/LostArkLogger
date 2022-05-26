@@ -42,10 +42,12 @@ namespace LostArkLogger
             field33 = reader.ReadByte();
             field34 = reader.ReadByte();
             field35 = reader.ReadUInt32();
-            field36 = reader.ReadUInt32();
+            GearLevel = reader.ReadUInt32();
             field37 = reader.ReadUInt64();
             field38 = reader.ReadByte();
-            field39 = reader.ReadBytes(112);
+            byteArr0 = reader.ReadBytes(44);
+            Level = reader.ReadUInt16();
+            byteArr1 = reader.ReadBytes(66);
             field40 = reader.ReadByte();
             field41 = reader.ReadByte();
             field42 = reader.ReadByte();
@@ -55,9 +57,9 @@ namespace LostArkLogger
             field44 = reader.ReadByte();
             field45 = reader.ReadUInt32();
             PlayerId = reader.ReadUInt64();
-            field47 = reader.ReadList<Byte>();
+            field47 = reader.ReadList<UInt16>();
             field48 = reader.ReadUInt32();
-            field49 = reader.ReadUInt16();
+            ClassId = reader.ReadUInt16();
             field50 = reader.ReadByte();
             field51 = reader.ReadUInt16();
         }
@@ -97,10 +99,12 @@ namespace LostArkLogger
         public Byte field33;
         public Byte field34;
         public UInt32 field35;
-        public UInt32 field36;
+        public UInt32 GearLevel;
         public UInt64 field37;
         public Byte field38;
-        public Byte[] field39;
+        public Byte[] byteArr0;
+        public UInt16 Level;
+        public Byte[] byteArr1;
         public Byte field40;
         public Byte field41;
         public Byte field42;
@@ -109,9 +113,9 @@ namespace LostArkLogger
         public Byte field44;
         public UInt32 field45;
         public UInt64 PlayerId;
-        public List<Byte> field47;
+        public List<UInt16> field47;
         public UInt32 field48;
-        public UInt16 field49;
+        public UInt16 ClassId;
         public Byte field50;
         public UInt16 field51;
     }
