@@ -578,7 +578,7 @@ namespace LostArkLogger
         PKTEventTokenUpdateNotify = 24058,
         PKTColosseumFeverTimeNotify = 24102,
         PKTTownPetWorkshopBoostUseResult = 24189,
-        PKTAuthTokenResult = 44877, // 44877, 9516 or 6982 probably
+        PKTAuthTokenResult = 24201,
         PKTGuildResearchResult = 24211,
         PKTShipBoostGaugeNotify = 24234,
         PKTModWayOfThroneRankingPCSelectResult = 24277,

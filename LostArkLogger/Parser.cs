@@ -21,7 +21,6 @@ namespace LostArkLogger
         public event Action<LogInfo> onCombatEvent;
         public event Action onNewZone;
         public event Action<string> onLogAppend;
-        public event Action<string> onDebug;
         public event Action<int> onPacketTotalCount;
         public bool enableLogging = true;
         public bool use_npcap = false;
@@ -42,6 +41,8 @@ namespace LostArkLogger
         public Region region = Region.Steam;
         public Parser()
         {
+            if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
+
             Encounters.Add(currentEncounter);
             onCombatEvent += Parser_onDamageEvent;
             onNewZone += Parser_onNewZone;
@@ -88,14 +89,18 @@ namespace LostArkLogger
                                 }
                                 catch (Exception ex)
                                 {
-                                    Console.WriteLine("Exception while trying to listen to NIC {0}:\n{1}", device.Name, ex.ToString());
+                                    var exceptionMessage = "Exception while trying to listen to NIC " + device.Name + "\n" + ex.ToString();
+                                    Console.WriteLine(exceptionMessage);
+                                    AppendLog(0, exceptionMessage);
                                 }
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Sharppcap init failed, using rawsockets instead, exception:\n{0}", ex.ToString());
+                        var exceptionMessage = "Sharppcap init failed, using rawsockets instead, exception:\n" + ex.ToString();
+                        Console.WriteLine(exceptionMessage);
+                        AppendLog(0, exceptionMessage);
                     }
                     // If we failed to find a pcap device, fall back to rawsockets.
                     if (!foundAdapter)
@@ -125,9 +130,15 @@ namespace LostArkLogger
             //var log = new LogInfo { Time = DateTime.Now, Source = sourceName, PC = sourceName.Contains("("), Destination = destinationName, SkillName = skillName, Crit = (dmgEvent.FlagsMaybe & 0x81) > 0, BackAttack = (dmgEvent.FlagsMaybe & 0x10) > 0, FrontAttack = (dmgEvent.FlagsMaybe & 0x20) > 0 };
             var log = new LogInfo
             {
-                Time = DateTime.Now, SourceEntity = sourceEntity, DestinationEntity = targetEntity, SkillId = skillId,
-                SkillEffectId = skillEffectId, SkillName = skillName, Damage = (ulong) dmgEvent.Damage, Crit =
-                    ((DamageModifierFlags) dmgEvent.Modifier &
+                Time = DateTime.Now,
+                SourceEntity = sourceEntity,
+                DestinationEntity = targetEntity,
+                SkillId = skillId,
+                SkillEffectId = skillEffectId,
+                SkillName = skillName,
+                Damage = (ulong)dmgEvent.Damage,
+                Crit =
+                    ((DamageModifierFlags)dmgEvent.Modifier &
                      (DamageModifierFlags.DotCrit |
                       DamageModifierFlags.SkillCrit)) > 0,
                 BackAttack = ((DamageModifierFlags)dmgEvent.Modifier & (DamageModifierFlags.BackAttack)) > 0,
@@ -382,7 +393,8 @@ namespace LostArkLogger
                     var entity = currentEncounter.Entities.GetOrAdd(health.ObjectId);
                     var log = new LogInfo
                     {
-                        Time = DateTime.Now, SourceEntity = entity,
+                        Time = DateTime.Now,
+                        SourceEntity = entity,
                         DestinationEntity = entity,
                         Heal = (UInt32)health.StatPairChangedList.Value[0]
                     };
@@ -449,8 +461,7 @@ namespace LostArkLogger
         }
 
         static string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
-        static string loaPath = Path.Combine(documentsPath, "LOA Details");
-        static string logsPath = Path.Combine(loaPath, "Logs");
+        static string logsPath = Path.Combine(documentsPath, "Lost Ark Logs");
 
         public Boolean debugLog = false;
         BinaryWriter logger;
@@ -474,7 +485,8 @@ namespace LostArkLogger
                 onLogAppend?.Invoke(log + "\n");
             }
         }
-        void DoDebugLog(byte[] bytes) {
+        void DoDebugLog(byte[] bytes)
+        {
             if (debugLog)
             {
                 if (logger == null)
@@ -499,8 +511,6 @@ namespace LostArkLogger
                     {
                         onNewZone?.Invoke();
                         currentIpAddr = srcAddr;
-                        fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
-                        loggedPacketCount = 0;
                     }
                     else return;
                 }
@@ -562,7 +572,9 @@ namespace LostArkLogger
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Exception while trying to stop capture on NIC {0}:\n{1}", pcap.Name, ex.ToString());
+                    var exceptionMessage = "Exception while trying to stop capture on NIC " + pcap.Name + "\n" + ex.ToString();
+                    Console.WriteLine(exceptionMessage);
+                    AppendLog(0, exceptionMessage);
                 }
             }
             tcp = null;

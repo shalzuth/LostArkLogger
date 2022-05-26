@@ -19,7 +19,7 @@ namespace LostArkLogger
 
         public void Start()
         {
-            EnqueueMessage("debug", "args: " + String.Join(",", args));
+            EnqueueMessage(0, "Arguments: " + String.Join(",", args));
 
             // Configure the monitor with command-line arguments.
             var RegionIndex = Array.IndexOf(args, "--Region");
@@ -62,43 +62,21 @@ namespace LostArkLogger
                 sniffer.InstallListener();
                 if (!sniffer.use_npcap)
                 {
-                    EnqueueMessage("message", "Failed to initialize Npcap, using raw sockets instead. You can try to restart the app.");
+                    EnqueueMessage(0, "Failed to initialize Npcap, using raw sockets instead. You can try to restart the app.");
                 }
                 else
                 {
-                    EnqueueMessage("message", "Using Npcap!");
+                    EnqueueMessage(0, "Using Npcap!");
                 }
 
             }
 
-            //sniffer.onCombatEvent += (LogInfo logInfo) =>
-            //{
-            //    EnqueueMessage("combat-event", (logInfo.SourceEntity?.VisibleName + "|#|" +
-            //           logInfo.DestinationEntity?.VisibleName + "|#|" +
-            //           logInfo.SkillName + "|#|" +
-            //           logInfo.Damage + "|#|" +
-            //           (logInfo.Crit ? "1" : "0") + "|#|" +
-            //           (logInfo.BackAttack ? "1" : "0") + "|#|" +
-            //           (logInfo.FrontAttack ? "1" : "0") + "|#|" +
-            //           (logInfo.Counter ? "1" : "0"))
-            //       );
-            //};
-
-            //sniffer.onNewZone += () =>
-            //{
-            //    EnqueueMessage("new-zone", "1");
-            //};
-
             sniffer.onLogAppend += (string log) =>
             {
-                EnqueueMessage("log", log);
-            };
-            sniffer.onDebug += (string message) =>
-            {
-                EnqueueMessage("debug", message);
+                EnqueueMessage(log);
             };
 
-            EnqueueMessage("message", "All connections are ready.");
+            EnqueueMessage(0, "All connections are ready");
 
             this.thread = new Thread(this.Run);
             this.thread.Start();
@@ -106,9 +84,14 @@ namespace LostArkLogger
             Console.ReadLine();
         }
 
-        private void EnqueueMessage(string channel, string message)
+        private void EnqueueMessage(string log)
         {
-            this.messageQueue.Enqueue(channel + "|===|" + message);
+            this.messageQueue.Enqueue(log);
+        }
+        private void EnqueueMessage(int id, params string[] elements)
+        {
+            var log = id + "|" + DateTime.Now.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'") + "|" + String.Join("|", elements);
+            this.messageQueue.Enqueue(log);
         }
 
         private async void Run()
@@ -122,7 +105,9 @@ namespace LostArkLogger
 #endif
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:" + Port);
                     request.Content = new StringContent(sendMessage);
-                    request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                    var mediaTypeHeaderValue = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                    mediaTypeHeaderValue.CharSet = "utf-8";
+                    request.Content.Headers.ContentType = mediaTypeHeaderValue;
 
                     //await this.http.SendAsync(request);
                 }
