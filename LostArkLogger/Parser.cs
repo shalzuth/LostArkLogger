@@ -20,6 +20,7 @@ namespace LostArkLogger
         ILiveDevice pcap;
         public event Action<LogInfo> onCombatEvent;
         public event Action onNewZone;
+        public event Action<string> onLogAppend;
         public event Action<string> onDebug;
         public event Action<int> onPacketTotalCount;
         public bool enableLogging = true;
@@ -470,6 +471,7 @@ namespace LostArkLogger
                 var log = id + "|" + DateTime.Now.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'") + "|" + String.Join("|", elements);
                 var logHash = string.Concat(hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(log)).Select(x => x.ToString("x2")));
                 File.AppendAllText(fileName, log + "|" + logHash + "\n");
+                onLogAppend?.Invoke(log + "\n");
             }
         }
         void DoDebugLog(byte[] bytes) {

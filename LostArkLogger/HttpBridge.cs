@@ -42,19 +42,19 @@ namespace LostArkLogger
 
             var sniffer = new Parser();
 
-            if (RegionIndex != -1)
-            {
-                if (args[RegionIndex + 1] == "Russia")
-                {
-                    sniffer.region = Parser.Region.Russia;
-                    EnqueueMessage("message", "Using Russia client!");
-                }
-                else if (args[RegionIndex + 1] == "Korea")
-                {
-                    sniffer.region = Parser.Region.Korea;
-                    EnqueueMessage("message", "Using Korea client!");
-                }
-            }
+            //if (RegionIndex != -1)
+            //{
+            //    if (args[RegionIndex + 1] == "Russia")
+            //    {
+            //        sniffer.region = Parser.Region.Russia;
+            //        EnqueueMessage("message", "Using Russia client!");
+            //    }
+            //    else if (args[RegionIndex + 1] == "Korea")
+            //    {
+            //        sniffer.region = Parser.Region.Korea;
+            //        EnqueueMessage("message", "Using Korea client!");
+            //    }
+            //}
 
             if (NpcapIndex != -1)
             {
@@ -71,24 +71,28 @@ namespace LostArkLogger
 
             }
 
-            sniffer.onCombatEvent += (LogInfo logInfo) =>
-            {
-                EnqueueMessage("combat-event", (logInfo.SourceEntity?.VisibleName + "|#|" +
-                       logInfo.DestinationEntity?.VisibleName + "|#|" +
-                       logInfo.SkillName + "|#|" +
-                       logInfo.Damage + "|#|" +
-                       (logInfo.Crit ? "1" : "0") + "|#|" +
-                       (logInfo.BackAttack ? "1" : "0") + "|#|" +
-                       (logInfo.FrontAttack ? "1" : "0") + "|#|" +
-                       (logInfo.Counter ? "1" : "0"))
-                   );
-            };
+            //sniffer.onCombatEvent += (LogInfo logInfo) =>
+            //{
+            //    EnqueueMessage("combat-event", (logInfo.SourceEntity?.VisibleName + "|#|" +
+            //           logInfo.DestinationEntity?.VisibleName + "|#|" +
+            //           logInfo.SkillName + "|#|" +
+            //           logInfo.Damage + "|#|" +
+            //           (logInfo.Crit ? "1" : "0") + "|#|" +
+            //           (logInfo.BackAttack ? "1" : "0") + "|#|" +
+            //           (logInfo.FrontAttack ? "1" : "0") + "|#|" +
+            //           (logInfo.Counter ? "1" : "0"))
+            //       );
+            //};
 
-            sniffer.onNewZone += () =>
-            {
-                EnqueueMessage("new-zone", "1");
-            };
+            //sniffer.onNewZone += () =>
+            //{
+            //    EnqueueMessage("new-zone", "1");
+            //};
 
+            sniffer.onLogAppend += (string log) =>
+            {
+                EnqueueMessage("log", log);
+            };
             sniffer.onDebug += (string message) =>
             {
                 EnqueueMessage("debug", message);
@@ -120,7 +124,7 @@ namespace LostArkLogger
                     request.Content = new StringContent(sendMessage);
                     request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
 
-                    await this.http.SendAsync(request);
+                    //await this.http.SendAsync(request);
                 }
                 else
                 {
