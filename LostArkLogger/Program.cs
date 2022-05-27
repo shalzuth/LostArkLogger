@@ -6,24 +6,17 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Security.Principal;
 using System.Windows.Forms;
-
 namespace LostArkLogger
 {
     internal static class Program
     {
-#if DEBUG
-        public static bool DebugMode = true;
-#else
-		public static bool DebugMode = false;
-#endif
         public static bool IsConsole = Console.OpenStandardInput(1) != Stream.Null;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-
             if (!AdminRelauncher()) return;
             AttemptFirewallPrompt();
 
@@ -35,8 +28,9 @@ namespace LostArkLogger
             }
             else
             {
-                var electronBridge = new ElectronBridge();
-                electronBridge.Run();
+                var httpBridge = new HttpBridge();
+                httpBridge.args = args;
+                httpBridge.Start();
             }
         }
         static void AttemptFirewallPrompt()
@@ -47,6 +41,7 @@ namespace LostArkLogger
             t.Start();
             t.Stop();
         }
+
         private static bool AdminRelauncher()
         {
             if (!new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
