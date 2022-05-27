@@ -10,7 +10,6 @@ using System.Net.NetworkInformation;
 using System.Threading;
 using System.Runtime.InteropServices;
 
-
 namespace LostArkLogger
 {
     internal class Parser : IDisposable
