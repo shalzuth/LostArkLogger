@@ -291,7 +291,7 @@ namespace LostArkLogger
                         if (opcode == OpCodes.PKTRaidBossKillNotify || opcode == OpCodes.PKTTriggerBossBattleStatus)
                             currentEncounter.Entities = Encounters.Last().Entities; // preserve entities 
                         Encounters.Add(currentEncounter);
-
+                        AppendLog(2);
                     })).Start();
                 }
                 else if (opcode == OpCodes.PKTInitPC)
