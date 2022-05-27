@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using SharpPcap;
 using LostArkLogger.Utilities;
 using System.Net.NetworkInformation;
+using System.Threading;
 
 namespace LostArkLogger
 {
