@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
-using System.Threading;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace LostArkLogger
 {
