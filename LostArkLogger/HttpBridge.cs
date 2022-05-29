@@ -103,13 +103,22 @@ namespace LostArkLogger
 #if DEBUG
                     Console.WriteLine("Sending: " + sendMessage);
 #endif
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:" + Port);
-                    request.Content = new StringContent(sendMessage);
-                    var mediaTypeHeaderValue = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                    mediaTypeHeaderValue.CharSet = "utf-8";
-                    request.Content.Headers.ContentType = mediaTypeHeaderValue;
+                    try
+                    {
+                        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "http://localhost:" + Port);
+                        request.Content = new StringContent(sendMessage);
+                        var mediaTypeHeaderValue = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                        mediaTypeHeaderValue.CharSet = "utf-8";
+                        request.Content.Headers.ContentType = mediaTypeHeaderValue;
 
-                    await this.http.SendAsync(request);
+                        await this.http.SendAsync(request);
+                    }
+                    catch
+                    {
+                        Console.WriteLine("Trying to requeue message");
+                        this.messageQueue.Enqueue(sendMessage);
+                    }
+                    
                 }
                 else
                 {

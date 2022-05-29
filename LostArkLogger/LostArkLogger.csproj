@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B0808A8B-3ADC-4BB1-8927-5BCB9A519131}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>LostArkLogger</RootNamespace>
     <AssemblyName>LostArkLogger</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
