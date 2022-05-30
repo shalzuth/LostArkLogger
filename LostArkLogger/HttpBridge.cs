@@ -31,13 +31,6 @@ namespace LostArkLogger
                 Port = uint.Parse(args[PortIndex + 1]);
             }
 
-            string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string loaPath = Path.Combine(documentsPath, "LOA Details");
-            string logsPath = Path.Combine(loaPath, "Logs");
-
-            if (!Directory.Exists(loaPath)) Directory.CreateDirectory(loaPath);
-            if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
-
             Oodle.Init();
 
             var sniffer = new Parser();
