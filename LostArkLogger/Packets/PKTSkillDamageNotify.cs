@@ -6,16 +6,16 @@ namespace LostArkLogger
     {
         public PKTSkillDamageNotify(BitReader reader)
         {
-            SkillEffectId = reader.ReadUInt32();
-            field1 = reader.ReadByte();
+            field0 = reader.ReadByte();
             SkillId = reader.ReadUInt32();
-            skillDamageEvents = reader.ReadList<SkillDamageEvent>();
             SourceId = reader.ReadUInt64();
+            SkillEffectId = reader.ReadUInt32();
+            skillDamageEvents = reader.ReadList<SkillDamageEvent>();
         }
-        public UInt32 SkillEffectId;
-        public Byte field1;
+        public Byte field0;
         public UInt32 SkillId;
-        public List<SkillDamageEvent> skillDamageEvents;
         public UInt64 SourceId;
+        public UInt32 SkillEffectId;
+        public List<SkillDamageEvent> skillDamageEvents;
     }
 }

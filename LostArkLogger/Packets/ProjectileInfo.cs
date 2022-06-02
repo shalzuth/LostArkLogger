@@ -6,52 +6,52 @@ namespace LostArkLogger
     {
         public ProjectileInfo(BitReader reader)
         {
-            SkillLevel = reader.ReadByte();
+            field0 = reader.ReadBytes(6);
             field1 = reader.ReadByte();
-            field2 = reader.ReadUInt64();
-            field3 = reader.ReadUInt16();
-            field4 = reader.ReadUInt16();
-            hasfield5 = reader.ReadByte();
-            if (hasfield5 == 1)
-                field5 = reader.ReadUInt32();
+            hasfield2 = reader.ReadByte();
+            if (hasfield2 == 1)
+                field2 = reader.ReadUInt32();
+            field3 = reader.ReadByte();
+            field4 = reader.ReadUInt32();
+            field5 = reader.ReadUInt32();
             field6 = reader.ReadUInt64();
-            field7 = reader.ReadUInt32();
-            hasfield8 = reader.ReadByte();
-            if (hasfield8 == 1)
-                field8 = reader.ReadList<UInt64>();
-            field9 = reader.ReadUInt32();
-            field10 = reader.ReadUInt32();
-            field11 = reader.ReadByte();
-            field12 = reader.ReadUInt32();
-            OwnerId = reader.ReadUInt64();
-            SkillEffect = reader.ReadUInt32();
             Tripods = reader.ReadBytes(3);
             SkillId = reader.ReadUInt32();
+            field9 = reader.ReadUInt32();
             ProjectileId = reader.ReadUInt64();
+            field11 = reader.ReadUInt16();
+            hasfield12 = reader.ReadByte();
+            if (hasfield12 == 1)
+                field12 = reader.ReadList<UInt64>();
+            field13 = reader.ReadUInt16();
+            OwnerId = reader.ReadUInt64();
+            field15 = reader.ReadUInt32();
+            SkillLevel = reader.ReadByte();
+            SkillEffect = reader.ReadUInt32();
             field18 = reader.ReadUInt64();
-            field19 = reader.ReadBytes(6);
+            field19 = reader.ReadUInt64();
         }
-        public Byte SkillLevel;
+        public Byte[] field0;
         public Byte field1;
-        public UInt64 field2;
-        public UInt16 field3;
-        public UInt16 field4;
-        public Byte hasfield5;
+        public Byte hasfield2;
+        public UInt32 field2;
+        public Byte field3;
+        public UInt32 field4;
         public UInt32 field5;
         public UInt64 field6;
-        public UInt32 field7;
-        public Byte hasfield8;
-        public List<UInt64> field8;
-        public UInt32 field9;
-        public UInt32 field10;
-        public Byte field11;
-        public UInt32 field12;
-        public UInt64 OwnerId;
-        public UInt32 SkillEffect;
         public Byte[] Tripods;
         public UInt32 SkillId;
+        public UInt32 field9;
         public UInt64 ProjectileId;
+        public UInt16 field11;
+        public Byte hasfield12;
+        public List<UInt64> field12;
+        public UInt16 field13;
+        public UInt64 OwnerId;
+        public UInt32 field15;
+        public Byte SkillLevel;
+        public UInt32 SkillEffect;
         public UInt64 field18;
-        public Byte[] field19;
+        public UInt64 field19;
     }
 }

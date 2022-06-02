@@ -6,39 +6,39 @@ namespace LostArkLogger
     {
         public PKTSkillStartNotify(BitReader reader)
         {
-            hasfield0 = reader.ReadByte();
-            if (hasfield0 == 1)
-                field0 = reader.ReadUInt32();
-            SkillId = reader.ReadUInt32();
-            hasfield2 = reader.ReadByte();
-            if (hasfield2 == 1)
-                field2 = reader.ReadUInt16();
-            field3 = reader.ReadPackedValues(1, 1, 4, 4, 4, 3, 6);
-            hasfield4 = reader.ReadByte();
-            if (hasfield4 == 1)
-                field4 = reader.ReadUInt32();
-            field5 = reader.ReadUInt64();
-            field6 = reader.ReadByte();
-            field7 = reader.ReadUInt16();
+            field0 = reader.ReadUInt64();
+            hasfield1 = reader.ReadByte();
+            if (hasfield1 == 1)
+                field1 = reader.ReadUInt32();
+            field2 = reader.ReadUInt16();
+            field3 = reader.ReadByte();
+            field4 = reader.ReadUInt16();
+            hasfield5 = reader.ReadByte();
+            if (hasfield5 == 1)
+                field5 = reader.ReadUInt16();
+            field6 = reader.ReadUInt64();
+            field7 = reader.ReadPackedValues(1, 1, 4, 4, 4, 3, 6);
             SourceId = reader.ReadUInt64();
-            field9 = reader.ReadUInt16();
+            hasfield9 = reader.ReadByte();
+            if (hasfield9 == 1)
+                field9 = reader.ReadUInt32();
             field10 = reader.ReadUInt64();
-            field11 = reader.ReadUInt64();
+            SkillId = reader.ReadUInt32();
         }
-        public Byte hasfield0;
-        public UInt32 field0;
-        public UInt32 SkillId;
-        public Byte hasfield2;
+        public UInt64 field0;
+        public Byte hasfield1;
+        public UInt32 field1;
         public UInt16 field2;
-        public List<Object> field3;
-        public Byte hasfield4;
-        public UInt32 field4;
-        public UInt64 field5;
-        public Byte field6;
-        public UInt16 field7;
+        public Byte field3;
+        public UInt16 field4;
+        public Byte hasfield5;
+        public UInt16 field5;
+        public UInt64 field6;
+        public List<Object> field7;
         public UInt64 SourceId;
-        public UInt16 field9;
+        public Byte hasfield9;
+        public UInt32 field9;
         public UInt64 field10;
-        public UInt64 field11;
+        public UInt32 SkillId;
     }
 }
