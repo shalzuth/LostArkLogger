@@ -153,7 +153,6 @@
     <None Include="Resources\Skill.bin" />
     <None Include="Resources\SkillBuff.bin" />
     <None Include="Resources\SkillEffect.bin" />
-    <None Include="Resources\xor.bin" />
     <None Include="Resources\xor_kr.bin" />
     <None Include="Resources\xor_ru.bin" />
     <None Include="Resources\xor_steam.bin" />
