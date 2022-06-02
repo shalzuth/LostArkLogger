@@ -363,6 +363,16 @@ namespace LostArkLogger.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        public static byte[] xor {
+            get {
+                object obj = ResourceManager.GetObject("xor", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         public static byte[] xor_steam {
             get {
                 object obj = ResourceManager.GetObject("xor_steam", resourceCulture);

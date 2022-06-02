@@ -2,12 +2,15 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <MyNewGuid>$([System.Guid]::NewGuid())</MyNewGuid>
+  </PropertyGroup>
+  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B0808A8B-3ADC-4BB1-8927-5BCB9A519131}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>LostArkLogger</RootNamespace>
-    <AssemblyName>LostArkLogger</AssemblyName>
+    <AssemblyName>$(MyNewGuid)</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -153,6 +156,7 @@
     <None Include="Resources\Skill.bin" />
     <None Include="Resources\SkillBuff.bin" />
     <None Include="Resources\SkillEffect.bin" />
+    <None Include="Resources\xor.bin" />
     <None Include="Resources\xor_kr.bin" />
     <None Include="Resources\xor_ru.bin" />
     <None Include="Resources\xor_steam.bin" />
