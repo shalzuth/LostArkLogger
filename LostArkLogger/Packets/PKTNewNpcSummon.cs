@@ -6,16 +6,16 @@ namespace LostArkLogger
     {
         public PKTNewNpcSummon(BitReader reader)
         {
-            subfield0 = reader.ReadBytes(30);
+            field0 = reader.ReadByte();
+            subfield0 = reader.ReadBytes(0);
             OwnerId = reader.ReadUInt64();
-            subfield1 = reader.ReadByte();
-            field1 = reader.ReadByte();
+            subfield1 = reader.ReadBytes(31);
             npcStruct = reader.Read<NpcStruct>();
         }
+        public Byte field0;
         public Byte[] subfield0;
         public UInt64 OwnerId;
-        public Byte subfield1;
-        public Byte field1;
+        public Byte[] subfield1;
         public NpcStruct npcStruct;
     }
 }

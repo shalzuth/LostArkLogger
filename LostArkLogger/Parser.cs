@@ -213,8 +213,7 @@ namespace LostArkLogger
             return (OpCodes)Enum.Parse(typeof(OpCodes), opCodeString);
         }
 
-        Byte[] XorTableSteam = Properties.Resources.xor;
-        //Byte[] XorTableSteam = ObjectSerialize.Decompress(Properties.Resources.xor_steam);
+        Byte[] XorTableSteam = ObjectSerialize.Decompress(Properties.Resources.xor_steam);
         //Byte[] XorTableRu = ObjectSerialize.Decompress(Properties.Resources.xor_ru);
         //Byte[] XorTableKr = ObjectSerialize.Decompress(Properties.Resources.xor_kr);
         //Byte[] XorTable { get { return region == Region.Steam ? XorTableSteam : region == Region.Russia ? XorTableRu : XorTableKr; } }
@@ -437,7 +436,7 @@ namespace LostArkLogger
                 else if (opcode == OpCodes.PKTStatusEffectAddNotify) // shields included
                 {
                     var buff = new PKTStatusEffectAddNotify(new BitReader(payload));
-                    var amount = buff.statusEffectData.hasfield5 == 1 ? BitConverter.ToUInt32(buff.statusEffectData.Value, 0) : 0;
+                    var amount = buff.statusEffectData.hasfield3 == 1 ? BitConverter.ToUInt32(buff.statusEffectData.Value, 0) : 0;
                     AppendLog(10, buff.statusEffectData.SourceId.ToString("X"), currentEncounter.Entities.GetOrAdd(buff.statusEffectData.SourceId).Name, buff.statusEffectData.BuffId.ToString(), SkillBuff.GetSkillBuffName(buff.statusEffectData.BuffId), buff.New.ToString(), buff.ObjectId.ToString("X"), currentEncounter.Entities.GetOrAdd(buff.ObjectId).Name, amount.ToString());
                 }
                 /*else if (opcode == OpCodes.PKTParalyzationStateNotify)

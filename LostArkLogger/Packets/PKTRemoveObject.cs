@@ -6,10 +6,10 @@ namespace LostArkLogger
     {
         public PKTRemoveObject(BitReader reader)
         {
-            field0 = reader.ReadString();
-            field1 = reader.ReadUInt64();
+            field0 = reader.ReadUInt64();
+            field1 = reader.ReadString();
         }
-        public String field0;
-        public UInt64 field1;
+        public UInt64 field0;
+        public String field1;
     }
 }
