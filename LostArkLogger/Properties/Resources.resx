@@ -118,80 +118,17 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="ac_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ac_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bd_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\bd_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bk_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\bk_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bk_skill_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\bk_skill_1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bl_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\bl_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bm_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\bm_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bs_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\bs_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="class_symbol_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\class_symbol_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="dh_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\dh_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="dm_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\dm_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="dt_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\dt_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="GameMsg_English" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GameMsg_English.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="gl_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\gl_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="he_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\he_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="he_skill_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\he_skill_1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="hk_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\hk_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="if_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\if_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="lm_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\lm_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Npc" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Npc.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="oodle_state_steam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\oodle_state_steam.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="po_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\po_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="po_skill_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\po_skill_1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="rp_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\rp_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="scs_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\scs_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="sc_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sc_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Skill" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Skill.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -201,12 +138,6 @@
   </data>
   <data name="SkillEffect" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SkillEffect.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="sm_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\sm_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="so_skill_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\so_skill_0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="xor_steam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\xor_steam.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>

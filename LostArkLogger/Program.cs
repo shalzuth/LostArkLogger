@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -18,6 +19,7 @@ namespace LostArkLogger
         static void Main(string[] args)
         {
             if (!AdminRelauncher()) return;
+            if (!IsConsole) Warning();
             AttemptFirewallPrompt();
 
             if (!IsConsole)
@@ -41,7 +43,30 @@ namespace LostArkLogger
             t.Start();
             t.Stop();
         }
-
+        static void Warning()
+        {
+            if (AppDomain.CurrentDomain.FriendlyName == "LostArkLogger.exe")
+            {
+                //var tempName = "LostArkDps" + Guid.NewGuid().ToString().Substring(0, 6) + ".exe";
+                var tempName = "DpsMeter.exe";
+                MessageBox.Show("LostArkLogger.exe is flagged.\nRenaming to " + tempName + " !", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                File.Copy(AppDomain.CurrentDomain.FriendlyName, tempName);
+                Process.Start(tempName);
+                Environment.Exit(0);
+            }
+            else
+            {
+                Process.GetProcessesByName("LostArkLogger").ToList().ForEach(p => p.Kill());
+                if (File.Exists("LostArkLogger.exe")) File.Delete("LostArkLogger.exe");
+            }
+            var res = MessageBox.Show("The game director has instructed Amazon Game Studios to ban users using a DPS Meter.\n\nAt this time, please refrain from using the DPS Meter.\n\nSelect \"Retry\" to voice your feedback, as this is not a hack nor a solution that should violate TOS", "Warning!", MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Warning);
+            if (res == DialogResult.Abort) Environment.Exit(0);
+            else if (res == DialogResult.Retry)
+            {
+                Process.Start("https://forums.playlostark.com/t/talk-to-us-already-about-the-dps-meter/370558");
+                Environment.Exit(0);
+            }
+        }
         private static bool AdminRelauncher()
         {
             if (!new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator))
@@ -54,7 +79,7 @@ namespace LostArkLogger
                     Verb = "runas"
                 };
                 try { Process.Start(startInfo); }
-                catch (Exception ex) { MessageBox.Show("This program must be run as an administrator!\n" + ex.ToString()); }
+                catch (Exception ex) { MessageBox.Show("This program must be run as an administrator!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error); }
                 return false;
             }
             return true;
