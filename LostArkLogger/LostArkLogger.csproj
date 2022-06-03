@@ -99,17 +99,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RetroOverlay.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="RetroOverlay.Designer.cs">
-      <DependentUpon>RetroOverlay.cs</DependentUpon>
-    </Compile>
-    <Compile Include="RetroUtil\ControlExtension.cs" />
-    <Compile Include="RetroUtil\DamageMeterRow.cs" />
-    <Compile Include="RetroUtil\MyColorTable.cs" />
-    <Compile Include="RetroUtil\PropertyComparer.cs" />
-    <Compile Include="RetroUtil\SortableBindingList.cs" />
     <Compile Include="Utilities\BitReader.cs" />
     <Compile Include="Utilities\ManagedIpHelper.cs" />
     <Compile Include="Utilities\NetworkUtil.cs" />
@@ -135,9 +124,6 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="RetroOverlay.resx">
-      <DependentUpon>RetroOverlay.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -162,31 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\class_symbol_0.png" />
-    <None Include="Resources\ac_skill_0.png" />
-    <None Include="Resources\bd_skill_0.png" />
-    <None Include="Resources\bk_skill_0.png" />
-    <None Include="Resources\bk_skill_1.png" />
-    <None Include="Resources\bl_skill_0.png" />
-    <None Include="Resources\bm_skill_0.png" />
-    <None Include="Resources\bs_skill_0.png" />
-    <None Include="Resources\dh_skill_0.png" />
-    <None Include="Resources\dm_skill_0.png" />
-    <None Include="Resources\dt_skill_0.png" />
-    <None Include="Resources\gl_skill_0.png" />
-    <None Include="Resources\he_skill_0.png" />
-    <None Include="Resources\he_skill_1.png" />
-    <None Include="Resources\hk_skill_0.png" />
-    <None Include="Resources\if_skill_0.png" />
-    <None Include="Resources\lm_skill_0.png" />
-    <None Include="Resources\oodle_state_kr.bin" />
     <None Include="Resources\oodle_state_steam.bin" />
-    <None Include="Resources\po_skill_0.png" />
-    <None Include="Resources\po_skill_1.png" />
-    <None Include="Resources\rp_skill_0.png" />
-    <None Include="Resources\sc_skill_0.png" />
-    <None Include="Resources\scs_skill_0.png" />
-    <None Include="Resources\sm_skill_0.png" />
-    <None Include="Resources\so_skill_0.png" />
     <Content Include="winged-sword.ico" />
   </ItemGroup>
   <ItemGroup>

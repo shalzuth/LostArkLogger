@@ -436,7 +436,7 @@ namespace LostArkLogger
                 else if (opcode == OpCodes.PKTStatusEffectAddNotify) // shields included
                 {
                     var buff = new PKTStatusEffectAddNotify(new BitReader(payload));
-                    var amount = buff.statusEffectData.hasfield3 == 1 ? BitConverter.ToUInt32(buff.statusEffectData.Value, 0) : 0;
+                    var amount = buff.statusEffectData.hasValue == 1 ? BitConverter.ToUInt32(buff.statusEffectData.Value, 0) : 0;
                     AppendLog(10, buff.statusEffectData.SourceId.ToString("X"), currentEncounter.Entities.GetOrAdd(buff.statusEffectData.SourceId).Name, buff.statusEffectData.BuffId.ToString(), SkillBuff.GetSkillBuffName(buff.statusEffectData.BuffId), buff.New.ToString(), buff.ObjectId.ToString("X"), currentEncounter.Entities.GetOrAdd(buff.ObjectId).Name, amount.ToString());
                 }
                 /*else if (opcode == OpCodes.PKTParalyzationStateNotify)
