@@ -9,8 +9,8 @@ namespace LostArkLogger
             field0 = reader.ReadUInt32();
             field1 = reader.ReadByte();
             field2 = reader.ReadByte();
-            hasfield3 = reader.ReadByte();
-            if (hasfield3 == 1)
+            hasValue = reader.ReadByte();
+            if (hasValue == 1)
                 Value = reader.ReadBytes(16);
             InstanceId = reader.ReadUInt64();
             BuffId = reader.ReadUInt32();
@@ -25,7 +25,7 @@ namespace LostArkLogger
         public UInt32 field0;
         public Byte field1;
         public Byte field2;
-        public Byte hasfield3;
+        public Byte hasValue;
         public Byte[] Value;
         public UInt64 InstanceId;
         public UInt32 BuffId;
