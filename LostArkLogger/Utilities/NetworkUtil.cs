@@ -11,6 +11,7 @@ namespace LostArkLogger.Utilities
     {
         public static NetworkInterface GetAdapterUsedByProcess(string pName)
         {
+            /*
             Process[] candidates = Process.GetProcessesByName(pName);
             if (candidates.Length == 0)
                 throw new Exception("Cannot find any running processes with the name " + pName + ".exe");
@@ -26,14 +27,16 @@ namespace LostArkLogger.Utilities
                         break;
                     }
             }
-
+            
             if (localAddr == null)
                 throw new Exception("No routing information for " + pName + ".exe found.");
-
+            */
             foreach (NetworkInterface nic in NetworkInterface.GetAllNetworkInterfaces())
             {
-                IPInterfaceProperties ipProps = nic.GetIPProperties();
-                if (ipProps.UnicastAddresses.Any(new Func<UnicastIPAddressInformation, bool>((u) => { return u.Address.ToString() == localAddr.ToString(); })))
+                //IPInterfaceProperties ipProps = nic.GetIPProperties();
+                //if (ipProps.UnicastAddresses.Any(new Func<UnicastIPAddressInformation, bool>((u) => { return u.Address.ToString() == localAddr.ToString(); })))
+                // Hardcode the NIC name
+                if (nic.Name=="ROUTER")
                     return nic;
             }
             return null;
