@@ -2,16 +2,12 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class StatPair
+    public partial class StatPair
     {
         public StatPair(BitReader reader)
         {
-            num = reader.ReadUInt16();
-            for(var i = 0; i < num; i++)
-            {
-                Value.Add(reader.ReadPackedInt());
-                StatType.Add(reader.ReadByte());
-            }
+            if (Parser.region == Parser.Region.Steam) SteamDecode(reader);
+            if (Parser.region == Parser.Region.Korea) SteamDecode(reader);
         }
         public UInt16 num;
         public List<Int64> Value = new List<Int64>();

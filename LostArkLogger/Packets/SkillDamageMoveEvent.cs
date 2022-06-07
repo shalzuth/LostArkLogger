@@ -2,19 +2,12 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class SkillDamageMoveEvent
+    public partial class SkillDamageMoveEvent
     {
         public SkillDamageMoveEvent(BitReader reader)
         {
-            field0 = reader.ReadUInt16();
-            field1 = reader.ReadUInt64();
-            field2 = reader.ReadUInt16();
-            field3 = reader.ReadUInt64();
-            skillDamageEvent = reader.Read<SkillDamageEvent>();
-            field5 = reader.ReadFlag();
-            field6 = reader.ReadUInt64();
-            field7 = reader.ReadByte();
-            field8 = reader.ReadUInt16();
+            if (Parser.region == Parser.Region.Steam) SteamDecode(reader);
+            if (Parser.region == Parser.Region.Korea) SteamDecode(reader);
         }
         public UInt16 field0;
         public UInt64 field1;

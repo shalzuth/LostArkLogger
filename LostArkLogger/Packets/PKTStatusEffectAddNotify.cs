@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class PKTStatusEffectAddNotify
+    public partial class PKTStatusEffectAddNotify
     {
         public PKTStatusEffectAddNotify(BitReader reader)
         {
-            field0 = reader.ReadUInt64();
-            statusEffectData = reader.Read<StatusEffectData>();
-            New = reader.ReadByte();
-            ObjectId = reader.ReadUInt64();
+            if (Parser.region == Parser.Region.Steam) SteamDecode(reader);
+            if (Parser.region == Parser.Region.Korea) SteamDecode(reader);
         }
         public UInt64 field0;
         public StatusEffectData statusEffectData;

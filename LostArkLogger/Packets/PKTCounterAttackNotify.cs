@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class PKTCounterAttackNotify
+    public partial class PKTCounterAttackNotify
     {
         public PKTCounterAttackNotify(BitReader reader)
         {
-            field0 = reader.ReadBytes(5);
-            TargetId = reader.ReadUInt64();
-            field2 = reader.ReadByte();
-            SourceId = reader.ReadUInt64();
+            if (Parser.region == Parser.Region.Steam) SteamDecode(reader);
+            if (Parser.region == Parser.Region.Korea) SteamDecode(reader);
         }
         public Byte[] field0;
         public UInt64 TargetId;

@@ -2,28 +2,12 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class PKTSkillStartNotify
+    public partial class PKTSkillStartNotify
     {
         public PKTSkillStartNotify(BitReader reader)
         {
-            field0 = reader.ReadUInt64();
-            hasfield1 = reader.ReadByte();
-            if (hasfield1 == 1)
-                field1 = reader.ReadUInt32();
-            field2 = reader.ReadUInt16();
-            field3 = reader.ReadByte();
-            field4 = reader.ReadUInt16();
-            hasfield5 = reader.ReadByte();
-            if (hasfield5 == 1)
-                field5 = reader.ReadUInt16();
-            field6 = reader.ReadUInt64();
-            field7 = reader.ReadPackedValues(1, 1, 4, 4, 4, 3, 6);
-            SourceId = reader.ReadUInt64();
-            hasfield9 = reader.ReadByte();
-            if (hasfield9 == 1)
-                field9 = reader.ReadUInt32();
-            field10 = reader.ReadUInt64();
-            SkillId = reader.ReadUInt32();
+            if (Parser.region == Parser.Region.Steam) SteamDecode(reader);
+            if (Parser.region == Parser.Region.Korea) SteamDecode(reader);
         }
         public UInt64 field0;
         public Byte hasfield1;

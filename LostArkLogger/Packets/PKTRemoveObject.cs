@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class PKTRemoveObject
+    public partial class PKTRemoveObject
     {
         public PKTRemoveObject(BitReader reader)
         {
-            field0 = reader.ReadUInt64();
-            field1 = reader.ReadString();
+            if (Parser.region == Parser.Region.Steam) SteamDecode(reader);
+            if (Parser.region == Parser.Region.Korea) SteamDecode(reader);
         }
         public UInt64 field0;
         public String field1;

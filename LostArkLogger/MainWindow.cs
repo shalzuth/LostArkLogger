@@ -97,7 +97,7 @@ namespace LostArkLogger
 
         private void regionSelector_SelectedIndexChanged(object sender, EventArgs e)
         {
-            sniffer.region = (Parser.Region)Enum.Parse(typeof(Parser.Region), regionSelector.Text);
+            Parser.region = (Parser.Region)Enum.Parse(typeof(Parser.Region), regionSelector.Text);
         }
     }
 }

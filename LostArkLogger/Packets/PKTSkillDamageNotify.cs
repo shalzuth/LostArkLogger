@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class PKTSkillDamageNotify
+    public partial class PKTSkillDamageNotify
     {
         public PKTSkillDamageNotify(BitReader reader)
         {
-            field0 = reader.ReadByte();
-            SkillId = reader.ReadUInt32();
-            SourceId = reader.ReadUInt64();
-            SkillEffectId = reader.ReadUInt32();
-            skillDamageEvents = reader.ReadList<SkillDamageEvent>();
+            if (Parser.region == Parser.Region.Steam) SteamDecode(reader);
+            if (Parser.region == Parser.Region.Korea) SteamDecode(reader);
         }
         public Byte field0;
         public UInt32 SkillId;

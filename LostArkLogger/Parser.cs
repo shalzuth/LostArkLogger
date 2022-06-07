@@ -38,7 +38,7 @@ namespace LostArkLogger
             Korea,
             Russia
         }
-        public Region region = Region.Steam;
+        public static Region region = Region.Steam;
         public Parser()
         {
             if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
@@ -189,7 +189,7 @@ namespace LostArkLogger
         {
             var opcodeVal = BitConverter.ToUInt16(packets, 2);
             var opCodeString = "";
-            if (region == Region.Steam) opCodeString = ((OpCodes_steam)opcodeVal).ToString();
+            if (region == Region.Steam) opCodeString = ((OpCodes_Steam)opcodeVal).ToString();
             if (region == Region.Russia) opCodeString = ((OpCodes_ru)opcodeVal).ToString();
             if (region == Region.Korea) opCodeString = ((OpCodes_kr)opcodeVal).ToString(); // broke atm
             return (OpCodes)Enum.Parse(typeof(OpCodes), opCodeString);

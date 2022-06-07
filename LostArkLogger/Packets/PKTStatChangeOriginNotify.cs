@@ -2,17 +2,12 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class PKTStatChangeOriginNotify
+    public partial class PKTStatChangeOriginNotify
     {
         public PKTStatChangeOriginNotify(BitReader reader)
         {
-            hasfield0 = reader.ReadByte();
-            if (hasfield0 == 1)
-                field0 = reader.ReadUInt32();
-            StatPairChangedList = reader.Read<StatPair>();
-            field2 = reader.ReadByte();
-            StatPairList = reader.Read<StatPair>();
-            ObjectId = reader.ReadUInt64();
+            if (Parser.region == Parser.Region.Steam) SteamDecode(reader);
+            if (Parser.region == Parser.Region.Korea) SteamDecode(reader);
         }
         public Byte hasfield0;
         public UInt32 field0;

@@ -2,16 +2,12 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class SkillRunes
+    public partial class SkillRunes
     {
         public SkillRunes(BitReader reader)
         {
-            num = reader.ReadUInt16();
-            for(var i = 0; i < num; i++)
-            {
-                field0s.Add(reader.ReadList<UInt32>());
-                field1s.Add(reader.ReadUInt32());
-            }
+            if (Parser.region == Parser.Region.Steam) SteamDecode(reader);
+            if (Parser.region == Parser.Region.Korea) SteamDecode(reader);
         }
         public UInt16 num;
         public List<List<UInt32>> field0s = new List<List<UInt32>>();

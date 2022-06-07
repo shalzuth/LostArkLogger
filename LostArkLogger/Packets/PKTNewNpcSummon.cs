@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class PKTNewNpcSummon
+    public partial class PKTNewNpcSummon
     {
         public PKTNewNpcSummon(BitReader reader)
         {
-            field0 = reader.ReadByte();
-            subfield0 = reader.ReadBytes(0);
-            OwnerId = reader.ReadUInt64();
-            subfield1 = reader.ReadBytes(31);
-            npcStruct = reader.Read<NpcStruct>();
+            if (Parser.region == Parser.Region.Steam) SteamDecode(reader);
+            if (Parser.region == Parser.Region.Korea) SteamDecode(reader);
         }
         public Byte field0;
         public Byte[] subfield0;

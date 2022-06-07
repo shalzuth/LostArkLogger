@@ -94,6 +94,7 @@
       <DependentUpon>Overlay.cs</DependentUpon>
     </Compile>
     <Compile Include="Packets\*.cs" />
+    <Compile Include="Packets\Steam\*.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -217,5 +218,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

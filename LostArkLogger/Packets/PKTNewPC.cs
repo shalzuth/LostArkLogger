@@ -2,25 +2,12 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public class PKTNewPC
+    public partial class PKTNewPC
     {
         public PKTNewPC(BitReader reader)
         {
-            hasfield0 = reader.ReadByte();
-            if (hasfield0 == 1)
-                field0 = reader.ReadBytes(12);
-            hasfield1 = reader.ReadByte();
-            if (hasfield1 == 1)
-                field1 = reader.ReadUInt32();
-            hasfield2 = reader.ReadByte();
-            if (hasfield2 == 1)
-                pKTNewPC_1 = reader.Read<PKTNewPC_1>();
-            field3 = reader.ReadByte();
-            hasfield4 = reader.ReadByte();
-            if (hasfield4 == 1)
-                field4 = reader.ReadBytes(20);
-            pCStruct = reader.Read<PCStruct>();
-            field6 = reader.ReadByte();
+            if (Parser.region == Parser.Region.Steam) SteamDecode(reader);
+            if (Parser.region == Parser.Region.Korea) SteamDecode(reader);
         }
         public Byte hasfield0;
         public Byte[] field0;
