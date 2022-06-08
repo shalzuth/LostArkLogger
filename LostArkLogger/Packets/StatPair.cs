@@ -6,8 +6,8 @@ namespace LostArkLogger
     {
         public StatPair(BitReader reader)
         {
-            if (Parser.region == Parser.Region.Steam) SteamDecode(reader);
-            if (Parser.region == Parser.Region.Korea) SteamDecode(reader);
+            if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
+            if (Properties.Settings.Default.Region == Region.Korea) SteamDecode(reader);
         }
         public UInt16 num;
         public List<Int64> Value = new List<Int64>();

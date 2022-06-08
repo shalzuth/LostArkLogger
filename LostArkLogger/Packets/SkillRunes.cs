@@ -6,8 +6,8 @@ namespace LostArkLogger
     {
         public SkillRunes(BitReader reader)
         {
-            if (Parser.region == Parser.Region.Steam) SteamDecode(reader);
-            if (Parser.region == Parser.Region.Korea) SteamDecode(reader);
+            if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
+            if (Properties.Settings.Default.Region == Region.Korea) SteamDecode(reader);
         }
         public UInt16 num;
         public List<List<UInt32>> field0s = new List<List<UInt32>>();

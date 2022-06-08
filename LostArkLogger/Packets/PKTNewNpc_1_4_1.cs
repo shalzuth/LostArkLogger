@@ -6,8 +6,8 @@ namespace LostArkLogger
     {
         public PKTNewNpc_1_4_1(BitReader reader)
         {
-            if (Parser.region == Parser.Region.Steam) SteamDecode(reader);
-            if (Parser.region == Parser.Region.Korea) SteamDecode(reader);
+            if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
+            if (Properties.Settings.Default.Region == Region.Korea) SteamDecode(reader);
         }
         public UInt16 field0;
         public Int64 field1;
