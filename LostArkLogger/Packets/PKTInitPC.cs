@@ -10,8 +10,6 @@ namespace LostArkLogger
             if (Properties.Settings.Default.Region == Region.Korea) SteamDecode(reader);
         }
         public String Name;
-        public Byte[] field2;
-        public Byte[] field0;
         public UInt64 PlayerId;
         public UInt32 GearLevel;
         public UInt16 ClassId;
@@ -24,6 +22,8 @@ namespace LostArkLogger
         public StatPair statPair;
         public Byte[] bytearray_0;
         public Byte[] bytearray_1;
+        public Byte[] bytearray_2;
+        public Byte[] bytearray_3;
         public UInt64 u64_0;
         public UInt64 u64_1;
         public UInt64 u64_2;
