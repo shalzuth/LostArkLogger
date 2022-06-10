@@ -10,8 +10,8 @@ namespace LostArkLogger
             if (Properties.Settings.Default.Region == Region.Korea) SteamDecode(reader);
         }
         public UInt64 OwnerId;
-        public UInt64 SkillEffect;
-        public UInt32 ProjectileId;
+        public UInt64 ProjectileId;
+        public UInt32 SkillEffect;
         public UInt32 SkillId;
         public Byte[] Tripods;
         public Byte SkillLevel;

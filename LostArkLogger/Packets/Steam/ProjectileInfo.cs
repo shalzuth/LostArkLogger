@@ -18,7 +18,7 @@ namespace LostArkLogger
             Tripods = reader.ReadBytes(3);
             SkillId = reader.ReadUInt32();
             u32_4 = reader.ReadUInt32();
-            SkillEffect = reader.ReadUInt64();
+            ProjectileId = reader.ReadUInt64();
             u16_0 = reader.ReadUInt16();
             b_1 = reader.ReadByte();
             if (b_1 == 1)
@@ -27,7 +27,7 @@ namespace LostArkLogger
             OwnerId = reader.ReadUInt64();
             u32_0 = reader.ReadUInt32();
             SkillLevel = reader.ReadByte();
-            ProjectileId = reader.ReadUInt32();
+            SkillEffect = reader.ReadUInt32();
             u64_0 = reader.ReadUInt64();
             u64_1 = reader.ReadUInt64();
         }
