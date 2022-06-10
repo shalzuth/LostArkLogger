@@ -133,7 +133,7 @@
   <data name="oodle_state_Korea" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\oodle_state_Korea.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="oodle_state_steam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="oodle_state_Steam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\oodle_state_steam.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="Skill" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -148,7 +148,7 @@
   <data name="xor_Korea" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\xor_Korea.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="xor_steam" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="xor_Steam" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\xor_steam.bin;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

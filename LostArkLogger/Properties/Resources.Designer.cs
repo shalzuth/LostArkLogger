@@ -113,9 +113,9 @@ namespace LostArkLogger.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static byte[] oodle_state_steam {
+        public static byte[] oodle_state_Steam {
             get {
-                object obj = ResourceManager.GetObject("oodle_state_steam", resourceCulture);
+                object obj = ResourceManager.GetObject("oodle_state_Steam", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -163,9 +163,9 @@ namespace LostArkLogger.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static byte[] xor_steam {
+        public static byte[] xor_Steam {
             get {
-                object obj = ResourceManager.GetObject("xor_steam", resourceCulture);
+                object obj = ResourceManager.GetObject("xor_Steam", resourceCulture);
                 return ((byte[])(obj));
             }
         }
