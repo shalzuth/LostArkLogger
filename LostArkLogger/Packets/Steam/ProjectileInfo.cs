@@ -6,30 +6,30 @@ namespace LostArkLogger
     {
         public void SteamDecode(BitReader reader)
         {
-            field0 = reader.ReadBytes(6);
-            field1 = reader.ReadByte();
-            hasfield2 = reader.ReadByte();
-            if (hasfield2 == 1)
-                field2 = reader.ReadUInt32();
-            field3 = reader.ReadByte();
-            field4 = reader.ReadUInt32();
-            field5 = reader.ReadUInt32();
-            field6 = reader.ReadUInt64();
+            bytearray = reader.ReadBytes(6);
+            b_0 = reader.ReadByte();
+            b_2 = reader.ReadByte();
+            if (b_2 == 1)
+                u32_1 = reader.ReadUInt32();
+            b_3 = reader.ReadByte();
+            u32_2 = reader.ReadUInt32();
+            u32_3 = reader.ReadUInt32();
+            u64_2 = reader.ReadUInt64();
             Tripods = reader.ReadBytes(3);
             SkillId = reader.ReadUInt32();
-            field9 = reader.ReadUInt32();
-            ProjectileId = reader.ReadUInt64();
-            field11 = reader.ReadUInt16();
-            hasfield12 = reader.ReadByte();
-            if (hasfield12 == 1)
-                field12 = reader.ReadList<UInt64>();
-            field13 = reader.ReadUInt16();
+            u32_4 = reader.ReadUInt32();
+            SkillEffect = reader.ReadUInt64();
+            u16_0 = reader.ReadUInt16();
+            b_1 = reader.ReadByte();
+            if (b_1 == 1)
+                u64list = reader.ReadList<UInt64>();
+            u16_1 = reader.ReadUInt16();
             OwnerId = reader.ReadUInt64();
-            field15 = reader.ReadUInt32();
+            u32_0 = reader.ReadUInt32();
             SkillLevel = reader.ReadByte();
-            SkillEffect = reader.ReadUInt32();
-            field18 = reader.ReadUInt64();
-            field19 = reader.ReadUInt64();
+            ProjectileId = reader.ReadUInt32();
+            u64_0 = reader.ReadUInt64();
+            u64_1 = reader.ReadUInt64();
         }
     }
 }

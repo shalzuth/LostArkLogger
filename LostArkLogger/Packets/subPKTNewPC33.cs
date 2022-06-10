@@ -2,18 +2,17 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public partial class PKTNewNpc
+    public partial class subPKTNewPC33
     {
-        public PKTNewNpc(BitReader reader)
+        public subPKTNewPC33(BitReader reader)
         {
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
             if (Properties.Settings.Default.Region == Region.Korea) SteamDecode(reader);
         }
-        public NpcStruct npcStruct;
-        public UInt64 u64;
-        public Byte b_0;
-        public Byte b_1;
-        public Byte b_2;
-        public Byte b_3;
+        public Byte[] bytearray_0;
+        public Byte[] bytearray_1;
+        public UInt32 u32_0;
+        public UInt32 u32_1;
+        public Byte b;
     }
 }

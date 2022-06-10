@@ -2,16 +2,16 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public partial class PKTInitEnv_1
+    public partial class subPKTInitEnv5
     {
-        public PKTInitEnv_1(BitReader reader)
+        public subPKTInitEnv5(BitReader reader)
         {
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
             if (Properties.Settings.Default.Region == Region.Korea) SteamDecode(reader);
         }
+        public List<List<Byte>> blist_0 = new List<List<Byte>>();
+        public List<List<Byte>> blist_1 = new List<List<Byte>>();
+        public List<List<Byte>> blist_2 = new List<List<Byte>>();
         public UInt16 num;
-        public List<List<Byte>> field0s = new List<List<Byte>>();
-        public List<List<Byte>> field1s = new List<List<Byte>>();
-        public List<List<Byte>> field2s = new List<List<Byte>>();
     }
 }

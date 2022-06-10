@@ -9,8 +9,8 @@ namespace LostArkLogger
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
             if (Properties.Settings.Default.Region == Region.Korea) SteamDecode(reader);
         }
+        public List<List<UInt32>> u32list = new List<List<UInt32>>();
+        public List<UInt32> u32 = new List<UInt32>();
         public UInt16 num;
-        public List<List<UInt32>> field0s = new List<List<UInt32>>();
-        public List<UInt32> field1s = new List<UInt32>();
     }
 }

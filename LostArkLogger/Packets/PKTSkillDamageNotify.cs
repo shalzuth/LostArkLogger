@@ -9,10 +9,10 @@ namespace LostArkLogger
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
             if (Properties.Settings.Default.Region == Region.Korea) SteamDecode(reader);
         }
-        public Byte field0;
-        public UInt32 SkillId;
         public UInt64 SourceId;
         public UInt32 SkillEffectId;
+        public UInt32 SkillId;
         public List<SkillDamageEvent> skillDamageEvents;
+        public Byte b;
     }
 }

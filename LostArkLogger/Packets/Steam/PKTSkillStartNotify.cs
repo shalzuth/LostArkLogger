@@ -6,23 +6,23 @@ namespace LostArkLogger
     {
         public void SteamDecode(BitReader reader)
         {
-            field0 = reader.ReadUInt64();
-            hasfield1 = reader.ReadByte();
-            if (hasfield1 == 1)
-                field1 = reader.ReadUInt32();
-            field2 = reader.ReadUInt16();
-            field3 = reader.ReadByte();
-            field4 = reader.ReadUInt16();
-            hasfield5 = reader.ReadByte();
-            if (hasfield5 == 1)
-                field5 = reader.ReadUInt16();
-            field6 = reader.ReadUInt64();
-            field7 = reader.ReadPackedValues(1, 1, 4, 4, 4, 3, 6);
+            u64_0 = reader.ReadUInt64();
+            b_0 = reader.ReadByte();
+            if (b_0 == 1)
+                u32_0 = reader.ReadUInt32();
+            u16_0 = reader.ReadUInt16();
+            b_1 = reader.ReadByte();
+            u16_1 = reader.ReadUInt16();
+            b_2 = reader.ReadByte();
+            if (b_2 == 1)
+                u16_2 = reader.ReadUInt16();
+            u64_2 = reader.ReadUInt64();
+            packed = reader.ReadPackedValues(1, 1, 4, 4, 4, 3, 6);
             SourceId = reader.ReadUInt64();
-            hasfield9 = reader.ReadByte();
-            if (hasfield9 == 1)
-                field9 = reader.ReadUInt32();
-            field10 = reader.ReadUInt64();
+            b_3 = reader.ReadByte();
+            if (b_3 == 1)
+                u32_1 = reader.ReadUInt32();
+            u64_1 = reader.ReadUInt64();
             SkillId = reader.ReadUInt32();
         }
     }

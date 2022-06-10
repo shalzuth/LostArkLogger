@@ -6,52 +6,52 @@ namespace LostArkLogger
     {
         public void SteamDecode(BitReader reader)
         {
-            pKTNewNpc_1_2_2 = reader.Read<PKTNewNpc_1_2_2>();
-            hasfield1 = reader.ReadByte();
-            if (hasfield1 == 1)
-                field1 = reader.ReadBytes(12);
-            field2 = reader.ReadByte();
-            field3 = reader.ReadByte();
-            field4 = reader.ReadByte();
-            field5 = reader.ReadUInt32();
-            field6 = reader.ReadByte();
-            field7 = reader.ReadUInt32();
-            field8 = reader.ReadByte();
+            subPKTNewNpc5 = reader.Read<subPKTNewNpc5>();
+            b_0 = reader.ReadByte();
+            if (b_0 == 1)
+                bytearray_1 = reader.ReadBytes(12);
+            b_1 = reader.ReadByte();
+            b_5 = reader.ReadByte();
+            b_9 = reader.ReadByte();
+            u32_7 = reader.ReadUInt32();
+            b_11 = reader.ReadByte();
+            u32_8 = reader.ReadUInt32();
+            b_12 = reader.ReadByte();
             itemInfos = reader.ReadList<ItemInfo>();
             ClassId = reader.ReadUInt16();
             skillRunes = reader.Read<SkillRunes>();
             GearLevel = reader.ReadUInt32();
-            field13 = reader.ReadUInt64();
-            field14 = reader.ReadUInt64();
-            field15 = reader.ReadUInt32();
-            field16 = reader.ReadList<UInt32>();
+            u64_0 = reader.ReadUInt64();
+            u64_1 = reader.ReadUInt64();
+            u32_0 = reader.ReadUInt32();
+            u32list = reader.ReadList<UInt32>();
             Name = reader.ReadString();
-            field18 = reader.ReadUInt32();
-            field19 = reader.ReadUInt16();
-            field20 = reader.ReadUInt32();
-            field21 = reader.ReadByte();
+            u32_1 = reader.ReadUInt32();
+            u16_0 = reader.ReadUInt16();
+            u32_2 = reader.ReadUInt32();
+            b_2 = reader.ReadByte();
             EquippedItems = reader.ReadList<ItemInfo>();
-            field23 = reader.ReadBytes(5);
-            field24 = reader.ReadUInt32();
-            field25 = reader.ReadByte();
-            field26 = reader.ReadUInt32();
+            bytearray_2 = reader.ReadBytes(5);
+            u32_3 = reader.ReadUInt32();
+            b_3 = reader.ReadByte();
+            u32_4 = reader.ReadUInt32();
             statusEffectDatas = reader.ReadList<StatusEffectData>();
-            field28 = reader.ReadUInt16();
-            field29 = reader.ReadByte();
-            Guild = reader.ReadString();
-            field31 = reader.ReadByte();
-            field32 = reader.ReadByte();
-            field33 = reader.ReadBytes(25);
-            field34 = reader.ReadUInt16();
+            u16_1 = reader.ReadUInt16();
+            b_4 = reader.ReadByte();
+            str = reader.ReadString();
+            b_6 = reader.ReadByte();
+            b_7 = reader.ReadByte();
+            bytearray_0 = reader.ReadBytes(25);
+            u16_2 = reader.ReadUInt16();
             PlayerId = reader.ReadUInt64();
-            field36 = reader.ReadByte();
+            b_8 = reader.ReadByte();
             Level = reader.ReadUInt16();
-            field38 = reader.ReadUInt16();
-            field39 = reader.ReadUInt32();
+            u16_3 = reader.ReadUInt16();
+            u32_5 = reader.ReadUInt32();
             statPair = reader.Read<StatPair>();
-            field41 = reader.ReadByte();
-            field42 = reader.ReadUInt32();
-            pKTNewNpc_1_4_1s = reader.ReadList<PKTNewNpc_1_4_1>();
+            b_10 = reader.ReadByte();
+            u32_6 = reader.ReadUInt32();
+            subPKTNewNpc29s = reader.ReadList<subPKTNewNpc29>();
         }
     }
 }

@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
-    public partial class PKTNewNpc_1_2_2
+    public partial class subPKTNewNpc5
     {
-        public PKTNewNpc_1_2_2(BitReader reader)
+        public subPKTNewNpc5(BitReader reader)
         {
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
             if (Properties.Settings.Default.Region == Region.Korea) SteamDecode(reader);
         }
         public UInt32 num;
-        public List<Byte> field0s = new List<Byte>();
+        public List<Byte> b = new List<Byte>();
     }
 }

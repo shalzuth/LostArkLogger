@@ -10,8 +10,9 @@ namespace LostArkLogger
             if (Properties.Settings.Default.Region == Region.Korea) SteamDecode(reader);
         }
         public Byte[] field0;
-        public UInt64 TargetId;
-        public Byte field2;
+        public Byte[] field2;
+        public Byte[] field4;
         public UInt64 SourceId;
+        public UInt64 TargetId;
     }
 }

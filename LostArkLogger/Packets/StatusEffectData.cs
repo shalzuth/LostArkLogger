@@ -9,18 +9,18 @@ namespace LostArkLogger
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
             if (Properties.Settings.Default.Region == Region.Korea) SteamDecode(reader);
         }
-        public UInt32 field0;
-        public Byte field1;
-        public Byte field2;
-        public Byte hasValue;
         public Byte[] Value;
         public UInt64 InstanceId;
-        public UInt32 BuffId;
-        public List<Byte[]> field6;
-        public UInt32 field7;
-        public UInt64 field8;
-        public Byte hasfield9;
-        public UInt64 field9;
         public UInt64 SourceId;
+        public UInt32 BuffId;
+        public Byte hasValue;
+        public UInt64 s64;
+        public List<Byte[]> bytearraylist;
+        public UInt64 u64;
+        public UInt32 u32_0;
+        public UInt32 u32_1;
+        public Byte b_0;
+        public Byte b_1;
+        public Byte b_2;
     }
 }

@@ -9,27 +9,27 @@ namespace LostArkLogger
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
             if (Properties.Settings.Default.Region == Region.Korea) SteamDecode(reader);
         }
-        public Byte[] field0;
-        public Byte field1;
-        public Byte hasfield2;
-        public UInt32 field2;
-        public Byte field3;
-        public UInt32 field4;
-        public UInt32 field5;
-        public UInt64 field6;
-        public Byte[] Tripods;
-        public UInt32 SkillId;
-        public UInt32 field9;
-        public UInt64 ProjectileId;
-        public UInt16 field11;
-        public Byte hasfield12;
-        public List<UInt64> field12;
-        public UInt16 field13;
         public UInt64 OwnerId;
-        public UInt32 field15;
+        public UInt64 SkillEffect;
+        public UInt32 ProjectileId;
+        public UInt32 SkillId;
+        public Byte[] Tripods;
         public Byte SkillLevel;
-        public UInt32 SkillEffect;
-        public UInt64 field18;
-        public UInt64 field19;
+        public List<UInt64> u64list;
+        public UInt64 u64_0;
+        public UInt64 u64_1;
+        public UInt64 u64_2;
+        public Byte[] bytearray;
+        public UInt32 u32_0;
+        public UInt32 u32_1;
+        public UInt32 u32_2;
+        public UInt32 u32_3;
+        public UInt32 u32_4;
+        public UInt16 u16_0;
+        public UInt16 u16_1;
+        public Byte b_0;
+        public Byte b_1;
+        public Byte b_2;
+        public Byte b_3;
     }
 }

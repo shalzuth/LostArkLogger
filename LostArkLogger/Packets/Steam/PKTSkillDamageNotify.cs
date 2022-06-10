@@ -6,7 +6,7 @@ namespace LostArkLogger
     {
         public void SteamDecode(BitReader reader)
         {
-            field0 = reader.ReadByte();
+            b = reader.ReadByte();
             SkillId = reader.ReadUInt32();
             SourceId = reader.ReadUInt64();
             SkillEffectId = reader.ReadUInt32();
