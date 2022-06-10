@@ -38,7 +38,7 @@ namespace LostArkLogger
                 }
                 if (MessageBox.Show("please copy oo2net_9_win64 from LostArk\\Binaries\\Win64 directory to current directory", "Missing DLL") != DialogResult.OK) return;
             }
-            var payload = ObjectSerialize.Decompress(Properties.Settings.Default.Region == Region.Steam ? Properties.Resources.oodle_state_Korea : Properties.Resources.oodle_state_steam); // to do select correct bin
+            var payload = ObjectSerialize.Decompress(Properties.Settings.Default.Region == Region.Steam ? Properties.Resources.oodle_state_steam : Properties.Resources.oodle_state_Korea); // to do select correct bin
             initDict = payload.Skip(0x20).Take(0x800000).ToArray();
             var compressorSize = BitConverter.ToInt32(payload, 0x18);
             var compressorState = payload.Skip(0x20).Skip(0x800000).Take(compressorSize).ToArray();
