@@ -312,7 +312,12 @@ namespace LostArkLogger
                     if (opcode == OpCodes.PKTRaidBossKillNotify || opcode == OpCodes.PKTTriggerBossBattleStatus)
                         currentEncounter.Entities = Encounters.Last().Entities; // preserve entities 
                     Encounters.Add(currentEncounter);
-                    AppendLog(2);
+
+                    var phaseCode = "0"; // PKTRaidResult
+                    if (opcode == OpCodes.PKTRaidBossKillNotify) phaseCode = "1";
+                    else if (opcode == OpCodes.PKTTriggerBossBattleStatus) phaseCode = "2";
+                    AppendLog(2, phaseCode);
+
                 }
                 else if (opcode == OpCodes.PKTInitPC)
                 {
