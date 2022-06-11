@@ -30,9 +30,7 @@ namespace LostArkLogger
                 Port = uint.Parse(args[PortIndex + 1]);
             }
 
-            Oodle.Init();
-
-            var sniffer = new Parser();
+            Properties.Settings.Default.Region = Region.Steam;
 
             if (RegionIndex != -1)
             {
@@ -47,6 +45,12 @@ namespace LostArkLogger
                     EnqueueMessage(0, "Using Korea client!");
                 }
             }
+
+            Properties.Settings.Default.Save();
+
+            Oodle.Init();
+
+            var sniffer = new Parser();
 
             if (NpcapIndex != -1)
             {
