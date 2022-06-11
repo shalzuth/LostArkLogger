@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -35,19 +34,19 @@ namespace LostArkLogger
 
             var sniffer = new Parser();
 
-            //if (RegionIndex != -1)
-            //{
-            //    if (args[RegionIndex + 1] == "Russia")
-            //    {
-            //        sniffer.region = Properties.Settings.Default.Region.Russia;
-            //        EnqueueMessage("message", "Using Russia client!");
-            //    }
-            //    else if (args[RegionIndex + 1] == "Korea")
-            //    {
-            //        sniffer.region = Properties.Settings.Default.Region.Korea;
-            //        EnqueueMessage("message", "Using Korea client!");
-            //    }
-            //}
+            if (RegionIndex != -1)
+            {
+                if (args[RegionIndex + 1] == "Russia")
+                {
+                    //Properties.Settings.Default.Region = Region.Russia;
+                    EnqueueMessage(0, "Using Russia client!");
+                }
+                else if (args[RegionIndex + 1] == "Korea")
+                {
+                    Properties.Settings.Default.Region = Region.Korea;
+                    EnqueueMessage(0, "Using Korea client!");
+                }
+            }
 
             if (NpcapIndex != -1)
             {
@@ -111,7 +110,7 @@ namespace LostArkLogger
                         Console.WriteLine("Trying to requeue message");
                         this.messageQueue.Enqueue(sendMessage);
                     }
-                    
+
                 }
                 else
                 {
