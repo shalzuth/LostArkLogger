@@ -25,61 +25,37 @@ namespace LostArkLogger.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
-        public global::System.Windows.Forms.FormWindowState State {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IgnoreWarning {
             get {
-                return ((global::System.Windows.Forms.FormWindowState)(this["State"]));
+                return ((bool)(this["IgnoreWarning"]));
             }
             set {
-                this["State"] = value;
+                this["IgnoreWarning"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
-        public global::System.Drawing.Point Location {
+        [global::System.Configuration.DefaultSettingValueAttribute("Steam")]
+        public global::LostArkLogger.Region Region {
             get {
-                return ((global::System.Drawing.Point)(this["Location"]));
+                return ((global::LostArkLogger.Region)(this["Region"]));
             }
             set {
-                this["Location"] = value;
+                this["Region"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
-        public global::System.Drawing.Size Size {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Npcap {
             get {
-                return ((global::System.Drawing.Size)(this["Size"]));
+                return ((bool)(this["Npcap"]));
             }
             set {
-                this["Size"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public double OpacitySetting {
-            get {
-                return ((double)(this["OpacitySetting"]));
-            }
-            set {
-                this["OpacitySetting"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool OnTop {
-            get {
-                return ((bool)(this["OnTop"]));
-            }
-            set {
-                this["OnTop"] = value;
+                this["Npcap"] = value;
             }
         }
     }

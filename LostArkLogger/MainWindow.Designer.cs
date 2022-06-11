@@ -130,13 +130,11 @@
             // regionSelector
             // 
             this.regionSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.regionSelector.Enabled = false;
             this.regionSelector.FormattingEnabled = true;
             this.regionSelector.Location = new System.Drawing.Point(98, 83);
             this.regionSelector.Name = "regionSelector";
             this.regionSelector.Size = new System.Drawing.Size(121, 21);
             this.regionSelector.TabIndex = 12;
-            this.regionSelector.SelectedIndexChanged += new System.EventHandler(this.regionSelector_SelectedIndexChanged);
             // 
             // MainWindow
             // 

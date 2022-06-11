@@ -18,6 +18,9 @@ namespace LostArkLogger
         [STAThread]
         static void Main(string[] args)
         {
+            Properties.Settings.Default.Providers.Clear();
+            Bluegrams.Application.PortableSettingsProvider.SettingsFileName = AppDomain.CurrentDomain.FriendlyName.Replace(".exe", ".ini");
+            Bluegrams.Application.PortableSettingsProvider.ApplyProvider(Properties.Settings.Default);
             if (!AdminRelauncher()) return;
             if (!IsConsole) Warning();
             AttemptFirewallPrompt();
@@ -45,6 +48,7 @@ namespace LostArkLogger
         }
         static void Warning()
         {
+            if (Properties.Settings.Default.IgnoreWarning) return;
             if (AppDomain.CurrentDomain.FriendlyName == "LostArkLogger.exe")
             {
                 //var tempName = "LostArkDps" + Guid.NewGuid().ToString().Substring(0, 6) + ".exe";
@@ -66,6 +70,8 @@ namespace LostArkLogger
                 Process.Start("https://forums.playlostark.com/t/talk-to-us-already-about-the-dps-meter/370558");
                 Environment.Exit(0);
             }
+            Properties.Settings.Default.IgnoreWarning = true;
+            Properties.Settings.Default.Save();
         }
         private static bool AdminRelauncher()
         {

@@ -18,7 +18,7 @@ namespace LostArkLogger
                 var skill = Items[(int)id];
                 if (skill[0].Length > 0)
                 {
-                    if (GameMsg_English.Items.ContainsKey(skill[0])) skillName = GameMsg_English.Items[skill[0]];
+                    if (GameMsg.Items.ContainsKey(skill[0])) skillName = GameMsg.Items[skill[0]];
                 }
                 if (skillName.Length == 0) skillName = skill[1];
             }
@@ -39,7 +39,7 @@ namespace LostArkLogger
                 var skill = Items[(int)id];
                 if (skill[0].Length > 0)
                 {
-                    if (GameMsg_English.Items.ContainsKey(skill[0])) skillName = GameMsg_English.Items[skill[0]];
+                    if (GameMsg.Items.ContainsKey(skill[0])) skillName = GameMsg.Items[skill[0]];
                 }
                 if (skillName == "UnknownSkill") skillName = skill[1];
             }

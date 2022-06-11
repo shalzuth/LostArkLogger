@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Sockets;
-using System.Text;
 using System.Windows.Forms;
-using System.Net.NetworkInformation;
-using System.Runtime.InteropServices;
 
 namespace LostArkLogger
 {
@@ -24,23 +18,14 @@ namespace LostArkLogger
             Oodle.Init();
             if (!Directory.Exists("logs")) Directory.CreateDirectory("logs");
             sniffer = new Parser();
-            sniffer.onPacketTotalCount += (int totalPacketCount) => {
-                this.loggedPacketCountLabel.Text = "Logged Packets : " + totalPacketCount;
-            };
-            regionSelector.DataSource = Enum.GetValues(typeof(Parser.Region));
-            regionSelector.SelectedIndex = 0;
+            sniffer.onPacketTotalCount += (int totalPacketCount) => loggedPacketCountLabel.Text = "Logged Packets : " + totalPacketCount;
+            regionSelector.DataSource = Enum.GetValues(typeof(Region));
+            regionSelector.SelectedIndex = (int)Properties.Settings.Default.Region;
+            regionSelector.SelectedIndexChanged += new EventHandler(regionSelector_SelectedIndexChanged);
+            //sniffModeCheckbox.Checked = Properties.Settings.Default.Npcap;
             overlay = new Overlay();
             overlay.AddSniffer(sniffer);
             overlay.Show();
-
-            /*
-            // RetroOverlay
-            retro = new RetroOverlay();
-            retro.sniffer = sniffer;
-            retro.Show();
-            sniffer = new Parser(this);
-            retro.AddSniffer(sniffer);
-            */
         }
 
         private void weblink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -93,11 +78,18 @@ namespace LostArkLogger
             // This will unset the checkbox if it fails to initialize
             this.sniffModeCheckbox.Checked = this.sniffer.use_npcap;
             this.sniffModeCheckbox.Enabled = true;
+            Properties.Settings.Default.Npcap = sniffModeCheckbox.Checked;
+            Properties.Settings.Default.Save();
         }
 
         private void regionSelector_SelectedIndexChanged(object sender, EventArgs e)
         {
-            sniffer.region = (Parser.Region)Enum.Parse(typeof(Parser.Region), regionSelector.Text);
+            if (regionSelector.SelectedIndex == -1)
+                Console.WriteLine("");
+            Properties.Settings.Default.Region = (Region)Enum.Parse(typeof(Region), regionSelector.Text);
+            Properties.Settings.Default.Save();
+            System.Diagnostics.Process.Start(AppDomain.CurrentDomain.FriendlyName);
+            Environment.Exit(0);
         }
     }
 }

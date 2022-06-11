@@ -32,13 +32,6 @@ namespace LostArkLogger
         private string _localPlayerName = "You";
         private uint _localGearLevel = 0;
 
-        public enum Region : Byte
-        {
-            Steam,
-            Korea,
-            Russia
-        }
-        public Region region = Region.Steam;
         public Parser()
         {
             if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
@@ -207,17 +200,15 @@ namespace LostArkLogger
         {
             var opcodeVal = BitConverter.ToUInt16(packets, 2);
             var opCodeString = "";
-            if (region == Region.Steam) opCodeString = ((OpCodes_steam)opcodeVal).ToString();
-            if (region == Region.Russia) opCodeString = ((OpCodes_ru)opcodeVal).ToString();
-            if (region == Region.Korea) opCodeString = ((OpCodes_kr)opcodeVal).ToString(); // broke atm
+            if (Properties.Settings.Default.Region == Region.Steam) opCodeString = ((OpCodes_Steam)opcodeVal).ToString();
+            //if (Properties.Settings.Default.Region == Region.Russia) opCodeString = ((OpCodes_ru)opcodeVal).ToString();
+            if (Properties.Settings.Default.Region == Region.Korea) opCodeString = ((OpCodes_Korea)opcodeVal).ToString();
             return (OpCodes)Enum.Parse(typeof(OpCodes), opCodeString);
         }
-
-        Byte[] XorTableSteam = ObjectSerialize.Decompress(Properties.Resources.xor_steam);
+        Byte[] XorTableSteam = ObjectSerialize.Decompress(Properties.Resources.xor_Steam);
         //Byte[] XorTableRu = ObjectSerialize.Decompress(Properties.Resources.xor_ru);
-        //Byte[] XorTableKr = ObjectSerialize.Decompress(Properties.Resources.xor_kr);
-        //Byte[] XorTable { get { return region == Region.Steam ? XorTableSteam : region == Region.Russia ? XorTableRu : XorTableKr; } }
-        Byte[] XorTable { get { return XorTableSteam; } }
+        Byte[] XorTableKorea = ObjectSerialize.Decompress(Properties.Resources.xor_Korea);
+        Byte[] XorTable { get { return Properties.Settings.Default.Region == Region.Steam ? XorTableSteam : XorTableKorea; } }
         void ProcessPacket(List<Byte> data)
         {
             var packets = data.ToArray();
@@ -246,7 +237,7 @@ namespace LostArkLogger
                 }
                 if (packetSize > packets.Length)
                 {
-                    fragmentedPacket = packets.ToArray();
+                    fragmentedPacket = packets;
                     return;
                 }
                 var payload = packets.Skip(6).Take(packetSize - 6).ToArray();
@@ -261,7 +252,8 @@ namespace LostArkLogger
                         break;
                     case 2: //Snappy
                         //https://github.com/robertvazan/snappy.net
-                        payload = SnappyCodec.Uncompress(payload.Skip(region == Region.Russia ? 4 : 0).ToArray()).Skip(16).ToArray();
+                        payload = SnappyCodec.Uncompress(payload.ToArray()).Skip(16).ToArray();
+                        //payload = SnappyCodec.Uncompress(payload.Skip(Properties.Settings.Default.Region == Region.Russia ? 4 : 0).ToArray()).Skip(16).ToArray();
                         break;
                     case 3: //Oodle
                         payload = Oodle.Decompress(payload).Skip(16).ToArray();
@@ -432,7 +424,7 @@ namespace LostArkLogger
                     };
                     onCombatEvent?.Invoke(log);
                     // might push this by 1??
-                    AppendLog(9, entity.EntityId.ToString("X"), entity.Name, health.StatPairChangedList.Value[0].ToString(), health.StatPairList.Value[0].ToString());// need to lookup cached max hp??
+                    AppendLog(9, entity.EntityId.ToString("X"), entity.Name, health.StatPairChangedList.Value[0].ToString(), health.StatPairChangedList.Value[0].ToString());// need to lookup cached max hp??
                 }
                 else if (opcode == OpCodes.PKTStatusEffectAddNotify) // shields included
                 {

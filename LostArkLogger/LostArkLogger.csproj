@@ -60,6 +60,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Numerics" />
@@ -77,7 +78,7 @@
     <Compile Include="Data\DamageModifierFlags.cs" />
     <Compile Include="Data\Encounter.cs" />
     <Compile Include="Data\Entity.cs" />
-    <Compile Include="Data\GameMsg_English.cs" />
+    <Compile Include="Data\GameMsg.cs" />
     <Compile Include="Data\LogInfo.cs" />
     <Compile Include="Data\Npc.cs" />
     <Compile Include="Data\ObjectSerialize.cs" />
@@ -94,6 +95,7 @@
       <DependentUpon>Overlay.cs</DependentUpon>
     </Compile>
     <Compile Include="Packets\*.cs" />
+    <Compile Include="Packets\*\*.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -104,6 +106,7 @@
     <Compile Include="Utilities\NetworkUtil.cs" />
     <Compile Include="Utilities\Oodle.cs" />
     <Compile Include="Parser.cs" />
+    <Compile Include="Utilities\Region.cs" />
     <Compile Include="Utilities\Xor.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
@@ -133,22 +136,22 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\class_symbol_0.png" />
+    <None Include="Resources\GameMsg.bin" />
     <None Include="Resources\GameMsg_English.bin" />
     <None Include="Resources\Npc.bin" />
-    <None Include="Resources\oodle_state_ru.bin" />
+    <None Include="Resources\oodle_state_Korea.bin" />
+    <None Include="Resources\oodle_state_Steam.bin" />
     <None Include="Resources\Skill.bin" />
     <None Include="Resources\SkillBuff.bin" />
     <None Include="Resources\SkillEffect.bin" />
-    <None Include="Resources\xor_kr.bin" />
-    <None Include="Resources\xor_ru.bin" />
-    <None Include="Resources\xor_steam.bin" />
+    <None Include="Resources\xor_Korea.bin" />
+    <None Include="Resources\xor_Steam.bin" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\class_symbol_0.png" />
-    <None Include="Resources\oodle_state_steam.bin" />
     <Content Include="winged-sword.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -195,6 +198,9 @@
     <PackageReference Include="K4os.Compression.LZ4">
       <Version>1.2.16</Version>
     </PackageReference>
+    <PackageReference Include="PortableSettingsProvider">
+      <Version>0.2.4</Version>
+    </PackageReference>
     <PackageReference Include="SharpPcap">
       <Version>6.1.0</Version>
     </PackageReference>
@@ -217,5 +223,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

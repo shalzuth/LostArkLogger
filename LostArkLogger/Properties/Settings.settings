@@ -2,20 +2,14 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="LostArkLogger.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="State" Type="System.Windows.Forms.FormWindowState" Scope="User">
-      <Value Profile="(Default)">Normal</Value>
+    <Setting Name="IgnoreWarning" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="Location" Type="System.Drawing.Point" Scope="User">
-      <Value Profile="(Default)">0, 0</Value>
+    <Setting Name="Region" Type="LostArkLogger.Region" Scope="User">
+      <Value Profile="(Default)">Steam</Value>
     </Setting>
-    <Setting Name="Size" Type="System.Drawing.Size" Scope="User">
-      <Value Profile="(Default)">0, 0</Value>
-    </Setting>
-    <Setting Name="OpacitySetting" Type="System.Double" Scope="User">
-      <Value Profile="(Default)">1</Value>
-    </Setting>
-    <Setting Name="OnTop" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+    <Setting Name="Npcap" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -39,12 +39,12 @@ namespace LostArkLogger
             //{
             //    if (args[RegionIndex + 1] == "Russia")
             //    {
-            //        sniffer.region = Parser.Region.Russia;
+            //        sniffer.region = Properties.Settings.Default.Region.Russia;
             //        EnqueueMessage("message", "Using Russia client!");
             //    }
             //    else if (args[RegionIndex + 1] == "Korea")
             //    {
-            //        sniffer.region = Parser.Region.Korea;
+            //        sniffer.region = Properties.Settings.Default.Region.Korea;
             //        EnqueueMessage("message", "Using Korea client!");
             //    }
             //}
