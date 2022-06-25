@@ -24,6 +24,7 @@ namespace LostArkLogger
             var RegionIndex = Array.IndexOf(args, "--Region");
             var NpcapIndex = Array.IndexOf(args, "--UseNpcap");
             var PortIndex = Array.IndexOf(args, "--Port");
+            var CustomLogPathIndex = Array.IndexOf(args, "--CustomLogPath");
 
             if (PortIndex != -1)
             {
@@ -50,7 +51,10 @@ namespace LostArkLogger
 
             Oodle.Init();
 
-            var sniffer = new Parser();
+            string logPath = "";
+            if(CustomLogPathIndex != -1) logPath = args[CustomLogPathIndex + 1];
+
+            var sniffer = new Parser(logPath);
 
             if (NpcapIndex != -1)
             {

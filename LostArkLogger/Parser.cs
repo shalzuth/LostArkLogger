@@ -32,9 +32,12 @@ namespace LostArkLogger
         private string _localPlayerName = "You";
         private uint _localGearLevel = 0;
 
-        public Parser()
+        string logsPath;
+        string fileName;
+
+        public Parser(string customLogPath = default)
         {
-            if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
+            UpdateLogPath(customLogPath);
 
             Encounters.Add(currentEncounter);
             onCombatEvent += Parser_onDamageEvent;
@@ -42,6 +45,23 @@ namespace LostArkLogger
 
             InstallListener();
         }
+
+        public void UpdateLogPath(string customLogPath = default)
+        {
+            if (String.IsNullOrEmpty(customLogPath))
+            {
+                string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+                logsPath = Path.Combine(documentsPath, "Lost Ark Logs");
+            }
+            else
+            {
+                logsPath = customLogPath;
+            }
+
+            if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
+            fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
+        }
+
         // UI needs to be able to ask us to reload our listener based on the current user settings
         public void InstallListener()
         {
@@ -489,14 +509,10 @@ namespace LostArkLogger
             }
         }
 
-        static string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
-        static string logsPath = Path.Combine(documentsPath, "Lost Ark Logs");
-
         public Boolean debugLog = false;
         BinaryWriter logger;
         FileStream logStream;
         UInt32 currentIpAddr = 0xdeadbeef;
-        string fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
         int loggedPacketCount = 0;
 
         void AppendLog(LogInfo s)
@@ -570,8 +586,6 @@ namespace LostArkLogger
                         {
                             onNewZone?.Invoke();
                             currentIpAddr = srcAddr;
-                            fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
-                            loggedPacketCount = 0;
                         }
                         else return;
                     }
