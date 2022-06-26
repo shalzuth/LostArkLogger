@@ -34,6 +34,8 @@ namespace LostArkLogger
 
         string logsPath;
         string fileName;
+        StreamWriter stream;
+        int writerLines = 0;
 
         public Parser(string customLogPath = default)
         {
@@ -60,8 +62,21 @@ namespace LostArkLogger
 
             if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
             fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
+
+            CreateStreamWriter();
         }
 
+        public void CreateStreamWriter()
+        {
+            if (stream != null)
+            {
+                stream.Flush();
+                stream.Close();
+            }
+
+            stream = new StreamWriter(fileName, true);
+            writerLines = 0;
+        }
         // UI needs to be able to ask us to reload our listener based on the current user settings
         public void InstallListener()
         {
@@ -517,7 +532,13 @@ namespace LostArkLogger
 
         void AppendLog(LogInfo s)
         {
-            if (enableLogging) File.AppendAllText(fileName, s.ToString() + "\n");
+            if (enableLogging)
+            {
+                stream.WriteLine(s.ToString());
+
+                writerLines++;
+                if (writerLines % 5 == 0) stream.Flush();
+            }
         }
         System.Security.Cryptography.MD5 hash = System.Security.Cryptography.MD5.Create();
         void AppendLog(int id, params string[] elements)
@@ -526,8 +547,11 @@ namespace LostArkLogger
             {
                 var log = id + "|" + DateTime.Now.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'") + "|" + String.Join("|", elements);
                 var logHash = string.Concat(hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(log)).Select(x => x.ToString("x2")));
-                File.AppendAllText(fileName, log + "|" + logHash + "\n");
+                stream.WriteLine(log + "|" + logHash);
                 onLogAppend?.Invoke(log + "\n");
+
+                writerLines++;
+                if (writerLines % 5 == 0) stream.Flush();
             }
         }
         void DoDebugLog(byte[] bytes)
@@ -626,7 +650,11 @@ namespace LostArkLogger
 
         public void Dispose()
         {
-
+            if (stream != null)
+            {
+                stream.Flush();
+                stream.Close();
+            }
         }
     }
 }
