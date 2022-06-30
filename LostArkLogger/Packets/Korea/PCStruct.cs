@@ -12,7 +12,7 @@ namespace LostArkLogger
             u32list = reader.ReadList<UInt32>();
             u32_4 = reader.ReadUInt32();
             u32_6 = reader.ReadUInt32();
-            subPKTNewNpc29s = reader.ReadList<subPKTNewNpc29>();
+            //subPKTNewNpc29s = reader.ReadList<subPKTNewNpc29>();
             b_12 = reader.ReadByte();
             u32_7 = reader.ReadUInt32();
             u32_8 = reader.ReadUInt32();
@@ -43,7 +43,7 @@ namespace LostArkLogger
             bytearray_0 = reader.ReadBytes(25);
             statPair = reader.Read<StatPair>();
             b_10 = reader.ReadByte();
-            blist = reader.ReadList<Byte>();
+            //blist = reader.ReadList<Byte>();
             u64_1 = reader.ReadUInt64();
             GearLevel = reader.ReadUInt32();
             EquippedItems = reader.ReadList<ItemInfo>();

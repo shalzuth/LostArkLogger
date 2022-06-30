@@ -36,7 +36,7 @@ namespace LostArkLogger
             b_8 = reader.ReadByte();
             b_9 = reader.ReadByte();
             b_10 = reader.ReadByte();
-            subPKTNewNpc29s = reader.ReadList<subPKTNewNpc29>();
+            //subPKTNewNpc29s = reader.ReadList<subPKTNewNpc29>();
             b_12 = reader.ReadByte();
             u32_3 = reader.ReadUInt32();
             u16_2 = reader.ReadUInt16();

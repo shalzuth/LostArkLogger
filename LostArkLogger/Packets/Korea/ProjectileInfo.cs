@@ -10,9 +10,9 @@ namespace LostArkLogger
             OwnerId = reader.ReadUInt64();
             u32_4 = reader.ReadUInt32();
             u64_2 = reader.ReadUInt64();
-            b_4 = reader.ReadByte();
+            //b_4 = reader.ReadByte();
             bytearray = reader.ReadBytes(6);
-            u64_3 = reader.ReadUInt64();
+            //u64_3 = reader.ReadUInt64();
             SkillLevel = reader.ReadByte();
             SkillId = reader.ReadUInt32();
             u16_1 = reader.ReadUInt16();

@@ -18,7 +18,7 @@ namespace LostArkLogger
             b_20 = reader.ReadByte();
             if (b_20 == 1)
                 b_21 = reader.ReadByte();
-            subPKTNewNpc29s = reader.ReadList<subPKTNewNpc29>();
+            //subPKTNewNpc29s = reader.ReadList<subPKTNewNpc29>();
             b_24 = reader.ReadByte();
             if (b_24 == 1)
                 b_25 = reader.ReadByte();

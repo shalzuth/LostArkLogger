@@ -15,10 +15,9 @@ namespace LostArkLogger
         public UInt32 GearLevel;
         public UInt16 ClassId;
         public UInt16 Level;
-        public List<Byte> blist;
         public String str;
         public List<StatusEffectData> statusEffectDatas;
-        public List<subPKTNewNpc29> subPKTNewNpc29s;
+        public List<subPKTInitPC29> subPKTInitPC29s;
         public List<ItemInfo> itemInfos;
         public List<UInt32> u32list;
         public subPKTNewNpc5 subPKTNewNpc5;
