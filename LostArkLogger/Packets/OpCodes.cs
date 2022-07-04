@@ -1446,6 +1446,6 @@ namespace LostArkLogger
         PKTInitTownTrainingForPC = 59844,
         PKTAdvRewardRequestResult = 59918,
         PKTFallDownPredictNotify = 59982,
-        PKTInitAchievementActive = 59992
+        PKTInitAchievementActive = 59992,
     }
 }
