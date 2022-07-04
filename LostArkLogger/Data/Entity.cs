@@ -12,6 +12,7 @@ namespace LostArkLogger
         public EntityType Type = EntityType.Npc;
         public UInt32 Stagger;
         public UInt32 GearLevel;
+        public Boolean dead = false;
         public String GearScore
         {
             get
