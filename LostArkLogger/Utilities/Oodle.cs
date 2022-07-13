@@ -36,7 +36,7 @@ namespace LostArkLogger
                         continue;
                     }
                 }
-                if (MessageBox.Show("please copy oo2net_9_win64 from LostArk\\Binaries\\Win64 directory to current directory", "Missing DLL") != DialogResult.OK) return;
+                if (MessageBox.Show("please copy oo2net_9_win64 from LostArk\\Binaries\\Win64 directory to " + Environment.CurrentDirectory + "\\", "Missing DLL") != DialogResult.OK) return;
             }
             var payload = ObjectSerialize.Decompress(Properties.Settings.Default.Region == Region.Steam ? Properties.Resources.oodle_state_Steam : Properties.Resources.oodle_state_Korea); // to do select correct bin
             initDict = payload.Skip(0x20).Take(0x800000).ToArray();
