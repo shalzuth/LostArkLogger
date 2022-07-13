@@ -227,7 +227,7 @@ namespace LostArkLogger
                 switch (packets[4])
                 {
                     case 0: //None
-                        payload = buffer.Skip(16).ToArray();
+                        payload = payload.Skip(16).ToArray();
                         break;
                     case 1: //LZ4
                         var buffer = new byte[0x11ff2];
