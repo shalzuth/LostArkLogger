@@ -7,7 +7,6 @@ namespace LostArkLogger
         public subPKTNewNpc66(BitReader reader)
         {
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
-            if (Properties.Settings.Default.Region == Region.Korea) KoreaDecode(reader);
         }
         public String str;
         public List<ItemInfo> itemInfos;

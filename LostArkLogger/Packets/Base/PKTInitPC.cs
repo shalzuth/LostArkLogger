@@ -7,7 +7,6 @@ namespace LostArkLogger
         public PKTInitPC(BitReader reader)
         {
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
-            if (Properties.Settings.Default.Region == Region.Korea) KoreaDecode(reader);
         }
         public String Name;
         public UInt64 PlayerId;
@@ -16,8 +15,8 @@ namespace LostArkLogger
         public UInt16 Level;
         public List<StatusEffectData> statusEffectDatas;
         public List<subPKTInitPC29> subPKTInitPC29s;
-        public List<UInt16> u16list;
         public List<Byte[]> bytearraylist;
+        public List<UInt16> u16list;
         public List<Byte> blist;
         public StatPair statPair;
         public Byte[] bytearray_0;
