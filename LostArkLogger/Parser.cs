@@ -267,7 +267,7 @@ namespace LostArkLogger
                 if (opcode == OpCodes.PKTTriggerStartNotify)
                 {
                     var trigger = new PKTTriggerStartNotify(new BitReader(payload));
-                    if (trigger.Signal >= (int)StartType.DUNGEON_PHASE1_CLEAR && trigger.Signal <= (int)StartType.DUNGEON_PHASE4_FAIL) // if in range of dungeon fail/kill
+                    if (trigger.Signal >= (int)TriggerSignalType.DUNGEON_PHASE1_CLEAR && trigger.Signal <= (int)TriggerSignalType.DUNGEON_PHASE4_FAIL) // if in range of dungeon fail/kill
                     {
                         if (trigger.Signal % 2 == 0)
                         {

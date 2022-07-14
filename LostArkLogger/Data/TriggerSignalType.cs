@@ -1,7 +1,7 @@
 ﻿namespace LostArkLogger
 {
 
-    public enum StartType : int
+    public enum TriggerSignalType : int
     {
         NONE = 1,
         OUT = 2,
