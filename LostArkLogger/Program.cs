@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,14 +12,11 @@ namespace LostArkLogger
     internal static class Program
     {
         public static bool IsConsole = Console.OpenStandardInput(1) != Stream.Null;
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main(string[] args)
         {
             Properties.Settings.Default.Providers.Clear();
-            Bluegrams.Application.PortableSettingsProvider.SettingsFileName = AppDomain.CurrentDomain.FriendlyName.Replace(".exe", ".ini");
+            Bluegrams.Application.PortableSettingsProvider.SettingsFileName = AppDomain.CurrentDomain.FriendlyName + ".ini";
             Bluegrams.Application.PortableSettingsProvider.ApplyProvider(Properties.Settings.Default);
             if (!AdminRelauncher()) return;
             if (!IsConsole) Warning();
@@ -27,9 +24,8 @@ namespace LostArkLogger
 
             if (!IsConsole)
             {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new MainWindow());
+				ApplicationConfiguration.Initialize();
+				Application.Run(new MainWindow());
             }
             else
             {
@@ -49,7 +45,7 @@ namespace LostArkLogger
         static void Warning()
         {
             if (Properties.Settings.Default.IgnoreWarning) return;
-            if (AppDomain.CurrentDomain.FriendlyName == "LostArkLogger.exe")
+            if (AppDomain.CurrentDomain.FriendlyName.Contains("LostArk"))
             {
                 //var tempName = "LostArkDps" + Guid.NewGuid().ToString().Substring(0, 6) + ".exe";
                 var tempName = "DpsMeter.exe";
