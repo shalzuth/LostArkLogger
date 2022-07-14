@@ -17,7 +17,8 @@ jobs:
         submodules: recursive
         
     - name: Set Version
-      run: echo ::set-env name=RELEASE_VERSION::$(echo ${{ github.ref }})
+      id: vars
+      run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
             
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
@@ -29,9 +30,7 @@ jobs:
       run: nuget restore LostArkLogger.sln
         
     - name: Build
-      run: |
-        echo ::set-env name=version::"${github_ref:11}"
-        dotnet publish -p:PublishSingleFile=true -r win-x64 -c Release --self-contained false /p:Version=${{ version }}
+      run: dotnet publish -p:PublishSingleFile=true -r win-x64 -c Release --self-contained false /p:Version=${{ steps.vars.outputs.tag }}
       
     - name: Import PFX
       shell: powershell
