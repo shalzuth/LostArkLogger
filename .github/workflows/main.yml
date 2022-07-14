@@ -36,7 +36,6 @@ jobs:
       run: |
         version="${github_ref:11}"
         dotnet publish -p:PublishSingleFile=true -r win-x64 -c Release --self-contained false /p:Version=${{ env.version }}
-      run: msbuild LostArkLogger.sln /p:Configuration=Debug
       
     - name: Import PFX
       shell: powershell
