@@ -8,9 +8,9 @@ namespace LostArkLogger
         {
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
         }
-        public Int64 CurrentHealth;
+        public Int64 CurHp;
         public Int64 Damage;
-        public Int64 MaxHealth;
+        public Int64 MaxHp;
         public UInt64 TargetId;
         public Byte Modifier;
         public UInt16 u16;
