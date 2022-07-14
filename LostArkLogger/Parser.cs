@@ -269,7 +269,7 @@ namespace LostArkLogger
                     var trigger = new PKTTriggerStartNotify(new BitReader(payload));
                     if (trigger.Signal >= (int)TriggerSignalType.DUNGEON_PHASE1_CLEAR && trigger.Signal <= (int)TriggerSignalType.DUNGEON_PHASE4_FAIL) // if in range of dungeon fail/kill
                     {
-                        if (trigger.Signal % 2 == 0)
+                        if (((TriggerSignalType)trigger.Signal).ToString().Contains("FAIL")) // not as good performance, but more clear and in case enums change order in future
                         {
                             WasWipe = true;
                             WasKill = false;
@@ -308,8 +308,6 @@ namespace LostArkLogger
                     };
                     currentEncounter.Entities.AddOrUpdate(temp);
 
-                    currentEncounter.PlayerEntities.AddOrUpdate(temp);
-
                     onNewZone?.Invoke();
                     AppendLog(1, env.PlayerId.ToString("X"));
                 }
@@ -322,7 +320,7 @@ namespace LostArkLogger
                     if (WasKill || WasWipe || opcode == OpCodes.PKTRaidBossKillNotify || opcode == OpCodes.PKTRaidResult) // if kill or wipe update the raid time duration 
                     {
                         currentEncounter.RaidTime += Duration;
-                        foreach (var i in currentEncounter.PlayerEntities)
+                        foreach (var i in currentEncounter.Entities.Where(e=>e.Value.Type == Entity.EntityType.Player))
                         {
                             if (!(i.Value.dead)) // if Player not dead on end of kill write fake death logInfo to track their time alive
                             {
@@ -348,7 +346,6 @@ namespace LostArkLogger
 
                     currentEncounter = new Encounter();
                     currentEncounter.Entities = Encounters.Last().Entities; // preserve entities
-                    currentEncounter.PlayerEntities = Encounters.Last().PlayerEntities; // preserve Player entites
                     if (WasWipe || Encounters.Last().AfterWipe)
                     {
 
@@ -393,7 +390,6 @@ namespace LostArkLogger
                         GearLevel = _localGearLevel
                     };
                     currentEncounter.Entities.AddOrUpdate(tempEntity);
-                    currentEncounter.PlayerEntities.AddOrUpdate(tempEntity);
                     onNewZone?.Invoke();
                     AppendLog(3, pc.PlayerId.ToString("X"), pc.Name, pc.ClassId.ToString(), Npc.GetPcClass(pc.ClassId), pc.Level.ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_HP)].ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_MAX_HP)].ToString());
                 }
@@ -409,7 +405,6 @@ namespace LostArkLogger
                         GearLevel = pc.GearLevel
                     };
                     currentEncounter.Entities.AddOrUpdate(temp);
-                    currentEncounter.PlayerEntities.TryAdd(pc.PlayerId, temp);
                     AppendLog(3, pc.PlayerId.ToString("X"), pc.Name, pc.ClassId.ToString(), Npc.GetPcClass(pc.ClassId), pc.Level.ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_HP)].ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_MAX_HP)].ToString());
                 }
                 else if (opcode == OpCodes.PKTNewNpc)
@@ -437,7 +432,7 @@ namespace LostArkLogger
                     TimeSpan timeAlive = DeathTime.Subtract(currentEncounter.Start);
                     if (currentEncounter.Entities.GetOrAdd(death.TargetId).Type == Entity.EntityType.Player) // if death is from player, add death log for time alive tracking
                     {
-                        currentEncounter.PlayerEntities.GetOrAdd(death.TargetId).dead = true;
+                        currentEncounter.Entities.GetOrAdd(death.TargetId).dead = true;
                         var log = new LogInfo
                         {
                             Time = DateTime.Now,

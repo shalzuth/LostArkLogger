@@ -85,7 +85,7 @@
     <Compile Include="Data\Skill.cs" />
     <Compile Include="Data\SkillBuff.cs" />
     <Compile Include="Data\SkillEffect.cs" />
-    <Compile Include="Data\StartType.cs" />
+    <Compile Include="Data\TriggerSignalType.cs" />
     <Compile Include="Data\StatType.cs" />
     <Compile Include="Data\StatusEffectType.cs" />
     <Compile Include="HttpBridge.cs" />
