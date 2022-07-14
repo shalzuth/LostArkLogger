@@ -30,7 +30,7 @@ jobs:
         
     - name: Build
       run: |
-        version="${github_ref:11}"
+        echo ::set-env name=version::"${github_ref:11}"
         dotnet publish -p:PublishSingleFile=true -r win-x64 -c Release --self-contained false /p:Version=${{ env.version }}
       
     - name: Import PFX
