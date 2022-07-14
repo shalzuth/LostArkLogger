@@ -55,7 +55,7 @@ namespace LostArkLogger
             {
                 wc.Headers["User-Agent"] = "LostArkLogger";
                 var json = wc.DownloadString(@"https://api.github.com/repos/shalzuth/LostArkLogger/releases/latest");
-                var version = json.Substring(json.IndexOf("tag_name") + 12);
+                var version = json.Substring(json.IndexOf("tag_name") + 11);
                 version = version.Substring(0, version.IndexOf("\""));
                 if (version == System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString()) MessageBox.Show("Current version is up to date : " + version, "Version Info");
                 else
