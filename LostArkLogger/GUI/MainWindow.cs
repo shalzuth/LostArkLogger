@@ -20,9 +20,9 @@ namespace LostArkLogger
             if (!Directory.Exists("logs")) Directory.CreateDirectory("logs");
             sniffer = new Parser();
             sniffer.onPacketTotalCount += (int totalPacketCount) => loggedPacketCountLabel.Text = "Logged Packets : " + totalPacketCount;
-            //regionSelector.DataSource = Enum.GetValues(typeof(Region));
-            //regionSelector.SelectedIndex = (int)Properties.Settings.Default.Region;
-            //regionSelector.SelectedIndexChanged += new EventHandler(regionSelector_SelectedIndexChanged);
+            regionSelector.DataSource = Enum.GetValues(typeof(Region));
+            regionSelector.SelectedIndex = (int)Properties.Settings.Default.Region;
+            regionSelector.SelectedIndexChanged += new EventHandler(regionSelector_SelectedIndexChanged);
             //sniffModeCheckbox.Checked = Properties.Settings.Default.Npcap;
             overlay = new Overlay();
             overlay.AddSniffer(sniffer);
@@ -85,7 +85,7 @@ namespace LostArkLogger
 
         private void regionSelector_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //Properties.Settings.Default.Region = (Region)Enum.Parse(typeof(Region), regionSelector.Text);
+            Properties.Settings.Default.Region = (Region)Enum.Parse(typeof(Region), regionSelector.Text);
             Properties.Settings.Default.Save();
             System.Diagnostics.Process.Start(AppDomain.CurrentDomain.FriendlyName);
             Environment.Exit(0);
