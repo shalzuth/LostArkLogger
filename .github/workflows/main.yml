@@ -49,17 +49,17 @@ jobs:
       shell: powershell
       run: |
         $codeSigningCert = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert | Select-Object -First 1
-        Set-AuthenticodeSignature -Certificate $codeSigningCert -FilePath "bin\Release\net6.0-windows\win-x64\publish\DpsMeter.exe" -TimestampServer "http://timestamp.digicert.com"
+        Set-AuthenticodeSignature -Certificate $codeSigningCert -FilePath "LostArkLogger\bin\Release\net6.0-windows\win-x64\publish\DpsMeter.exe" -TimestampServer "http://timestamp.digicert.com"
         
     - name: Upload dll Artifact
       uses: actions/upload-artifact@v1.0.0
       with:
         name: DpsMeter.exe
-        path: bin\Release\net6.0-windows\win-x64\publish\DpsMeter.exe
+        path: LostArkLogger\bin\Release\net6.0-windows\win-x64\publish\DpsMeter.exe
 
     - name: Add to releases
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: |
-          bin\Release\net6.0-windows\win-x64\publish\DpsMeter.exe
+          LostArkLogger\bin\Release\net6.0-windows\win-x64\publish\DpsMeter.exe
