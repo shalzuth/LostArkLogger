@@ -32,6 +32,7 @@ jobs:
         
     - name: Build
       run: |
+        cd LostArkLogger
         dotnet publish -p:PublishSingleFile=true -r win-x64 -c Release --self-contained false /p:Version=${{ steps.ver.outputs.version }}
       
     - name: Import PFX
