@@ -832,7 +832,7 @@ namespace LostArkLogger
         PKTHotTimeEventStatusNotify = 33371,
         PKTFloatingMatterCreateNotify = 33383,
         PKTStatusEffectDamageNotify = 33413,
-        PKTTriggerStartNotify = 33427,
+        PKTTriggerStartNotify = 42781,
         PKTLifeHuntingTrapUpdateNotify = 33600,
         PKTEscapeResultNotify = 33644,
         PKTTraceDamageNotify = 33669,

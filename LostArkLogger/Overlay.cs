@@ -18,6 +18,9 @@ namespace LostArkLogger
             Stagger,
             Heal,
             Shield,
+            TimeAlive,
+            RaidTimeAlive,
+            RaidDamage,
             Max
         }
         enum Scope // need better state, suboverlay type/etc.
@@ -54,8 +57,8 @@ namespace LostArkLogger
         Brush black = new SolidBrush(Color.White);
         void InitPens()
         {
-            String[] colors = {"#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac", "#b77322", "#16d620", "#b91383", "#f4359e", "#9c5935", "#a9c413", "#2a778d", "#668d1c", "#bea413", "#0c5922", "#743411" };
-            foreach(var color in colors) brushes.Add(new SolidBrush(ColorTranslator.FromHtml(color)));
+            String[] colors = { "#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395", "#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707", "#651067", "#329262", "#5574a6", "#3b3eac", "#b77322", "#16d620", "#b91383", "#f4359e", "#9c5935", "#a9c413", "#2a778d", "#668d1c", "#bea413", "#0c5922", "#743411" };
+            foreach (var color in colors) brushes.Add(new SolidBrush(ColorTranslator.FromHtml(color)));
         }
         int barHeight = 20;
         public static string FormatNumber(UInt64 n) // https://stackoverflow.com/questions/30180672/string-format-numbers-to-millions-thousands-with-rounding
@@ -80,7 +83,7 @@ namespace LostArkLogger
         public String[] ClassIconIndex = { "start1", "Destroyer", "unk", "Arcana", "Berserker", "Wardancer", "Deadeye", "MartialArtist", "Gunlancer", "Gunner", "Scrapper", "Mage", "Summoner", "Warrior",
          "Soulfist", "Sharpshooter", "Artillerist", "dummyfill", "Bard", "Glavier", "Assassin", "Deathblade", "Shadowhunter", "Paladin", "Scouter", "Reaper", "FemaleGunner", "Gunslinger", "MaleMartialArtist", "Striker", "Sorceress" };
         public Pen arrowPen = new Pen(Color.FromArgb(255, 255, 255, 255), 4) { StartCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor };
-        IOrderedEnumerable<KeyValuePair<String, Tuple<UInt64, UInt32, UInt32>>> orderedRows;
+        IOrderedEnumerable<KeyValuePair<String, Tuple<UInt64, UInt32, UInt32, UInt64>>> orderedRows;
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -108,16 +111,31 @@ namespace LostArkLogger
             }
             else
             {
+                var elapsed = ((encounter.End == default(DateTime) ? DateTime.Now : encounter.End) - encounter.Start).TotalSeconds;
                 var rows = encounter.GetDamages((i => (Single)(
-                    level == Level.Damage ? i.Damage : 
+                    level == Level.Damage ? i.Damage :
+                    level == Level.RaidDamage ? i.Damage :
                     level == Level.Stagger ? i.Stagger :
                     level == Level.Counterattacks ? (i.Counter ? 1u : 0) :
+                    level == Level.TimeAlive ? (i.TimeAlive) :
+                    level == Level.RaidTimeAlive ? (i.TimeAlive) :
                     level == Level.Heal ? i.Heal :
                     level == Level.Shield ? i.Shield : 0)), SubEntity);
-                if (level == Level.Damage) rows = encounter.GetDamages((i=>i.Damage), SubEntity);
-                else if (level == Level.Counterattacks) rows = encounter.Counterattacks.ToDictionary(x => x.Key, x => Tuple.Create(x.Value, 0u, 0u));
-                else if (level == Level.Stagger) rows = encounter.Stagger.ToDictionary(x => x.Key, x => Tuple.Create(x.Value, 0u, 0u));
-                var elapsed = ((encounter.End == default(DateTime) ? DateTime.Now : encounter.End) - encounter.Start).TotalSeconds;
+                if (level == Level.Damage) rows = encounter.GetDamages((i => i.Damage), SubEntity);
+                else if (level == Level.Counterattacks) rows = encounter.Counterattacks.ToDictionary(x => x.Key, x => Tuple.Create(x.Value, 0u, 0u, 0ul));
+                else if (level == Level.Stagger) rows = encounter.Stagger.ToDictionary(x => x.Key, x => Tuple.Create(x.Value, 0u, 0u, 0ul));
+                else if (level == Level.TimeAlive) rows = encounter.TimeAlive.ToDictionary(x => x.Key, x => Tuple.Create(x.Value, 0u, 0u, 0ul));
+                else if (level == Level.RaidTimeAlive)
+                {
+                    rows = encounter.RaidTimeAlive.ToDictionary(x => x.Key, x => Tuple.Create(x.Value, 0u, 0u, 0ul));
+                    elapsed = encounter.RaidTime;
+                }
+                else if (level == Level.RaidDamage)
+                {
+                    rows = encounter.GetRaidDamages((i => i.Damage), SubEntity);
+                    elapsed = encounter.RaidTime;
+                }
+
                 var maxDamage = rows.Count == 0 ? 0 : rows.Max(b => b.Value.Item1);
                 var totalDamage = rows.Values.Sum(b => (Single)b.Item1);
                 orderedRows = rows.OrderByDescending(b => b.Value);
@@ -129,8 +147,19 @@ namespace LostArkLogger
                     //if (barWidth < .3f) continue;
                     e.Graphics.FillRectangle(brushes[i % brushes.Count], 0, (i + 1) * barHeight, barWidth, barHeight);
                     var dps = FormatNumber((ulong)(playerDmg.Value.Item1 / elapsed));
-                    var formattedDmg = FormatNumber(playerDmg.Value.Item1) + " (" + dps + ", " + (1f * playerDmg.Value.Item1 / totalDamage).ToString("P1");
-                    if (level == Level.Damage && Width > 450)
+                    if (playerDmg.Value.Item4 > 0)
+                    {
+                        dps = FormatNumber((ulong)(playerDmg.Value.Item1 / playerDmg.Value.Item4));
+                    }
+
+
+                    var formattedDmg = FormatNumber(playerDmg.Value.Item1) + " (" + dps + ", " + (1f * playerDmg.Value.Item1 / totalDamage).ToString("P1") + ")";
+                    if (level == Level.TimeAlive || level == Level.RaidTimeAlive)
+                    {
+                        dps = (1f * playerDmg.Value.Item1 / totalDamage).ToString("P1");
+                        formattedDmg = FormatNumber(playerDmg.Value.Item1) + " (" + dps + ", " + (1f * playerDmg.Value.Item1 / elapsed).ToString("P1") + ")";
+                    }
+                    if ((level == Level.Damage || level == Level.RaidDamage) && Width > 450)
                     {
                         formattedDmg += " | H: " + playerDmg.Value.Item2 + " | C: " + (1f * playerDmg.Value.Item3 / playerDmg.Value.Item2).ToString("P1");
                     }
@@ -201,7 +230,7 @@ namespace LostArkLogger
                     SwitchOverlay(Scope.Encounters);
             }
         }
-        void SwitchOverlay(bool progress) 
+        void SwitchOverlay(bool progress)
         {
             if (progress) level++;
             else level--;
