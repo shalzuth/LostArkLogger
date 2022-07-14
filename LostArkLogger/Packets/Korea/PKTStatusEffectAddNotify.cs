@@ -4,12 +4,15 @@ namespace LostArkLogger
 {
     public partial class PKTStatusEffectAddNotify
     {
-        public void SteamDecode(BitReader reader)
+        public void KoreaDecode(BitReader reader)
         {
-            ObjectId = reader.ReadUInt64();
             New = reader.ReadByte();
-            u64_0 = reader.ReadUInt64();
+            if (New == 1)
+                u64_0 = reader.ReadUInt64();
+            b = reader.ReadByte();
+            u64_1 = reader.ReadUInt64();
             statusEffectData = reader.Read<StatusEffectData>();
+            ObjectId = reader.ReadUInt64();
         }
     }
 }
