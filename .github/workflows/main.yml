@@ -27,8 +27,9 @@ jobs:
         
     - name: Build
       run: |
-        echo "RELEASE_VERSION=$(echo ${GITHUB_REF:11})" >> $GITHUB_ENV
-        dotnet publish -p:PublishSingleFile=true -r win-x64 -c Release --self-contained false /p:Version=${{ env.RELEASE_VERSION }}
+        chcp 65001 #set code page to utf-8
+        echo ("RELEASE_VERSION=" + $env:GITHUB_REF.replace('refs/heads/v', '')) >> $env:GITHUB_ENV
+        dotnet publish -p:PublishSingleFile=true -r win-x64 -c Release --self-contained false /p:Version=$env:RELEASE_VERSION
       
     - name: Import PFX
       shell: powershell
