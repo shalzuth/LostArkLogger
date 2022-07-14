@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
@@ -8,11 +8,9 @@ namespace LostArkLogger
         {
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
         }
-        public UInt64 SourceID;
-        public UInt32 TriggerSignalType;
-        public UInt32 TriggerID;
-        public List<UInt64> steps = new List<UInt64>();
-        public UInt16 num;
-        
+        public UInt64 TriggerUnitIndex;
+        public UInt32 ActorId;
+        public UInt32 Signal;
+        public List<UInt64> u64list;
     }
 }

@@ -229,11 +229,14 @@ namespace LostArkLogger
                 Xor.Cipher(payload, BitConverter.ToUInt16(packets, 2), XorTable);
                 switch (packets[4])
                 {
+                    case 0: //None
+                        payload = payload.Skip(16).ToArray();
+                        break;
                     case 1: //LZ4
                         var buffer = new byte[0x11ff2];
                         var result = LZ4Codec.Decode(payload, 0, payload.Length, buffer, 0, 0x11ff2);
                         if (result < 1) throw new Exception("LZ4 output buffer too small");
-                        payload = buffer.Take(result).ToArray(); //TODO: check LZ4 payload and see if we should skip some data
+                        payload = buffer.Take(result).Skip(16).ToArray();
                         break;
                     case 2: //Snappy
                         //https://github.com/robertvazan/snappy.net

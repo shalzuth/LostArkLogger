@@ -1,21 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 namespace LostArkLogger
 {
     public partial class PKTTriggerStartNotify
     {
         public void SteamDecode(BitReader reader)
-        {   
-            TriggerID = reader.ReadUInt32();
-            TriggerSignalType = reader.ReadUInt32();
-            SourceID = reader.ReadUInt64();
-           
-            num =  reader.ReadUInt16();
-            for(var i = 0; i < num; i++)
-            {
-                steps.Add(reader.ReadUInt64());
-            }
-
+        {
+            ActorId = reader.ReadUInt32();
+            Signal = reader.ReadUInt32();
+            TriggerUnitIndex = reader.ReadUInt64();
+            u64list = reader.ReadList<UInt64>();
         }
     }
 }

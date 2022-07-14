@@ -23,5 +23,6 @@ namespace LostArkLogger
         PKTStatusEffectAddNotify = 0x42A5,
         PKTTriggerBossBattleStatus = 0x76E0,
         PKTTriggerStartNotify = 0x3558,
+        PKTTriggerStartNotify = 0xA71D,
     }
 }
