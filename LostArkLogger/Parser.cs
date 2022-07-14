@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace LostArkLogger
 {
@@ -561,31 +562,62 @@ namespace LostArkLogger
         string fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
         int loggedPacketCount = 0;
 
+        private static readonly object LogFileLock = new object();
+        private static readonly object DebugFileLock = new object();
+
         void AppendLog(LogInfo s)
         {
-            if (enableLogging) File.AppendAllText(fileName, s.ToString() + "\n");
+            if (enableLogging)
+            {
+                Task.Run(() =>
+                {
+                    lock (LogFileLock)
+                    {
+                        File.AppendAllText(fileName, s.ToString() + "\n");
+                    }
+                });
+            }
         }
         System.Security.Cryptography.MD5 hash = System.Security.Cryptography.MD5.Create();
+
         void AppendLog(int id, params string[] elements)
         {
             if (enableLogging)
             {
                 var log = id + "|" + DateTime.Now.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'") + "|" + String.Join("|", elements);
                 var logHash = string.Concat(hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(log)).Select(x => x.ToString("x2")));
-                File.AppendAllText(fileName, log + "|" + logHash + "\n");
-                onLogAppend?.Invoke(log + "\n");
+
+                Task.Run(() =>
+                {
+                    lock (LogFileLock)
+                    {
+                        File.AppendAllText(fileName, log + "|" + logHash + "\n");
+                    }
+
+                    onLogAppend?.Invoke(log + "\n");
+                });
             }
         }
         void DoDebugLog(byte[] bytes)
         {
             if (debugLog)
             {
-                if (logger == null)
+                Task.Run(() =>
                 {
-                    logStream = new FileStream(fileName.Replace(".log", ".bin"), FileMode.Create);
-                    logger = new BinaryWriter(logStream);
-                }
-                logger.Write(BitConverter.GetBytes(DateTime.Now.ToBinary()).Concat(BitConverter.GetBytes(bytes.Length)).Concat(bytes).ToArray());
+                    var log = BitConverter.GetBytes(DateTime.Now.ToBinary())
+                        .Concat(BitConverter.GetBytes(bytes.Length)).Concat(bytes).ToArray();
+
+                    lock (DebugFileLock)
+                    {
+                        if (logger == null)
+                        {
+                            logStream = new FileStream(fileName.Replace(".log", ".bin"), FileMode.Create);
+                            logger = new BinaryWriter(logStream);
+                        }
+
+                        logger.Write(log);
+                    }
+                });
             }
         }
 
