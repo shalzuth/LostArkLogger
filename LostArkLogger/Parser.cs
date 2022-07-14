@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace LostArkLogger
 {
@@ -292,12 +293,16 @@ namespace LostArkLogger
                          || opcode == OpCodes.PKTRaidBossKillNotify // boss dead, includes argos phases
                          || opcode == OpCodes.PKTTriggerBossBattleStatus) // wipe
                 {
-                    currentEncounter.End = DateTime.Now;
-                    currentEncounter = new Encounter();
-                    if (opcode == OpCodes.PKTRaidBossKillNotify || opcode == OpCodes.PKTTriggerBossBattleStatus)
-                        currentEncounter.Entities = Encounters.Last().Entities; // preserve entities 
-                    Encounters.Add(currentEncounter);
-                    AppendLog(2);
+                    new Thread((ThreadStart)(() =>
+                    {
+                        Thread.Sleep(TimeSpan.FromMilliseconds(5000));
+                        currentEncounter.End = DateTime.Now;
+                        currentEncounter = new Encounter();
+                        if (opcode == OpCodes.PKTRaidBossKillNotify || opcode == OpCodes.PKTTriggerBossBattleStatus)
+                            currentEncounter.Entities = Encounters.Last().Entities; // preserve entities 
+                        Encounters.Add(currentEncounter);
+                        AppendLog(2);
+                    })).Start();
                 }
                 else if (opcode == OpCodes.PKTInitPC)
                 {
