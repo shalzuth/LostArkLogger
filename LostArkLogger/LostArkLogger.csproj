@@ -7,17 +7,15 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>DpsMeter</AssemblyName>
-    <ApplicationIcon>winged-sword.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\winged-sword.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="winged-sword.ico" />
+    <Content Include="Resources\winged-sword.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Data\" />
-    <Folder Include="Resources\" />
-    <Folder Include="Utilities\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Windows.Forms;
+using LostArkLogger.Utilities;
 
 namespace LostArkLogger
 {
@@ -40,12 +41,12 @@ namespace LostArkLogger
 
         private void logEnabled_CheckedChanged(object sender, EventArgs e)
         {
-            this.sniffer.enableLogging = logEnabled.Checked;
+            Logger.enableLogging = logEnabled.Checked;
         }
 
         private void debugLog_CheckedChanged(object sender, EventArgs e)
         {
-            sniffer.debugLog = debugLog.Checked;
+            Logger.debugLog = debugLog.Checked;
         }
 
         private void checkUpdate_Click(object sender, EventArgs e)
