@@ -77,7 +77,7 @@ namespace LostArkLogger
                 {
                     UseShellExecute = true,
                     WorkingDirectory = Environment.CurrentDirectory,
-                    FileName = Assembly.GetEntryAssembly().CodeBase,
+                    FileName = Assembly.GetEntryAssembly().CodeBase.Replace(".dll", ".exe"),
                     Verb = "runas"
                 };
                 try { Process.Start(startInfo); }
