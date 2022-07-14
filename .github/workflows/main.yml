@@ -33,4 +33,36 @@ jobs:
       run: nuget restore LostArkLogger.sln
         
     - name: Build
+      run: |
+        version="${github_ref:11}"
+        dotnet publish -p:PublishSingleFile=true -r win-x64 -c Release --self-contained false /p:Version=${{ env.version }}
       run: msbuild LostArkLogger.sln /p:Configuration=Debug
+      
+    - name: Import PFX
+      shell: powershell
+      run: |
+        $pfxCertFilePath = Join-Path -Path $PSScriptRoot -ChildPath "CodeSigningCertificate.pfx"
+        Set-Content -Value $([System.Convert]::FromBase64String($env:BASE64_PFX)) -Path $pfxCertFilePath -Encoding Byte
+        $codeSigningCert = Import-PfxCertificate -FilePath $pfxCertFilePath -Password $($env:PFX_PASSWORD | ConvertTo-SecureString -AsPlainText -Force) -CertStoreLocation Cert:\CurrentUser\My
+      env:
+        BASE64_PFX: ${{ secrets.CERTIFICATE }}
+        PFX_PASSWORD: ${{ secrets.PASSWORD }}
+
+    - name: Sign exe
+      shell: powershell
+      run: |
+        $codeSigningCert = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert | Select-Object -First 1
+        Set-AuthenticodeSignature -Certificate $codeSigningCert -FilePath "bin\Release\net6.0-windows\win-x64\publish\DpsMeter.exe" -TimestampServer "http://timestamp.digicert.com"
+        
+    - name: Upload dll Artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: DpsMeter.exe
+        path: bin\Release\net6.0-windows\win-x64\publish\DpsMeter.exe
+
+    - name: Add to releases
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          bin\Release\net6.0-windows\win-x64\publish\DpsMeter.exe
