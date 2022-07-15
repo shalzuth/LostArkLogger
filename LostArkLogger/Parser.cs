@@ -240,7 +240,6 @@ namespace LostArkLogger
                         payload = Oodle.Decompress(payload).Skip(16).ToArray();
                         break;
                     default:
-                        //AppendLog(45, BitConverter.ToString(payload).Replace("-", ""));
                         payload = payload.Skip(16).ToArray();
                         break;
                 }
@@ -291,7 +290,6 @@ namespace LostArkLogger
                 else if (opcode == OpCodes.PKTInitEnv)
                 {
                     var env = new PKTInitEnv(new BitReader(payload));
-                    
                     if (currentEncounter.Infos.Count <= 15) Encounters.Remove(currentEncounter);
 
                     currentEncounter = new Encounter();
@@ -643,7 +641,7 @@ namespace LostArkLogger
             currentEncounter.Infos.Add(log);
         }
 
-        private void Parser_onStatusEffectEnded(StatusEffect effect, TimeSpan duration, DateTime calcNow)
+        private void Parser_onStatusEffectEnded(StatusEffect effect, TimeSpan duration)
         {
             var log = new LogInfo
             {
