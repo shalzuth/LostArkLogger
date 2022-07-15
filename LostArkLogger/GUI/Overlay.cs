@@ -180,7 +180,8 @@ namespace LostArkLogger
                         }*/
                         var skillid = rowText.Substring(1);
                         skillid = skillid.Substring(0, skillid.IndexOf(")"));
-                        rowText = Skill.GetSkillName(uint.Parse(skillid));
+                        if (uint.TryParse(skillid, out uint parsedSkillID))
+                            rowText = Skill.GetSkillName(parsedSkillID);
                     }
                     var edge = e.Graphics.MeasureString(formattedDmg, font);
                     e.Graphics.DrawString(rowText, font, black, nameOffset + 5, (i + 1) * barHeight + heightBuffer);
