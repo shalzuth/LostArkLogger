@@ -66,8 +66,8 @@ namespace LostArkLogger
 
         private void ProcessStatusEffectData(StatusEffectData effectData, UInt64 targetId, UInt64 sourceId, ConcurrentDictionary<UInt64, StatusEffect> effectList, StatusEffect.StatusEffectType effectType)
         {
-            
-            var statusEffect = new StatusEffect { Started = DateTime.UtcNow, StatusEffectId = effectData.StatusEffectId, InstanceId = effectData.EffectInstanceId, SourceId = sourceId, TargetId = targetId, Type = effectType };
+            Entity sourceEntity = parser.GetSourceEntity(sourceId);
+            var statusEffect = new StatusEffect { Started = DateTime.UtcNow, StatusEffectId = effectData.StatusEffectId, InstanceId = effectData.EffectInstanceId, SourceId = sourceEntity.EntityId, TargetId = targetId, Type = effectType };
             // end this buf now, it got refreshed
             if (effectList.Remove(statusEffect.InstanceId, out var oldStatusEffect))
             {

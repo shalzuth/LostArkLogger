@@ -147,7 +147,6 @@ namespace LostArkLogger
         void ProcessSkillDamage(PKTSkillDamageNotify damage)
         {
             var sourceEntity = GetSourceEntity(damage.SourceId);
-                sourceEntity = currentEncounter.Entities.GetOrAdd(sourceEntity.OwnerId);
             var className = Skill.GetClassFromSkill(damage.SkillId);
             if (String.IsNullOrEmpty(sourceEntity.ClassName) && className != "UnknownClass")
             {
