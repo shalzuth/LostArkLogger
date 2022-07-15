@@ -31,6 +31,7 @@ namespace LostArkLogger
         private uint _localGearLevel = 0;
         public bool WasWipe = false;
         public bool WasKill = false;
+        public StatusEffectTracker statusEffectTracker;
 
         public Parser()
         {
@@ -38,6 +39,8 @@ namespace LostArkLogger
             Encounters.Add(currentEncounter);
             onCombatEvent += Parser_onDamageEvent;
             onNewZone += Parser_onNewZone;
+            statusEffectTracker = new StatusEffectTracker(this);
+            statusEffectTracker.OnStatusEffectEnded += Parser_onStatusEffectEnded;
 
             InstallListener();
         }
@@ -142,10 +145,7 @@ namespace LostArkLogger
         }
         void ProcessSkillDamage(PKTSkillDamageNotify damage)
         {
-            var sourceEntity = currentEncounter.Entities.GetOrAdd(damage.SourceId);
-            if (sourceEntity.Type == Entity.EntityType.Projectile)
-                sourceEntity = currentEncounter.Entities.GetOrAdd(sourceEntity.OwnerId);
-            if (sourceEntity.Type == Entity.EntityType.Summon)
+            var sourceEntity = GetSourceEntity(damage.SourceId);
                 sourceEntity = currentEncounter.Entities.GetOrAdd(sourceEntity.OwnerId);
             var className = Skill.GetClassFromSkill(damage.SkillId);
             if (String.IsNullOrEmpty(sourceEntity.ClassName) && className != "UnknownClass")
@@ -161,11 +161,7 @@ namespace LostArkLogger
 
         void ProcessSkillDamage(PKTSkillDamageAbnormalMoveNotify damage)
         {
-            var sourceEntity = currentEncounter.Entities.GetOrAdd(damage.SourceId);
-            if (sourceEntity.Type == Entity.EntityType.Projectile)
-                sourceEntity = currentEncounter.Entities.GetOrAdd(sourceEntity.OwnerId);
-            if (sourceEntity.Type == Entity.EntityType.Summon)
-                sourceEntity = currentEncounter.Entities.GetOrAdd(sourceEntity.OwnerId);
+            var sourceEntity = GetSourceEntity(damage.SourceId);
             var className = Skill.GetClassFromSkill(damage.SkillId);
             if (String.IsNullOrEmpty(sourceEntity.ClassName) && className != "UnknownClass")
             {
@@ -242,6 +238,10 @@ namespace LostArkLogger
                         break;
                     case 3: //Oodle
                         payload = Oodle.Decompress(payload).Skip(16).ToArray();
+                        break;
+                    default:
+                        //AppendLog(45, BitConverter.ToString(payload).Replace("-", ""));
+                        payload = payload.Skip(16).ToArray();
                         break;
                 }
 
@@ -396,6 +396,7 @@ namespace LostArkLogger
                     var temp = new Entity
                     {
                         EntityId = pc.PlayerId,
+                        PartyId = pc.PartyId,
                         Name = pc.Name,
                         ClassName = Npc.GetPcClass(pc.ClassId),
                         Type = Entity.EntityType.Player,
@@ -443,6 +444,25 @@ namespace LostArkLogger
                         currentEncounter.Infos.Add(log);
                     }
 
+                    statusEffectTracker.Process(death);
+                }
+                else if (opcode == OpCodes.PKTPartyStatusEffectAddNotify)
+                {
+                    var partyStatusEffect = new PKTPartyStatusEffectAddNotify(new BitReader(payload));
+                    statusEffectTracker.Process(partyStatusEffect);
+
+                    foreach (var effect in partyStatusEffect.Unk0.Unk0_0_0)
+                    {
+                        Logger.AppendLog(14, effect.SourceId.ToString("X"), currentEncounter.Entities.GetOrAdd(effect.SourceId).Name, effect.StatusEffectId.ToString("X"), SkillBuff.GetSkillBuffName(effect.StatusEffectId), "01", partyStatusEffect.PartyId.ToString("X"), currentEncounter.Entities.GetOrAdd(partyStatusEffect.PartyId).Name);
+                    }
+
+                }
+                else if (opcode == OpCodes.PKTPartyStatusEffectRemoveNotify)
+                {
+                    var partyStatusEffectRemove = new PKTPartyStatusEffectRemoveNotify(new BitReader(payload));
+                    statusEffectTracker.Process(partyStatusEffectRemove);
+                    foreach (var effect in partyStatusEffectRemove.StatusEffectIds)
+                        Logger.AppendLog(13, partyStatusEffectRemove.PartyId.ToString("X"), effect.InstanceId.ToString("X"));
                 }
                 else if (opcode == OpCodes.PKTSkillStartNotify)
                 {
@@ -491,9 +511,18 @@ namespace LostArkLogger
                 }
                 else if (opcode == OpCodes.PKTStatusEffectAddNotify) // shields included
                 {
-                    var buff = new PKTStatusEffectAddNotify(new BitReader(payload));
-                    var amount = buff.statusEffectData.hasValue == 1 ? BitConverter.ToUInt32(buff.statusEffectData.Value, 0) : 0;
-                    Logger.AppendLog(10, buff.statusEffectData.SourceId.ToString("X"), currentEncounter.Entities.GetOrAdd(buff.statusEffectData.SourceId).Name, buff.statusEffectData.BuffId.ToString(), SkillBuff.GetSkillBuffName(buff.statusEffectData.BuffId), buff.New.ToString(), buff.ObjectId.ToString("X"), currentEncounter.Entities.GetOrAdd(buff.ObjectId).Name, amount.ToString());
+                    var statusEffect = new PKTStatusEffectAddNotify(new BitReader(payload));
+                    statusEffectTracker.Process(statusEffect);
+                    var amount = statusEffect.statusEffectData.hasValue == 1 ? BitConverter.ToUInt32(statusEffect.statusEffectData.Value, 0) : 0;
+                    Logger.AppendLog(10, statusEffect.statusEffectData.SourceId.ToString("X"), currentEncounter.Entities.GetOrAdd(statusEffect.statusEffectData.SourceId).Name, statusEffect.statusEffectData.StatusEffectId.ToString("X"), SkillBuff.GetSkillBuffName(statusEffect.statusEffectData.StatusEffectId), statusEffect.New.ToString(), statusEffect.ObjectId.ToString("X"), currentEncounter.Entities.GetOrAdd(statusEffect.ObjectId).Name, amount.ToString());
+                }
+                else if (opcode == OpCodes.PKTStatusEffectRemoveNotify)
+                {
+                    var statusEffectRemove = new PKTStatusEffectRemoveNotify(new BitReader(payload));
+                    statusEffectTracker.Process(statusEffectRemove);
+                    foreach(var statusEffect in statusEffectRemove.StatusEffectIds)
+                        Logger.AppendLog(12, statusEffectRemove.PlayerId.ToString("X"), statusEffect.InstanceId.ToString("X"));
+
                 }
                 /*else if (opcode == OpCodes.PKTParalyzationStateNotify)
                 {
@@ -542,7 +571,6 @@ namespace LostArkLogger
                         Type = Entity.EntityType.Summon
                     });
                 }
-
                 if (packets.Length < packetSize) throw new Exception("bad packet maybe");
                 packets = packets.Skip(packetSize).ToArray();
             }
@@ -609,8 +637,33 @@ namespace LostArkLogger
         {
             currentEncounter.Infos.Add(log);
         }
+
+        private void Parser_onStatusEffectEnded(StatusEffect effect, TimeSpan duration, DateTime calcNow)
+        {
+            var log = new LogInfo
+            {
+                Time = DateTime.Now,
+                SourceEntity = currentEncounter.Entities.GetOrAdd(effect.SourceId),
+                DestinationEntity = currentEncounter.Entities.GetOrAdd(effect.TargetId),
+                SkillEffectId = effect.StatusEffectId,
+                SkillName = SkillBuff.GetSkillBuffName(effect.StatusEffectId),
+                Damage = 0,
+                Duration = duration
+            };
+            currentEncounter.Infos.Add(log);
+        }
         private void Parser_onNewZone()
         {
+        }
+
+        public Entity GetSourceEntity(UInt64 sourceId)
+        {
+            var sourceEntity = currentEncounter.Entities.GetOrAdd(sourceId);
+            if (sourceEntity.Type == Entity.EntityType.Projectile)
+                sourceEntity = currentEncounter.Entities.GetOrAdd(sourceEntity.OwnerId);
+            if (sourceEntity.Type == Entity.EntityType.Summon)
+                sourceEntity = currentEncounter.Entities.GetOrAdd(sourceEntity.OwnerId);
+            return sourceEntity;
         }
         public void UninstallListeners()
         {
