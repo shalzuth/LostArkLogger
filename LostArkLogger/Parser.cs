@@ -387,12 +387,14 @@ namespace LostArkLogger
                         GearLevel = _localGearLevel
                     };
                     currentEncounter.Entities.AddOrUpdate(tempEntity);
+                    statusEffectTracker.Process(pc);
                     onNewZone?.Invoke();
                     Logger.AppendLog(3, pc.PlayerId.ToString("X"), pc.Name, pc.ClassId.ToString(), Npc.GetPcClass(pc.ClassId), pc.Level.ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_HP)].ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_MAX_HP)].ToString());
                 }
                 else if (opcode == OpCodes.PKTNewPC)
                 {
-                    var pc = new PKTNewPC(new BitReader(payload)).pCStruct;
+                    var pcPacket = new PKTNewPC(new BitReader(payload));
+                    var pc = pcPacket.pCStruct;
                     var temp = new Entity
                     {
                         EntityId = pc.PlayerId,
@@ -403,17 +405,20 @@ namespace LostArkLogger
                         GearLevel = pc.GearLevel
                     };
                     currentEncounter.Entities.AddOrUpdate(temp);
+                    statusEffectTracker.Process(pcPacket);
                     Logger.AppendLog(3, pc.PlayerId.ToString("X"), pc.Name, pc.ClassId.ToString(), Npc.GetPcClass(pc.ClassId), pc.Level.ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_HP)].ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_MAX_HP)].ToString());
                 }
                 else if (opcode == OpCodes.PKTNewNpc)
                 {
-                    var npc = new PKTNewNpc(new BitReader(payload)).npcStruct;
+                    var npcPacket = new PKTNewNpc(new BitReader(payload));
+                    var npc = npcPacket.npcStruct;
                     currentEncounter.Entities.AddOrUpdate(new Entity
                     {
                         EntityId = npc.NpcId,
                         Name = Npc.GetNpcName(npc.NpcType),
                         Type = Entity.EntityType.Npc
                     });
+                    statusEffectTracker.Process(npcPacket);
                     Logger.AppendLog(4, npc.NpcId.ToString("X"), npc.NpcType.ToString(), Npc.GetNpcName(npc.NpcType), npc.statPair.Value[npc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_HP)].ToString(), npc.statPair.Value[npc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_MAX_HP)].ToString());
                 }
                 else if (opcode == OpCodes.PKTRemoveObject)

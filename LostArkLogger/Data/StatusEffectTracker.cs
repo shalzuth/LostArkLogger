@@ -25,24 +25,54 @@ namespace LostArkLogger
             BuffMap.Clear();
         }
 
+        public void Process(PKTInitPC packet)
+        {
+            var buffList = GetBuffList(packet.PlayerId);
+            foreach (var statusEffect in packet.statusEffectDatas)
+            {
+                ProcessStatusEffectData(statusEffect, packet.PlayerId, statusEffect.SourceId, buffList, StatusEffect.StatusEffectType.Local);
+            }
+            OnChange?.Invoke();
+        }
+
+        public void Process(PKTNewNpc packet)
+        {
+            var buffList = GetBuffList(packet.npcStruct.NpcId);
+            foreach (var statusEffect in packet.npcStruct.statusEffectDatas)
+            {
+                ProcessStatusEffectData(statusEffect, packet.npcStruct.NpcId, statusEffect.SourceId, buffList, StatusEffect.StatusEffectType.Local);
+            }
+            OnChange?.Invoke();
+        }
+
+        public void Process(PKTNewPC packet)
+        {
+            var buffList = GetBuffList(packet.pCStruct.PartyId);
+            foreach (var statusEffect in packet.pCStruct.statusEffectDatas)
+            {
+                ProcessStatusEffectData(statusEffect, packet.pCStruct.PartyId, statusEffect.SourceId, buffList, StatusEffect.StatusEffectType.Party);
+            }
+            OnChange?.Invoke();
+        }
+
+        private void ProcessStatusEffectData(StatusEffectData effectData, UInt64 targetId, UInt64 sourceId, ConcurrentDictionary<UInt64, StatusEffect> effectList, StatusEffect.StatusEffectType effectType)
+        {
+            
+            var buff = new StatusEffect { Started = DateTime.UtcNow, StatusEffectId = effectData.StatusEffectId, InstanceId = effectData.EffectInstanceId, SourceId = sourceId, TargetId = targetId, Type = effectType };
+            // end this buf now, it got refreshed
+            if (effectList.Remove(buff.InstanceId, out var oldBuff))
+            {
+                var calcNow = DateTime.UtcNow;
+                var duration = calcNow - oldBuff.Started;
+                OnStatusEffectEnded?.Invoke(oldBuff, duration, calcNow);
+            }
+            effectList.TryAdd(buff.InstanceId, buff);
+        }
+
         public void Process(PKTStatusEffectAddNotify effect)
         {
             var buffList = GetBuffList(effect.ObjectId);//get by targetId
-            Entity sourceEntity = parser.GetSourceEntity(effect.statusEffectData.SourceId);
-            var buff = new StatusEffect { Started = DateTime.UtcNow , StatusEffectId = effect.statusEffectData.StatusEffectId, InstanceId = effect.statusEffectData.EffectInstanceId, SourceId = sourceEntity.EntityId, TargetId = effect.ObjectId, Type = StatusEffect.StatusEffectType.Local };
-            if (buffList.ContainsKey(buff.InstanceId)) {
-                // end this buf now, it got refreshed
-                buffList.Remove(buff.InstanceId, out var oldBuff);
-                var calcNow = DateTime.UtcNow;
-                var duration = (calcNow - oldBuff.Started);
-                OnStatusEffectEnded?.Invoke(oldBuff, duration, calcNow);
-            }
-            buffList.TryAdd(buff.InstanceId, buff);
-            if (!parser.currentEncounter.Entities.ContainsKey(effect.ObjectId))//search targetId
-            {
-                Console.WriteLine("Could not find Entity with ID " + BitConverter.ToString(BitConverter.GetBytes(effect.ObjectId)) + " for adding statuseffect");//log targetId
-            }
-            Console.WriteLine("Buff Added " + buff.ToString());
+            ProcessStatusEffectData(effect.statusEffectData, effect.ObjectId, effect.statusEffectData.SourceId, buffList, StatusEffect.StatusEffectType.Local);
             OnChange?.Invoke();
         }
 
@@ -53,23 +83,8 @@ namespace LostArkLogger
                 var applierId = statusEffect.SourceId;
                 if (effect.PlayerIdOnRefresh != 0x0)
                     applierId = effect.PlayerIdOnRefresh;
-                Entity sourceEntity = parser.GetSourceEntity(applierId);
                 var buffList = GetBuffList(applierId);
-                var buff = new StatusEffect { Started = DateTime.UtcNow, StatusEffectId = statusEffect.StatusEffectId , InstanceId = statusEffect.EffectInstanceId, SourceId = sourceEntity.EntityId, TargetId = effect.PartyId, Type = StatusEffect.StatusEffectType.Party };
-                if (buffList.ContainsKey(buff.InstanceId))
-                {
-                    // this buff was refreshed
-                    buffList.Remove(buff.InstanceId, out StatusEffect oldBuff);
-                    var calcNow = DateTime.UtcNow;
-                    var duration = (calcNow - oldBuff.Started);
-                    OnStatusEffectEnded?.Invoke(oldBuff, duration, calcNow);
-                }
-                buffList.TryAdd(buff.InstanceId, buff);
-                if (!parser.currentEncounter.PartyEntities.ContainsKey(effect.PartyId))
-                {
-                    Console.WriteLine("Could not find Party Entity with ID " + BitConverter.ToString(BitConverter.GetBytes(effect.PartyId)) + " for adding statuseffect");
-                }
-                Console.WriteLine("Party Buff Added " + buff.ToString());
+                ProcessStatusEffectData(statusEffect, effect.PartyId, applierId, buffList, StatusEffect.StatusEffectType.Party);
             }
             OnChange?.Invoke();
         }
@@ -79,20 +94,11 @@ namespace LostArkLogger
             var buffList = GetBuffList(effect.PartyId);
             foreach (var effectInstanceId in effect.StatusEffectIds)
             {
-                if (buffList.ContainsKey(effectInstanceId))
+                if (buffList.Remove(effectInstanceId, out var oldBuff))
                 {
-                    var oldBuff = buffList[effectInstanceId];
                     var calcNow = DateTime.UtcNow;
                     var duration = (calcNow - oldBuff.Started);
                     OnStatusEffectEnded?.Invoke(oldBuff, duration, calcNow);
-                }
-                if (buffList.TryRemove(effectInstanceId, out _))
-                {
-                    Console.WriteLine("Party Buff removed " + effectInstanceId.ToString());
-                }
-                else
-                {
-                    Console.WriteLine("Party Buff NOT removed " + effectInstanceId.ToString());
                 }
             }
             OnChange?.Invoke();
@@ -103,30 +109,19 @@ namespace LostArkLogger
             var buffList = GetBuffList(effect.ObjectId);
             foreach (var effectInstanceId in effect.InstanceIds)
             {
-                if (buffList.ContainsKey(effectInstanceId))
+                if (buffList.Remove(effectInstanceId, out var oldBuff))
                 {
-                    var oldBuff = buffList[effectInstanceId];
                     var calcNow = DateTime.UtcNow;
                     var duration = (calcNow - oldBuff.Started);
                     OnStatusEffectEnded?.Invoke(oldBuff, duration, calcNow);
-                }
-                if (buffList.TryRemove(effectInstanceId, out _))
-                {
-                    Console.WriteLine("Buff removed " + effectInstanceId.ToString());
-                }
-                else
-                {
-                    Console.WriteLine("Buff NOT removed " + effectInstanceId.ToString());
                 }
             }
             OnChange?.Invoke();
         }
 
-        public void Process(PKTDeathNotify paket)
+        public void Process(PKTDeathNotify packet)
         {
-            Console.Write("Death Notifyed");
-            ConcurrentDictionary<UInt64, StatusEffect> buffList;
-            if(BuffMap.TryRemove(paket.TargetId, out buffList))
+            if(BuffMap.Remove(packet.TargetId, out var buffList))
             {
                 foreach (var buff in buffList)
                 {
@@ -151,7 +146,7 @@ namespace LostArkLogger
 
         private ConcurrentDictionary<UInt64, StatusEffect> GetBuffList(UInt64 targetId)
         {
-            if (!BuffMap.TryGetValue(targetId, out ConcurrentDictionary<UInt64, StatusEffect> buffList))
+            if (!BuffMap.TryGetValue(targetId, out var buffList))
             {
                 buffList = new ConcurrentDictionary<UInt64, StatusEffect>();
                 BuffMap.TryAdd(targetId, buffList);
