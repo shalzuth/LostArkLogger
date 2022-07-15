@@ -26,7 +26,7 @@ namespace LostArkLogger
         public SkillRunes skillRunes;
         public Byte[] bytearray_0;
         public Byte[] bytearray_1;
-        public UInt64 u64_0;
+        public UInt64 PartyId;
         public UInt64 u64_1;
         public Byte[] bytearray_2;
         public UInt32 u32_0;
