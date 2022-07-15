@@ -7,6 +7,7 @@ namespace LostArkLogger
         public PKTTriggerStartNotify(BitReader reader)
         {
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
+            if (Properties.Settings.Default.Region == Region.Korea) KoreaDecode(reader);
         }
         public UInt64 TriggerUnitIndex;
         public UInt32 ActorId;

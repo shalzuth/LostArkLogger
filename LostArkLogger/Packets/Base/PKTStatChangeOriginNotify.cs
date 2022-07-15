@@ -7,6 +7,7 @@ namespace LostArkLogger
         public PKTStatChangeOriginNotify(BitReader reader)
         {
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
+            if (Properties.Settings.Default.Region == Region.Korea) KoreaDecode(reader);
         }
         public StatPair StatPairChangedList;
         public StatPair StatPairList;

@@ -7,6 +7,7 @@ namespace LostArkLogger
         public ProjectileInfo(BitReader reader)
         {
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
+            if (Properties.Settings.Default.Region == Region.Korea) KoreaDecode(reader);
         }
         public UInt64 OwnerId;
         public UInt64 ProjectileId;

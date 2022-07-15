@@ -7,6 +7,7 @@ namespace LostArkLogger
         public StatusEffectData(BitReader reader)
         {
             if (Properties.Settings.Default.Region == Region.Steam) SteamDecode(reader);
+            if (Properties.Settings.Default.Region == Region.Korea) KoreaDecode(reader);
         }
         public Byte[] Value;
         public UInt64 InstanceId;
