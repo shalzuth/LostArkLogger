@@ -17,12 +17,21 @@ namespace LostArkLogger
         {
             StatusEffectRegistry = new ConcurrentDictionary<UInt64, ConcurrentDictionary<UInt64, StatusEffect>>();
             parser = p;
-            parser.onNewZone += OnNewZone;
+            parser.beforeNewZone += BeforeNewZone;
         }
 
-        public void OnNewZone()
+        public void BeforeNewZone()
         {
-            BuffMap.Clear();
+            // cancel remaining statuseffects so they get added to the old encounter
+            foreach(var statusEffectList in StatusEffectRegistry)
+            {
+                foreach(var statusEffect in statusEffectList.Value)
+                {
+                    var duration = (DateTime.UtcNow - statusEffect.Value.Started);
+                    OnStatusEffectEnded?.Invoke(statusEffect.Value, duration);
+                }
+            }
+            StatusEffectRegistry.Clear();
         }
 
         public void Process(PKTInitPC packet)

@@ -20,6 +20,7 @@ namespace LostArkLogger
         ILiveDevice pcap;
         public event Action<LogInfo> onCombatEvent;
         public event Action onNewZone;
+        public event Action beforeNewZone;
         public event Action<int> onPacketTotalCount;
         public bool use_npcap = false;
         private object lockPacketProcessing = new object(); // needed to synchronize UI swapping devices
@@ -290,6 +291,7 @@ namespace LostArkLogger
                 else if (opcode == OpCodes.PKTInitEnv)
                 {
                     var env = new PKTInitEnv(new BitReader(payload));
+                    beforeNewZone?.Invoke();
                     if (currentEncounter.Infos.Count <= 15) Encounters.Remove(currentEncounter);
 
                     currentEncounter = new Encounter();
@@ -370,6 +372,7 @@ namespace LostArkLogger
                 else if (opcode == OpCodes.PKTInitPC)
                 {
                     var pc = new PKTInitPC(new BitReader(payload));
+                    beforeNewZone?.Invoke();
                     if (currentEncounter.Infos.Count == 0) Encounters.Remove(currentEncounter);
                     currentEncounter = new Encounter();
                     Encounters.Add(currentEncounter);
@@ -594,6 +597,7 @@ namespace LostArkLogger
                 {
                     if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && GetOpCode(bytes) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
                     {
+                        beforeNewZone?.Invoke();
                         onNewZone?.Invoke();
                         currentIpAddr = srcAddr;
                     }
@@ -624,6 +628,7 @@ namespace LostArkLogger
                     {
                         if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && GetOpCode(bytes) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
                         {
+                            beforeNewZone?.Invoke();
                             onNewZone?.Invoke();
                             currentIpAddr = srcAddr;
                             Logger.StartNewLogFile();
