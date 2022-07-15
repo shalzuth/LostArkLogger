@@ -24,7 +24,7 @@ namespace LostArkLogger
             b_2 = reader.ReadByte();
             str = reader.ReadString();
             u16_0 = reader.ReadUInt16();
-            u64_1 = reader.ReadUInt64();
+            u64 = reader.ReadUInt64();
             u32_2 = reader.ReadUInt32();
             statusEffectDatas = reader.ReadList<StatusEffectData>();
             u16_1 = reader.ReadUInt16();

@@ -29,7 +29,7 @@ namespace LostArkLogger
         {
             var buffList = GetBuffList(effect.ObjectId);//get by targetId
             Entity sourceEntity = parser.GetSourceEntity(effect.statusEffectData.SourceId);
-            var buff = new StatusEffect { Started = DateTime.UtcNow , StatusEffectId = effect.statusEffectData.StatusEffectId, InstanceId = effect.statusEffectData.StatusEffectInstanceId, SourceId = sourceEntity.EntityId, TargetId = effect.ObjectId, Type = StatusEffect.StatusEffectType.Local };
+            var buff = new StatusEffect { Started = DateTime.UtcNow , StatusEffectId = effect.statusEffectData.StatusEffectId, InstanceId = effect.statusEffectData.EffectInstanceId, SourceId = sourceEntity.EntityId, TargetId = effect.ObjectId, Type = StatusEffect.StatusEffectType.Local };
             if (buffList.ContainsKey(buff.InstanceId)) {
                 // end this buf now, it got refreshed
                 buffList.Remove(buff.InstanceId, out var oldBuff);
@@ -48,7 +48,7 @@ namespace LostArkLogger
 
         public void Process(PKTPartyStatusEffectAddNotify effect)
         {
-            foreach (var statusEffect in effect.Unk0.Unk0_0_0)
+            foreach (var statusEffect in effect.statusEffectDatas)
             {
                 var applierId = statusEffect.SourceId;
                 if (effect.PlayerIdOnRefresh != 0x0)
@@ -79,20 +79,20 @@ namespace LostArkLogger
             var buffList = GetBuffList(effect.PartyId);
             foreach (var effectInstanceId in effect.StatusEffectIds)
             {
-                if (buffList.ContainsKey(effectInstanceId.InstanceId))
+                if (buffList.ContainsKey(effectInstanceId))
                 {
-                    var oldBuff = buffList[effectInstanceId.InstanceId];
+                    var oldBuff = buffList[effectInstanceId];
                     var calcNow = DateTime.UtcNow;
                     var duration = (calcNow - oldBuff.Started);
                     OnStatusEffectEnded?.Invoke(oldBuff, duration, calcNow);
                 }
-                if (buffList.TryRemove(effectInstanceId.InstanceId, out _))
+                if (buffList.TryRemove(effectInstanceId, out _))
                 {
-                    Console.WriteLine("Party Buff removed " + effectInstanceId.InstanceId.ToString());
+                    Console.WriteLine("Party Buff removed " + effectInstanceId.ToString());
                 }
                 else
                 {
-                    Console.WriteLine("Party Buff NOT removed " + effectInstanceId.InstanceId.ToString());
+                    Console.WriteLine("Party Buff NOT removed " + effectInstanceId.ToString());
                 }
             }
             OnChange?.Invoke();
@@ -100,17 +100,17 @@ namespace LostArkLogger
 
         public void Process(PKTStatusEffectRemoveNotify effect)
         {
-            var buffList = GetBuffList(effect.PlayerId);
-            foreach (var effectInstanceId in effect.StatusEffectIds)
+            var buffList = GetBuffList(effect.ObjectId);
+            foreach (var effectInstanceId in effect.InstanceIds)
             {
-                if (buffList.ContainsKey(effectInstanceId.InstanceId))
+                if (buffList.ContainsKey(effectInstanceId))
                 {
-                    var oldBuff = buffList[effectInstanceId.InstanceId];
+                    var oldBuff = buffList[effectInstanceId];
                     var calcNow = DateTime.UtcNow;
                     var duration = (calcNow - oldBuff.Started);
                     OnStatusEffectEnded?.Invoke(oldBuff, duration, calcNow);
                 }
-                if (buffList.TryRemove(effectInstanceId.InstanceId, out _))
+                if (buffList.TryRemove(effectInstanceId, out _))
                 {
                     Console.WriteLine("Buff removed " + effectInstanceId.ToString());
                 }

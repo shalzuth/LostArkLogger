@@ -451,7 +451,7 @@ namespace LostArkLogger
                     var partyStatusEffect = new PKTPartyStatusEffectAddNotify(new BitReader(payload));
                     statusEffectTracker.Process(partyStatusEffect);
 
-                    foreach (var effect in partyStatusEffect.Unk0.Unk0_0_0)
+                    foreach (var effect in partyStatusEffect.statusEffectDatas)
                     {
                         Logger.AppendLog(14, effect.SourceId.ToString("X"), currentEncounter.Entities.GetOrAdd(effect.SourceId).Name, effect.StatusEffectId.ToString("X"), SkillBuff.GetSkillBuffName(effect.StatusEffectId), "01", partyStatusEffect.PartyId.ToString("X"), currentEncounter.Entities.GetOrAdd(partyStatusEffect.PartyId).Name);
                     }
@@ -462,7 +462,7 @@ namespace LostArkLogger
                     var partyStatusEffectRemove = new PKTPartyStatusEffectRemoveNotify(new BitReader(payload));
                     statusEffectTracker.Process(partyStatusEffectRemove);
                     foreach (var effect in partyStatusEffectRemove.StatusEffectIds)
-                        Logger.AppendLog(13, partyStatusEffectRemove.PartyId.ToString("X"), effect.InstanceId.ToString("X"));
+                        Logger.AppendLog(13, partyStatusEffectRemove.PartyId.ToString("X"), effect.ToString("X"));
                 }
                 else if (opcode == OpCodes.PKTSkillStartNotify)
                 {
@@ -520,8 +520,8 @@ namespace LostArkLogger
                 {
                     var statusEffectRemove = new PKTStatusEffectRemoveNotify(new BitReader(payload));
                     statusEffectTracker.Process(statusEffectRemove);
-                    foreach(var statusEffect in statusEffectRemove.StatusEffectIds)
-                        Logger.AppendLog(12, statusEffectRemove.PlayerId.ToString("X"), statusEffect.InstanceId.ToString("X"));
+                    foreach(var statusEffect in statusEffectRemove.InstanceIds)
+                        Logger.AppendLog(12, statusEffectRemove.ObjectId.ToString("X"), statusEffect.ToString("X"));
 
                 }
                 /*else if (opcode == OpCodes.PKTParalyzationStateNotify)

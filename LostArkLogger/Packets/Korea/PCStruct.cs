@@ -37,7 +37,7 @@ namespace LostArkLogger
             itemInfos = reader.ReadList<ItemInfo>();
             statPair = reader.Read<StatPair>();
             u16_1 = reader.ReadUInt16();
-            u64_1 = reader.ReadUInt64();
+            //u64_1 = reader.ReadUInt64();
             b_8 = reader.ReadByte();
             u16_2 = reader.ReadUInt16();
             blist = reader.ReadList<Byte>();
