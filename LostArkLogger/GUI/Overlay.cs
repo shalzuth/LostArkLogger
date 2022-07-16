@@ -105,6 +105,8 @@ namespace LostArkLogger
                 var rowData = orderedRows.ElementAt(i);
                 int barWidth = (int)((rowData.Value.Item1 / elapsed) * Size.Width);
                 var nameOffset = 0;
+                var infoString = $"{rowData.Value.Item1}s {((rowData.Value.Item1 * 100) / elapsed):0.#}%";
+                e.Graphics.FillRectangle(brushes[i % brushes.Count], 0, (i + 1) * barHeight, barWidth, barHeight);
                 if (rowData.Key.Contains('(') && scope == Scope.TopLevel)
                 {
                     var className = rowData.Key[(rowData.Key.IndexOf("(") + 1)..];
@@ -112,8 +114,6 @@ namespace LostArkLogger
                     e.Graphics.DrawImage(Properties.Resources.class_symbol_0, new Rectangle(2, (i + 1) * barHeight + 2, barHeight - 4, barHeight - 4), GetSpriteLocation(Array.IndexOf(ClassIconIndex, className)), GraphicsUnit.Pixel);
                     nameOffset += 2 + barHeight - 4;
                 }
-                var infoString = $"{rowData.Value.Item1}s {((rowData.Value.Item1 * 100) / elapsed):0.#}%";
-                e.Graphics.FillRectangle(brushes[i % brushes.Count], 0, (i + 1) * barHeight, barWidth, barHeight);
                 var edge = e.Graphics.MeasureString(infoString, font);
                 e.Graphics.DrawString(rowData.Key, font, black, nameOffset + 5, (i + 1) * barHeight + heightBuffer);
                 e.Graphics.DrawString(infoString, font, black, Size.Width - edge.Width, (i + 1) * barHeight + heightBuffer);
