@@ -7,6 +7,7 @@ namespace LostArkLogger
     {
         public UInt64 EntityId;
         public UInt64 OwnerId;
+        public UInt64 PartyId;
         public String Name;
         public String ClassName = "";
         public EntityType Type = EntityType.Npc;

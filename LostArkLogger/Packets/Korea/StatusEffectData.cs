@@ -14,13 +14,13 @@ namespace LostArkLogger
                 SourceId = reader.ReadUInt64();
             b_1 = reader.ReadByte();
             s64 = reader.ReadSimpleInt();
-            u32_1 = reader.ReadUInt32();
+            EffectInstanceId = reader.ReadUInt32();
             InstanceId = reader.ReadUInt64();
             u64 = reader.ReadUInt64();
-            b_2 = reader.ReadByte();
+            SkillLevel = reader.ReadByte();
             bytearraylist = reader.ReadList<Byte[]>(7);
-            BuffId = reader.ReadUInt32();
-            u32_0 = reader.ReadUInt32();
+            StatusEffectId = reader.ReadUInt32();
+            u32 = reader.ReadUInt32();
         }
     }
 }

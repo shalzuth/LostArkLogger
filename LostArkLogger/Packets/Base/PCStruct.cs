@@ -11,6 +11,7 @@ namespace LostArkLogger
         }
         public String Name;
         public List<ItemInfo> EquippedItems;
+        public UInt64 PartyId;
         public UInt64 PlayerId;
         public UInt32 GearLevel;
         public UInt16 ClassId;
@@ -26,8 +27,7 @@ namespace LostArkLogger
         public SkillRunes skillRunes;
         public Byte[] bytearray_0;
         public Byte[] bytearray_1;
-        public UInt64 u64_0;
-        public UInt64 u64_1;
+        public UInt64 u64;
         public Byte[] bytearray_2;
         public UInt32 u32_0;
         public UInt32 u32_1;
