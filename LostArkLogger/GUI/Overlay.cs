@@ -94,7 +94,7 @@ namespace LostArkLogger
          "Soulfist", "Sharpshooter", "Artillerist", "dummyfill", "Bard", "Glavier", "Assassin", "Deathblade", "Shadowhunter", "Paladin", "Scouter", "Reaper", "FemaleGunner", "Gunslinger", "MaleMartialArtist", "Striker", "Sorceress" };
         public Pen arrowPen = new Pen(Color.FromArgb(255, 255, 255, 255), 4) { StartCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor };
         IOrderedEnumerable<KeyValuePair<String, Tuple<UInt64, UInt32, UInt32, UInt64>>> orderedRows;
-
+        private readonly Bitmap ClassSymbols = Properties.Resources.class_symbol_0;
         protected void OnPaintStatusEffectTimes(PaintEventArgs e, float heightBuffer)
         {
             var rows = scope == Scope.Player ? encounter.GetStatusEffects(SubEntity) : encounter.GetStatusEffects();
@@ -111,7 +111,7 @@ namespace LostArkLogger
                 {
                     var className = rowData.Key[(rowData.Key.IndexOf("(") + 1)..];
                     className = className.Substring(0, className.IndexOf(")")).Split(' ')[1];
-                    e.Graphics.DrawImage(Properties.Resources.class_symbol_0, new Rectangle(2, (i + 1) * barHeight + 2, barHeight - 4, barHeight - 4), GetSpriteLocation(Array.IndexOf(ClassIconIndex, className)), GraphicsUnit.Pixel);
+                    e.Graphics.DrawImage(ClassSymbols, new Rectangle(2, (i + 1) * barHeight + 2, barHeight - 4, barHeight - 4), GetSpriteLocation(Array.IndexOf(ClassIconIndex, className)), GraphicsUnit.Pixel);
                     nameOffset += 2 + barHeight - 4;
                 }
                 var edge = e.Graphics.MeasureString(infoString, font);
@@ -224,7 +224,7 @@ namespace LostArkLogger
                     {
                         var className = rowText.Substring(rowText.IndexOf("(") + 1);
                         className = className.Substring(0, className.IndexOf(")")).Split(' ')[1];
-                        e.Graphics.DrawImage(Properties.Resources.class_symbol_0, new Rectangle(2, (i + 1) * barHeight + 2, barHeight - 4, barHeight - 4), GetSpriteLocation(Array.IndexOf(ClassIconIndex, className)), GraphicsUnit.Pixel);
+                        e.Graphics.DrawImage(ClassSymbols, new Rectangle(2, (i + 1) * barHeight + 2, barHeight - 4, barHeight - 4), GetSpriteLocation(Array.IndexOf(ClassIconIndex, className)), GraphicsUnit.Pixel);
                         nameOffset += 16;
                     }
                     if (scope == Scope.Player)
