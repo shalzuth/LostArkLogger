@@ -10,12 +10,12 @@ namespace LostArkLogger
             if (Properties.Settings.Default.Region == Region.Korea) KoreaDecode(reader);
         }
         public UInt64 PlayerId;
-        public UInt64 s64;
-        public List<Byte> blist;
+        public UInt64 s64_0;
+        public List<Byte> blist_0;
         public subPKTInitEnv5 subPKTInitEnv5;
-        public UInt64 u64;
+        public UInt64 s64_1;
         public UInt32 u32_0;
         public UInt32 u32_1;
-        public Byte b;
+        public Byte b_0;
     }
 }

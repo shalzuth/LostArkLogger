@@ -10,10 +10,10 @@ namespace LostArkLogger
             b_1 = reader.ReadByte();
             subPKTNewNpc5 = reader.Read<subPKTNewNpc5>();
             b_2 = reader.ReadByte();
-            u64 = reader.ReadUInt64();
-            u16 = reader.ReadUInt16();
+            u64_0 = reader.ReadUInt64();
+            u16_0 = reader.ReadUInt16();
             itemInfos = reader.ReadList<ItemInfo>();
-            str = reader.ReadString();
+            str_0 = reader.ReadString();
         }
     }
 }

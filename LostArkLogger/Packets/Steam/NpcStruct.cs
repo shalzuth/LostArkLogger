@@ -61,7 +61,7 @@ namespace LostArkLogger
             u16_2 = reader.ReadUInt16();
             b_18 = reader.ReadByte();
             if (b_18 == 1)
-                bytearraylist = reader.ReadList<Byte[]>(12);
+                bytearraylist_0 = reader.ReadList<Byte[]>(12);
             NpcId = reader.ReadUInt64();
             b_19 = reader.ReadByte();
             if (b_19 == 1)
@@ -73,7 +73,7 @@ namespace LostArkLogger
                 u32_4 = reader.ReadUInt32();
             b_23 = reader.ReadByte();
             if (b_23 == 1)
-                u64list = reader.ReadList<UInt64>();
+                u64list_0 = reader.ReadList<UInt64>();
             b_24 = reader.ReadByte();
         }
     }

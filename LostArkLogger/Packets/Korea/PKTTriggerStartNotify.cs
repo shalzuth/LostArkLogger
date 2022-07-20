@@ -6,7 +6,7 @@ namespace LostArkLogger
     {
         public void KoreaDecode(BitReader reader)
         {
-            u64list = reader.ReadList<UInt64>();
+            u64list_0 = reader.ReadList<UInt64>();
             TriggerUnitIndex = reader.ReadUInt64();
             ActorId = reader.ReadUInt32();
             Signal = reader.ReadUInt32();

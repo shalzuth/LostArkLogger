@@ -7,8 +7,6 @@ namespace LostArkLogger
         public void KoreaDecode(BitReader reader)
         {
             b_0 = reader.ReadByte();
-            if (b_0 == 1)
-                u64list = reader.ReadList<UInt64>();
             ProjectileId = reader.ReadUInt64();
             u32_3 = reader.ReadUInt32();
             b_2 = reader.ReadByte();
@@ -26,7 +24,6 @@ namespace LostArkLogger
             u16_0 = reader.ReadUInt16();
             SkillId = reader.ReadUInt32();
             u32_0 = reader.ReadUInt32();
-            bytearray = reader.ReadBytes(6);
             b_1 = reader.ReadByte();
             u16_1 = reader.ReadUInt16();
             u32_1 = reader.ReadUInt32();

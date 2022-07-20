@@ -11,7 +11,7 @@ namespace LostArkLogger
         }
         public UInt64 SourceId;
         public UInt32 SkillId;
-        public List<Object> packed;
+        public List<Object> packed_0;
         public UInt64 u64_0;
         public UInt64 u64_1;
         public UInt64 u64_2;

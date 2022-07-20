@@ -31,7 +31,7 @@ namespace LostArkLogger
                 bytearray_1 = reader.ReadBytes(12);
             u32_4 = reader.ReadUInt32();
             u16_0 = reader.ReadUInt16();
-            u64 = reader.ReadUInt64();
+            u64_0 = reader.ReadUInt64();
             b_7 = reader.ReadByte();
             u32_5 = reader.ReadUInt32();
             itemInfos = reader.ReadList<ItemInfo>();
@@ -40,7 +40,7 @@ namespace LostArkLogger
             PartyId = reader.ReadUInt64();
             b_8 = reader.ReadByte();
             u16_2 = reader.ReadUInt16();
-            blist = reader.ReadList<Byte>();
+            blist_0 = reader.ReadList<Byte>();
             ClassId = reader.ReadUInt16();
             u32_6 = reader.ReadUInt32();
             bytearray_2 = reader.ReadBytes(5);
@@ -48,7 +48,7 @@ namespace LostArkLogger
             u16_3 = reader.ReadUInt16();
             b_10 = reader.ReadByte();
             b_11 = reader.ReadByte();
-            u32list = reader.ReadList<UInt32>();
+            u32list_0 = reader.ReadList<UInt32>();
             statusEffectDatas = reader.ReadList<StatusEffectData>();
             bytearray_0 = reader.ReadBytes(25);
             EquippedItems = reader.ReadList<ItemInfo>();

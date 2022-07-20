@@ -13,6 +13,6 @@ namespace LostArkLogger
         public UInt32 SkillEffectId;
         public UInt32 SkillId;
         public List<SkillDamageEvent> skillDamageEvents;
-        public Byte b;
+        public Byte b_0;
     }
 }

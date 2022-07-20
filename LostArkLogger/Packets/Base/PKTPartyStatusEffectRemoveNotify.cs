@@ -11,6 +11,6 @@ namespace LostArkLogger
         }
         public List<UInt32> StatusEffectIds;
         public UInt64 PartyId;
-        public Byte b;
+        public Byte b_0;
     }
 }

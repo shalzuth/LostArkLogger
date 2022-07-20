@@ -13,7 +13,7 @@ namespace LostArkLogger
         public PCStruct pCStruct;
         public Byte[] bytearray_0;
         public Byte[] bytearray_1;
-        public UInt32 u32;
+        public UInt32 u32_0;
         public Byte b_0;
         public Byte b_1;
         public Byte b_2;

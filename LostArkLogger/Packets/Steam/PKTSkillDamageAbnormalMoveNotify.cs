@@ -10,8 +10,8 @@ namespace LostArkLogger
             skillDamageMoveEvents = reader.ReadList<SkillDamageMoveEvent>();
             SkillId = reader.ReadUInt32();
             SourceId = reader.ReadUInt64();
-            u32 = reader.ReadUInt32();
-            b = reader.ReadByte();
+            u32_0 = reader.ReadUInt32();
+            b_0 = reader.ReadByte();
         }
     }
 }

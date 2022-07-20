@@ -9,7 +9,7 @@ namespace LostArkLogger
             num = reader.ReadUInt32();
             for(var i = 0; i < num; i++)
             {
-                b.Add(reader.ReadByte());
+                b_0.Add(reader.ReadByte());
             }
         }
     }

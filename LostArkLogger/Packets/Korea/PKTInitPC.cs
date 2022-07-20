@@ -25,11 +25,11 @@ namespace LostArkLogger
             u32_2 = reader.ReadUInt32();
             b_3 = reader.ReadByte();
             statPair = reader.Read<StatPair>();
-            u16list = reader.ReadList<UInt16>();
+            u16list_0 = reader.ReadList<UInt16>();
             u16_1 = reader.ReadUInt16();
             b_4 = reader.ReadByte();
             b_5 = reader.ReadByte();
-            blist = reader.ReadList<Byte>();
+            blist_0 = reader.ReadList<Byte>();
             u64_0 = reader.ReadUInt64();
             b_6 = reader.ReadByte();
             Name = reader.ReadString();

@@ -13,6 +13,6 @@ namespace LostArkLogger
         public NpcStruct npcStruct;
         public Byte[] bytearray_0;
         public Byte[] bytearray_1;
-        public Byte b;
+        public Byte b_0;
     }
 }

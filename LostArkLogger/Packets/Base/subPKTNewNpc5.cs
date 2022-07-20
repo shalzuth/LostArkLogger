@@ -10,6 +10,6 @@ namespace LostArkLogger
             if (Properties.Settings.Default.Region == Region.Korea) KoreaDecode(reader);
         }
         public UInt32 num;
-        public List<Byte> b = new List<Byte>();
+        public List<Byte> b_0 = new List<Byte>();
     }
 }

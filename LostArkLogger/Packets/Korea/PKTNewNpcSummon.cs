@@ -6,7 +6,7 @@ namespace LostArkLogger
     {
         public void KoreaDecode(BitReader reader)
         {
-            b = reader.ReadByte();
+            b_0 = reader.ReadByte();
             npcStruct = reader.Read<NpcStruct>();
             bytearray_1 = reader.ReadBytes(6);
             OwnerId = reader.ReadUInt64();

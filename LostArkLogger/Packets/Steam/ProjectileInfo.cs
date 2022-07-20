@@ -12,7 +12,7 @@ namespace LostArkLogger
             b_2 = reader.ReadByte();
             b_3 = reader.ReadByte();
             if (b_3 == 1)
-                u64list = reader.ReadList<UInt64>();
+                u64list_0 = reader.ReadList<UInt64>();
             Tripods = reader.ReadBytes(3);
             u64_1 = reader.ReadUInt64();
             u16_1 = reader.ReadUInt16();
@@ -20,7 +20,7 @@ namespace LostArkLogger
             u64_2 = reader.ReadUInt64();
             SkillLevel = reader.ReadByte();
             ProjectileId = reader.ReadUInt64();
-            bytearray = reader.ReadBytes(6);
+            bytearray_0 = reader.ReadBytes(6);
             u32_1 = reader.ReadUInt32();
             b_0 = reader.ReadByte();
             if (b_0 == 1)

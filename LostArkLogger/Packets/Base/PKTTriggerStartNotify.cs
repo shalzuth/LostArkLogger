@@ -12,6 +12,6 @@ namespace LostArkLogger
         public UInt64 TriggerUnitIndex;
         public UInt32 ActorId;
         public UInt32 Signal;
-        public List<UInt64> u64list;
+        public List<UInt64> u64list_0;
     }
 }

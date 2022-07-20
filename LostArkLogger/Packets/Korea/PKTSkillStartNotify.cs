@@ -13,7 +13,7 @@ namespace LostArkLogger
             u16_2 = reader.ReadUInt16();
             u64_0 = reader.ReadUInt64();
             u64_1 = reader.ReadUInt64();
-            packed = reader.ReadPackedValues(1, 1, 4, 4, 4, 3, 6);
+            packed_0 = reader.ReadPackedValues(1, 1, 4, 4, 4, 3, 6);
             b_1 = reader.ReadByte();
             if (b_1 == 1)
                 u32_0 = reader.ReadUInt32();

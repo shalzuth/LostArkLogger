@@ -14,7 +14,7 @@ namespace LostArkLogger
             b_19 = reader.ReadByte();
             u16_4 = reader.ReadUInt16();
             u32_10 = reader.ReadUInt32();
-            u16list = reader.ReadList<UInt16>();
+            u16list_0 = reader.ReadList<UInt16>();
             u32_11 = reader.ReadUInt32();
             GearLevel = reader.ReadUInt32();
             bytearray_3 = reader.ReadBytes(25);
@@ -56,7 +56,7 @@ namespace LostArkLogger
             u16_3 = reader.ReadUInt16();
             b_16 = reader.ReadByte();
             u32_7 = reader.ReadUInt32();
-            blist = reader.ReadList<Byte>();
+            blist_0 = reader.ReadList<Byte>();
             u64_3 = reader.ReadUInt64();
             b_17 = reader.ReadByte();
             b_18 = reader.ReadByte();

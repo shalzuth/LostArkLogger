@@ -11,9 +11,9 @@ namespace LostArkLogger
         }
         public UInt64 SourceId;
         public UInt64 TargetId;
-        public UInt64 u64;
-        public UInt32 u32;
-        public UInt16 u16;
+        public UInt64 u64_0;
+        public UInt32 u32_0;
+        public UInt16 u16_0;
         public Byte b_0;
         public Byte b_1;
         public Byte b_2;

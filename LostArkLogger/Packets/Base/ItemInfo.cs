@@ -10,10 +10,10 @@ namespace LostArkLogger
             if (Properties.Settings.Default.Region == Region.Korea) KoreaDecode(reader);
         }
         public UInt16 Level;
-        public UInt64 s64;
-        public List<Byte[]> bytearraylist;
-        public UInt32 u32;
-        public UInt16 u16;
+        public UInt64 s64_0;
+        public List<Byte[]> bytearraylist_0;
+        public UInt32 u32_0;
+        public UInt16 u16_0;
         public Byte b_0;
         public Byte b_1;
     }

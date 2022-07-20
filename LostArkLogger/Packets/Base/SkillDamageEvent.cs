@@ -14,7 +14,7 @@ namespace LostArkLogger
         public Int64 MaxHp;
         public UInt64 TargetId;
         public Byte Modifier;
-        public UInt16 u16;
+        public UInt16 u16_0;
         public Byte b_0;
         public Byte b_1;
         public Byte b_2;

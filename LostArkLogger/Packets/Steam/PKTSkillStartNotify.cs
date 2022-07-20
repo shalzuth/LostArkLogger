@@ -6,7 +6,7 @@ namespace LostArkLogger
     {
         public void SteamDecode(BitReader reader)
         {
-            packed = reader.ReadPackedValues(1, 1, 4, 4, 4, 3, 6);
+            packed_0 = reader.ReadPackedValues(1, 1, 4, 4, 4, 3, 6);
             b_0 = reader.ReadByte();
             b_1 = reader.ReadByte();
             if (b_1 == 1)

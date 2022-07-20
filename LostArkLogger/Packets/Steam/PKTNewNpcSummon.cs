@@ -10,7 +10,7 @@ namespace LostArkLogger
             bytearray_1 = reader.ReadBytes(6);
             OwnerId = reader.ReadUInt64();
             bytearray_0 = reader.ReadBytes(25);
-            b = reader.ReadByte();
+            b_0 = reader.ReadByte();
         }
     }
 }

@@ -13,6 +13,6 @@ namespace LostArkLogger
         public Byte[] bytearray_1;
         public UInt32 u32_0;
         public UInt32 u32_1;
-        public Byte b;
+        public Byte b_0;
     }
 }

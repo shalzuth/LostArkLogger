@@ -10,7 +10,7 @@ namespace LostArkLogger
             if (Properties.Settings.Default.Region == Region.Korea) KoreaDecode(reader);
         }
         public NpcStruct npcStruct;
-        public UInt64 u64;
+        public UInt64 u64_0;
         public Byte b_0;
         public Byte b_1;
         public Byte b_2;

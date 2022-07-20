@@ -10,7 +10,7 @@ namespace LostArkLogger
             MaxHp = reader.ReadPackedInt();
             Damage = reader.ReadPackedInt();
             b_0 = reader.ReadByte();
-            u16 = reader.ReadUInt16();
+            u16_0 = reader.ReadUInt16();
             Modifier = reader.ReadByte();
             TargetId = reader.ReadUInt64();
             b_1 = reader.ReadByte();
