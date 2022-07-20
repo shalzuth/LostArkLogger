@@ -9,8 +9,8 @@ namespace LostArkLogger
             num = reader.ReadUInt16();
             for(var i = 0; i < num; i++)
             {
-                u32list.Add(reader.ReadList<UInt32>());
                 u32.Add(reader.ReadUInt32());
+                u32list.Add(reader.ReadList<UInt32>());
             }
         }
     }

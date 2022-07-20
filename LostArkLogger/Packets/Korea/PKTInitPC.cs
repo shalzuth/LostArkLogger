@@ -60,7 +60,7 @@ namespace LostArkLogger
             b_15 = reader.ReadByte();
             u32_10 = reader.ReadUInt32();
             u32_11 = reader.ReadUInt32();
-            bytearraylist = reader.ReadList<Byte[]>(30);
+            bytearraylist_0 = reader.ReadList<Byte[]>(30);
             b_17 = reader.ReadByte();
             u32_12 = reader.ReadUInt32();
             bytearray_2 = reader.ReadBytes(35);
