@@ -406,6 +406,7 @@ namespace LostArkLogger
                         GearLevel = pc.GearLevel
                     };
                     currentEncounter.Entities.AddOrUpdate(temp);
+                    currentEncounter.PartyEntities[temp.PartyId] = temp;
                     statusEffectTracker.Process(pcPacket);
                     Logger.AppendLog(3, pc.PlayerId.ToString("X"), pc.Name, pc.ClassId.ToString(), Npc.GetPcClass(pc.ClassId), pc.Level.ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_HP)].ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_MAX_HP)].ToString());
                 }
@@ -459,7 +460,7 @@ namespace LostArkLogger
 
                     foreach (var effect in partyStatusEffect.statusEffectDatas)
                     {
-                        Logger.AppendLog(14, effect.SourceId.ToString("X"), currentEncounter.Entities.GetOrAdd(effect.SourceId).Name, effect.StatusEffectId.ToString("X"), SkillBuff.GetSkillBuffName(effect.StatusEffectId), "01", partyStatusEffect.PartyId.ToString("X"), currentEncounter.Entities.GetOrAdd(partyStatusEffect.PartyId).Name);
+                        Logger.AppendLog(14, effect.SourceId.ToString("X"), currentEncounter.Entities.GetOrAdd(effect.SourceId).Name, effect.StatusEffectId.ToString("X"), SkillBuff.GetSkillBuffName(effect.StatusEffectId), "01", partyStatusEffect.PartyId.ToString("X"), currentEncounter.PartyEntities.GetOrAdd(partyStatusEffect.PartyId).Name);
                     }
 
                 }
@@ -648,11 +649,16 @@ namespace LostArkLogger
 
         private void Parser_onStatusEffectEnded(StatusEffect effect, TimeSpan duration)
         {
+            Entity dstEntity;
+            if (effect.Type == StatusEffect.StatusEffectType.Party)
+                dstEntity = currentEncounter.PartyEntities.GetOrAdd(effect.TargetId);
+            else
+                dstEntity = currentEncounter.Entities.GetOrAdd(effect.TargetId);
             var log = new LogInfo
             {
                 Time = DateTime.Now,
                 SourceEntity = currentEncounter.Entities.GetOrAdd(effect.SourceId),
-                DestinationEntity = currentEncounter.Entities.GetOrAdd(effect.TargetId),
+                DestinationEntity = dstEntity,
                 SkillEffectId = effect.StatusEffectId,
                 SkillName = SkillBuff.GetSkillBuffName(effect.StatusEffectId),
                 Damage = 0,

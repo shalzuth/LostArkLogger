@@ -91,7 +91,7 @@ namespace LostArkLogger
                 var applierId = statusEffect.SourceId;
                 if (effect.PlayerIdOnRefresh != 0x0)
                     applierId = effect.PlayerIdOnRefresh;
-                var statusEffectList = GetStatusEffectList(applierId);
+                var statusEffectList = GetStatusEffectList(effect.PartyId);
                 ProcessStatusEffectData(statusEffect, effect.PartyId, applierId, statusEffectList, StatusEffect.StatusEffectType.Party);
             }
             OnChange?.Invoke();
