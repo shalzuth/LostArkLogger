@@ -13,7 +13,7 @@ namespace LostArkLogger
         Overlay overlay;
         private int _packetCount;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public string PacketCount
         {
@@ -104,5 +104,6 @@ namespace LostArkLogger
             System.Diagnostics.Process.Start(AppDomain.CurrentDomain.FriendlyName);
             Environment.Exit(0);
         }
+
     }
 }

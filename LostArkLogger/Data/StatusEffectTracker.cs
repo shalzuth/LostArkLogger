@@ -11,8 +11,8 @@ namespace LostArkLogger
     {
         private readonly ConcurrentDictionary<UInt64, ConcurrentDictionary<UInt64, StatusEffect>> StatusEffectRegistry;
         public Parser parser;
-        public event Action? OnChange;
-        public event Action<StatusEffect, TimeSpan>? OnStatusEffectEnded;
+        public event Action OnChange;
+        public event Action<StatusEffect, TimeSpan> OnStatusEffectEnded;
         public StatusEffectTracker(Parser p)
         {
             StatusEffectRegistry = new ConcurrentDictionary<UInt64, ConcurrentDictionary<UInt64, StatusEffect>>();
@@ -69,7 +69,7 @@ namespace LostArkLogger
             Entity sourceEntity = parser.GetSourceEntity(sourceId);
             var statusEffect = new StatusEffect { Started = DateTime.UtcNow, StatusEffectId = effectData.StatusEffectId, InstanceId = effectData.EffectInstanceId, SourceId = sourceEntity.EntityId, TargetId = targetId, Type = effectType };
             // end this buf now, it got refreshed
-            if (effectList.Remove(statusEffect.InstanceId, out var oldStatusEffect))
+            if (effectList.TryRemove(statusEffect.InstanceId, out var oldStatusEffect))
             {
                 var duration = DateTime.UtcNow - oldStatusEffect.Started;
                 OnStatusEffectEnded?.Invoke(oldStatusEffect, duration);
@@ -102,7 +102,7 @@ namespace LostArkLogger
             var statusEffectList = GetStatusEffectList(effect.PartyId);
             foreach (var effectInstanceId in effect.StatusEffectIds)
             {
-                if (statusEffectList.Remove(effectInstanceId, out var oldStatusEffect))
+                if (statusEffectList.TryRemove(effectInstanceId, out var oldStatusEffect))
                 {
                     var duration = DateTime.UtcNow - oldStatusEffect.Started;
                     OnStatusEffectEnded?.Invoke(oldStatusEffect, duration);
@@ -116,7 +116,7 @@ namespace LostArkLogger
             var statusEffectList = GetStatusEffectList(effect.ObjectId);
             foreach (var effectInstanceId in effect.InstanceIds)
             {
-                if (statusEffectList.Remove(effectInstanceId, out var oldStatusEffect))
+                if (statusEffectList.TryRemove(effectInstanceId, out var oldStatusEffect))
                 {
                     var duration = DateTime.UtcNow - oldStatusEffect.Started;
                     OnStatusEffectEnded?.Invoke(oldStatusEffect, duration);
@@ -127,7 +127,7 @@ namespace LostArkLogger
 
         public void Process(PKTDeathNotify packet)
         {
-            if(StatusEffectRegistry.Remove(packet.TargetId, out var statusEffectList))
+            if(StatusEffectRegistry.TryRemove(packet.TargetId, out var statusEffectList))
             {
                 foreach (var statusEffect in statusEffectList)
                 {

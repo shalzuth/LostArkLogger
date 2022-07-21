@@ -109,8 +109,10 @@ namespace LostArkLogger
                 e.Graphics.FillRectangle(brushes[i % brushes.Count], 0, (i + 1) * barHeight, barWidth, barHeight);
                 if (rowData.Key.Contains('(') && scope == Scope.TopLevel)
                 {
-                    var className = rowData.Key[(rowData.Key.IndexOf("(") + 1)..];
+                    var className = rowData.Key.Substring(rowData.Key.IndexOf("(") + 1);
                     className = className.Substring(0, className.IndexOf(")")).Split(' ')[1];
+                    //var className = rowData.Key[(rowData.Key.IndexOf("(") + 1)..];
+                    //className = className.Substring(0, className.IndexOf(")")).Split(' ')[1];
                     e.Graphics.DrawImage(ClassSymbols, new Rectangle(2, (i + 1) * barHeight + 2, barHeight - 4, barHeight - 4), GetSpriteLocation(Array.IndexOf(ClassIconIndex, className)), GraphicsUnit.Pixel);
                     nameOffset += 2 + barHeight - 4;
                 }

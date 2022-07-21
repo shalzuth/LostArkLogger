@@ -52,7 +52,7 @@ namespace LostArkLogger
             }
         }
 
-        public Dictionary<String, Tuple<UInt64, UInt32, UInt32, UInt64>> GetStatusEffects(Entity? entity = default)
+        public Dictionary<String, Tuple<UInt64, UInt32, UInt32, UInt64>> GetStatusEffects(Entity entity = default)
         {
             var baseSearch = Infos.Where(i => i.Duration != TimeSpan.Zero && !String.IsNullOrEmpty(i.DestinationEntity.Name));
             if (entity == default(Entity))

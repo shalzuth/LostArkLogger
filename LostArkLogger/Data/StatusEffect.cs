@@ -16,7 +16,7 @@ namespace LostArkLogger
         public DateTime Started;
         public StatusEffectType Type;
 
-        public int CompareTo(object? obj)
+        public int CompareTo(object obj)
         {
             if (obj == null) return 1;
 
@@ -37,7 +37,7 @@ namespace LostArkLogger
             return (int)InstanceId;
         }
 
-        public override bool Equals(object? obj)
+        public override bool Equals(object obj)
         {
             if (obj == null) return false;
 

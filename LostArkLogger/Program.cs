@@ -24,8 +24,9 @@ namespace LostArkLogger
 
             if (!IsConsole)
             {
-				ApplicationConfiguration.Initialize();
-				Application.Run(new MainWindow());
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Application.Run(new MainWindow());
             }
             else
             {
