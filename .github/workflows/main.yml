@@ -33,7 +33,7 @@ jobs:
       run: nuget restore LostArkLogger.sln
         
     - name: Build
-      run: msbuild LostArkLogger.sln /p:Configuration=Debug
+      run: msbuild LostArkLogger.sln /p:Configuration=Release
       
     - name: Import PFX
       shell: powershell
