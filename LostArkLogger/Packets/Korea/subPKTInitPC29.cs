@@ -8,11 +8,11 @@ namespace LostArkLogger
         {
             p64_0 = reader.ReadPackedInt();
             b_0 = reader.ReadByte();
+            u64_0 = reader.ReadUInt64();
+            b_1 = reader.ReadByte();
+            b_2 = reader.ReadByte();
             u16_0 = reader.ReadUInt16();
             p64_1 = reader.ReadPackedInt();
-            b_1 = reader.ReadByte();
-            u64_0 = reader.ReadUInt64();
-            b_2 = reader.ReadByte();
         }
     }
 }

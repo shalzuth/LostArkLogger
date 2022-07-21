@@ -14,6 +14,6 @@ namespace LostArkLogger
         public StatusEffectData statusEffectData;
         public UInt64 u64_0;
         public UInt64 u64_1;
-        public Byte b;
+        public Byte b_0;
     }
 }
