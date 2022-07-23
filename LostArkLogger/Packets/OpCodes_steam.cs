@@ -14,7 +14,7 @@ namespace LostArkLogger
         PKTNewProjectile = 0xC922,
         PKTPartyStatusEffectAddNotify = 0x2458,
         PKTPartyStatusEffectRemoveNotify = 0x528C,
-        PKTRaidBossKillNotify = 0xC,
+        PKTRaidBossKillNotify = 0x4AAF,
         PKTRaidResult = 0x4AA3,
         PKTRemoveObject = 0x3203,
         PKTSkillDamageAbnormalMoveNotify = 0xCE05,
