@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LostArkLogger
 {
@@ -56,6 +52,7 @@ namespace LostArkLogger
             if (id == 311) return "MaleMartialArtist";
             if (id == 312) return "Striker";
             if (id == 602) return "Artist";
+            if (id == 603) return "Aeromancer";
             return "UnknownClass";
         }
     }
