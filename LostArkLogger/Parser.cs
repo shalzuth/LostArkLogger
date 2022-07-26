@@ -343,34 +343,38 @@ namespace LostArkLogger
                             }
                         }
                     }
-                    currentEncounter.End = DateTime.Now;
-                    currentEncounter = new Encounter();
-                    currentEncounter.Entities = Encounters.Last().Entities; // preserve entities
-                    if (WasWipe || Encounters.Last().AfterWipe)
+                    Task.Run(() =>
                     {
-
-                        currentEncounter.RaidInfos = Encounters.Last().RaidInfos;
-                        currentEncounter.AfterWipe = true; // flag signifying zone after wipe
-                        if (Encounters.Last().AfterWipe)
+                        Task.Delay(500); // wait 500ms to capture any final damage packets
+                        currentEncounter.End = DateTime.Now;
+                        currentEncounter = new Encounter();
+                        currentEncounter.Entities = Encounters.Last().Entities; // preserve entities
+                        if (WasWipe || Encounters.Last().AfterWipe)
                         {
-                            Duration = 0; // dont add time for zone inbetween pulls for raid time
-                            currentEncounter.AfterWipe = false;
+
+                            currentEncounter.RaidInfos = Encounters.Last().RaidInfos;
+                            currentEncounter.AfterWipe = true; // flag signifying zone after wipe
+                            if (Encounters.Last().AfterWipe)
+                            {
+                                Duration = 0; // dont add time for zone inbetween pulls for raid time
+                                currentEncounter.AfterWipe = false;
+                            }
+                            currentEncounter.RaidTime = Encounters.Last().RaidTime + Duration;// update raid duration
+                            WasWipe = false;
+
                         }
-                        currentEncounter.RaidTime = Encounters.Last().RaidTime + Duration;// update raid duration
-                        WasWipe = false;
+                        else if (WasKill)
+                        {
+                            WasKill = false;
+                        }
 
-                    }
-                    else if (WasKill)
-                    {
-                        WasKill = false;
-                    }
-
-                    if (Encounters.Last().Infos.Count <= 15)
-                    {
-                        Encounters.Remove(Encounters.Last());
-                    }
-                    Encounters.Add(currentEncounter);
-                    Logger.AppendLog(2);
+                        if (Encounters.Last().Infos.Count <= 15)
+                        {
+                            Encounters.Remove(Encounters.Last());
+                        }
+                        Encounters.Add(currentEncounter);
+                        Logger.AppendLog(2);
+                    });
                 }
                 else if (opcode == OpCodes.PKTInitPC)
                 {
