@@ -121,7 +121,7 @@ namespace LostArkLogger
 
         void ProcessDamageEvent(Entity sourceEntity, UInt32 skillId, UInt32 skillEffectId, SkillDamageEvent dmgEvent)
         {
-            if (((HitFlag)dmgEvent.Modifier & (HitFlag.HIT_FLAG_DAMAGE_SHARE)) > 0 && skillId == 0 && skillEffectId == 0)
+            if (((HitFlag)dmgEvent.Modifier == HitFlag.HIT_FLAG_DAMAGE_SHARE) && skillId == 0 && skillEffectId == 0)
                 return;
             var skillName = Skill.GetSkillName(skillId, skillEffectId);
             var targetEntity = currentEncounter.Entities.GetOrAdd(dmgEvent.TargetId);
