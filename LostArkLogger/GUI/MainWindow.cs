@@ -37,6 +37,10 @@ namespace LostArkLogger
             regionSelector.SelectedIndexChanged += new EventHandler(regionSelector_SelectedIndexChanged);
             loggedPacketCountLabel.Text = "Logged Packets : 0";
             loggedPacketCountLabel.DataBindings.Add("Text", this, nameof(PacketCount));
+            displayName.Checked = Properties.Settings.Default.DisplayNames;
+            autoUpload.Checked = Properties.Settings.Default.AutoUpload;
+            displayName.CheckedChanged += new EventHandler(displayName_CheckedChanged);
+            autoUpload.CheckedChanged += new EventHandler(autoUpload_CheckedChanged);
             //sniffModeCheckbox.Checked = Properties.Settings.Default.Npcap;
             overlay = new Overlay();
             overlay.AddSniffer(sniffer);
@@ -51,11 +55,6 @@ namespace LostArkLogger
         private void overlayEnabled_CheckedChanged(object sender, EventArgs e)
         {
             overlay.Visible = overlayEnabled.Checked;
-        }
-
-        private void logEnabled_CheckedChanged(object sender, EventArgs e)
-        {
-            Logger.enableLogging = logEnabled.Checked;
         }
 
         private void debugLog_CheckedChanged(object sender, EventArgs e)
@@ -105,5 +104,18 @@ namespace LostArkLogger
             Environment.Exit(0);
         }
 
+        private void displayName_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.DisplayNames = displayName.Checked;
+            Properties.Settings.Default.Save();
+
+        }
+
+        private void autoUpload_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.AutoUpload = autoUpload.Checked;
+            Properties.Settings.Default.Save();
+
+        }
     }
 }

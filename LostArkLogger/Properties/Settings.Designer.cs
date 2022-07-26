@@ -58,5 +58,29 @@ namespace LostArkLogger.Properties {
                 this["Npcap"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AutoUpload {
+            get {
+                return ((bool)(this["AutoUpload"]));
+            }
+            set {
+                this["AutoUpload"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool DisplayNames {
+            get {
+                return ((bool)(this["DisplayNames"]));
+            }
+            set {
+                this["DisplayNames"] = value;
+            }
+        }
     }
 }

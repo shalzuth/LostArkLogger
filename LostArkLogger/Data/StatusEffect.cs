@@ -15,6 +15,7 @@ namespace LostArkLogger
         public UInt64 SourceId;
         public DateTime Started;
         public StatusEffectType Type;
+        public Int32 Value; // for shield amount, etc.
 
         public int CompareTo(object obj)
         {

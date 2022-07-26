@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace LostArkLogger
 {
-    public partial class Overlay : Form
+    public class Overlay : Form
     {
         enum Level // need better state, suboverlay type/etc.
         {
@@ -37,7 +37,21 @@ namespace LostArkLogger
         {
             InitPens();
             Control.CheckForIllegalCrossThreadCalls = false;
-            InitializeComponent();
+            this.SuspendLayout();
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(300, 120);
+            this.DoubleBuffered = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MinimizeBox = false;
+            this.Name = "Overlay";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.Text = "Overlay";
+            this.TopMost = true;
+            this.TransparencyKey = System.Drawing.SystemColors.Control;
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Overlay_MouseDown);
+            this.ResumeLayout(false);
             SetStyle(ControlStyles.ResizeRedraw, true);
         }
         internal void AddSniffer(Parser s)

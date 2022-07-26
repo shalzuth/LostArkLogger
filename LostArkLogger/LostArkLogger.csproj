@@ -75,7 +75,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\*.cs" />
-    <Compile Include="GUI\*.cs" />
+    <Compile Include="GUI\MainWindow.Designer.cs">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUI\Overlay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GUI\MainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Packets\*.cs" />
     <Compile Include="Packets\*\*.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

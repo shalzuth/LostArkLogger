@@ -9,10 +9,9 @@ namespace LostArkLogger.Utilities
 {
     public static class Logger
     {
-        static string documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+        static string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         static string logsPath = Path.Combine(documentsPath, "Lost Ark Logs");
 
-        public static bool enableLogging = false;
         public static bool debugLog = false;
 
         static BinaryWriter logger;
@@ -26,43 +25,32 @@ namespace LostArkLogger.Utilities
         {
             if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
         }
-        public static void AppendLog(LogInfo s)
-        {
-            if (enableLogging)
-            {
-                Task.Run(() =>
-                {
-                    lock (LogFileLock)
-                    {
-                        File.AppendAllText(fileName, s.ToString() + "\n");
-                    }
-                });
-            }
-        }
-        static System.Security.Cryptography.MD5 hash = System.Security.Cryptography.MD5.Create();
+        public static System.Security.Cryptography.MD5 hash = System.Security.Cryptography.MD5.Create();
         public static void StartNewLogFile()
         {
             fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
-
         }
         public static event Action<string> onLogAppend;
+        static bool InittedLog = false;
         public static void AppendLog(int id, params string[] elements)
         {
-            if (enableLogging)
+            if (InittedLog == false)
             {
-                var log = id + "|" + DateTime.Now.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'") + "|" + String.Join("|", elements);
-                var logHash = string.Concat(hash.ComputeHash(System.Text.Encoding.Unicode.GetBytes(log)).Select(x => x.ToString("x2")));
-
-                Task.Run(() =>
-                {
-                    lock (LogFileLock)
-                    {
-                        File.AppendAllText(fileName, log + "|" + logHash + "\n");
-                    }
-
-                    onLogAppend?.Invoke(log + "\n");
-                });
+                InittedLog = true;
+                AppendLog(253, System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString());
             }
+            var log = id + "|" + DateTime.Now.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'") + "|" + String.Join("|", elements);
+            var logHash = string.Concat(hash.ComputeHash(Encoding.Unicode.GetBytes(log)).Select(x => x.ToString("x2")));
+
+            Task.Run(() =>
+            {
+                lock (LogFileLock)
+                {
+                    File.AppendAllText(fileName, log + "|" + logHash + "\n");
+                }
+
+                onLogAppend?.Invoke(log + "\n");
+            });
         }
         public static void DoDebugLog(byte[] bytes)
         {

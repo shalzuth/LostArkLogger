@@ -34,6 +34,13 @@ namespace LostArkLogger
                 httpBridge.args = args;
                 httpBridge.Start();
             }
+            if (File.Exists(Utilities.Logger.fileName) && Properties.Settings.Default.AutoUpload)
+            {
+                var fileBytes = File.ReadAllBytes(Utilities.Logger.fileName);
+                var fileText = File.ReadAllText(Utilities.Logger.fileName);
+                if (fileBytes.Length > 100 && fileText.Contains("8|"))
+                    Utilities.Uploader.UploadLog(fileBytes);
+            }
         }
         static void AttemptFirewallPrompt()
         {
