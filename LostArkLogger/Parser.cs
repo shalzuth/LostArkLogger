@@ -121,6 +121,8 @@ namespace LostArkLogger
 
         void ProcessDamageEvent(Entity sourceEntity, UInt32 skillId, UInt32 skillEffectId, SkillDamageEvent dmgEvent)
         {
+            if (((HitFlag)dmgEvent.Modifier & (HitFlag.HIT_FLAG_DAMAGE_SHARE)) > 0)
+                return;
             var skillName = Skill.GetSkillName(skillId, skillEffectId);
             var targetEntity = currentEncounter.Entities.GetOrAdd(dmgEvent.TargetId);
             var destinationName = targetEntity != null ? targetEntity.VisibleName : dmgEvent.TargetId.ToString("X");
@@ -135,11 +137,11 @@ namespace LostArkLogger
                 SkillName = skillName,
                 Damage = (ulong)dmgEvent.Damage,
                 Crit =
-                    ((DamageModifierFlags)dmgEvent.Modifier &
-                     (DamageModifierFlags.DotCrit |
-                      DamageModifierFlags.SkillCrit)) > 0,
-                BackAttack = ((DamageModifierFlags)dmgEvent.Modifier & (DamageModifierFlags.BackAttack)) > 0,
-                FrontAttack = ((DamageModifierFlags)dmgEvent.Modifier & (DamageModifierFlags.FrontAttack)) > 0
+                    ((HitFlag)dmgEvent.Modifier &
+                     (HitFlag.HIT_FLAG_CRITICAL |
+                      HitFlag.HIT_FLAG_DOT_CRITICAL)) > 0,
+                BackAttack = ((HitFlag)dmgEvent.Modifier & (HitFlag.HIT_OPTION_BACK_ATTACK)) > 0,
+                FrontAttack = ((HitFlag)dmgEvent.Modifier & (HitFlag.HIT_OPTION_FRONTAL_ATTACK)) > 0
             };
             onCombatEvent?.Invoke(log);
             currentEncounter.RaidInfos.Add(log);
