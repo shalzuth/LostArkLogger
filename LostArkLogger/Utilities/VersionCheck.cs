@@ -22,7 +22,9 @@ namespace LostArkLogger
                     fileName = Path.Combine(installLocation.ToString(), "Binaries", "Win64", "LOSTARK.exe");
                 }
             }
-            return new Version(FileVersionInfo.GetVersionInfo(fileName).ProductVersion.Split(' ')[0]);
+            if (File.Exists(fileName)) return new Version(FileVersionInfo.GetVersionInfo(fileName).ProductVersion.Split(' ')[0]);
+            else return new Version("0.0.0.0");
+
         }
     }
 }
