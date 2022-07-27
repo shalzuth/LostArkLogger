@@ -345,8 +345,8 @@ namespace LostArkLogger
                     }
                     Task.Run(() =>
                     {
-                        Task.Delay(500); // wait 500ms to capture any final damage packets
                         currentEncounter.End = DateTime.Now;
+                        Task.Delay(1500); // wait 1500ms to capture any final damage packets
                         currentEncounter = new Encounter();
                         currentEncounter.Entities = Encounters.Last().Entities; // preserve entities
                         if (WasWipe || Encounters.Last().AfterWipe)
