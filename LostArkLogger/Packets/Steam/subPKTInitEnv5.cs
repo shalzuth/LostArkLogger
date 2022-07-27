@@ -10,8 +10,8 @@ namespace LostArkLogger
             for(var i = 0; i < num; i++)
             {
                 blist_1.Add(reader.ReadList<Byte>());
-                blist_0.Add(reader.ReadList<Byte>());
                 blist_2.Add(reader.ReadList<Byte>());
+                blist_0.Add(reader.ReadList<Byte>());
             }
         }
     }
