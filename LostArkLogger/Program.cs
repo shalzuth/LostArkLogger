@@ -18,6 +18,7 @@ namespace LostArkLogger
             Properties.Settings.Default.Providers.Clear();
             Bluegrams.Application.PortableSettingsProvider.SettingsFileName = AppDomain.CurrentDomain.FriendlyName + ".ini";
             Bluegrams.Application.PortableSettingsProvider.ApplyProvider(Properties.Settings.Default);
+            if(Properties.Settings.Default.Region == Region.Steam) VersionCompatibility();
             if (!AdminRelauncher()) return;
             if (!IsConsole) Warning();
             AttemptFirewallPrompt();
@@ -49,6 +50,12 @@ namespace LostArkLogger
             var t = new TcpListener(ipLocalEndPoint);
             t.Start();
             t.Stop();
+        }
+        static void VersionCompatibility()
+        {
+            var installedVersion = VersionCheck.GetLostArkVersion();
+            if (installedVersion > VersionCheck.SupportedSteamVersion)
+                MessageBox.Show("DPS Meter is out of date.\nDPS Meter might not work until updated.\nCheck Discord/Github for more info.", "Out of date!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
         static void Warning()
         {
