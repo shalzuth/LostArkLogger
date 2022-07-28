@@ -6,11 +6,12 @@ namespace LostArkLogger
     {
         public void KoreaDecode(BitReader reader)
         {
-            b_0 = reader.ReadByte();
+            SkillLevel = reader.ReadByte();
             InstanceId = reader.ReadUInt64();
             StatusEffectId = reader.ReadUInt32();
+            // if tripod the first byte has tripod level
             bytearraylist_0 = reader.ReadList<Byte[]>(7);
-            SkillLevel = reader.ReadByte();
+            b_2 = reader.ReadByte();
             SourceId = reader.ReadUInt64();
             s64_0 = reader.ReadSimpleInt();
             EffectInstanceId = reader.ReadUInt32();
