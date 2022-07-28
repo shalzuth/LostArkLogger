@@ -13,7 +13,7 @@ namespace LostArkLogger
         UnkModifier2 = 0x40,
         UnkModifier3 = 0x80
     }
-    [Flags] public enum HitFlag : int
+    public enum HitFlag : int
     {
         HIT_FLAG_NORMAL = 0,
         HIT_FLAG_CRITICAL = 1,
