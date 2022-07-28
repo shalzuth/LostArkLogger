@@ -32,6 +32,7 @@ namespace LostArkLogger
     }
     public enum HitOption : int
     {
+        HIT_OPTION_NONE = -1,
         HIT_OPTION_BACK_ATTACK = 0,
         HIT_OPTION_FRONTAL_ATTACK = 1,
         HIT_OPTION_FLANK_ATTACK = 2,

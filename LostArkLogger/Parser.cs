@@ -124,7 +124,7 @@ namespace LostArkLogger
             var hitFlag = (HitFlag)(dmgEvent.Modifier & 0xf);
             if (hitFlag == HitFlag.HIT_FLAG_DAMAGE_SHARE && skillId == 0 && skillEffectId == 0)
                 return;
-            var hitOption = (HitOption)((dmgEvent.Modifier & 0x30) >> 4);
+            var hitOption = (HitOption)(((dmgEvent.Modifier >> 4) & 0x7) - 1);
             var skillName = Skill.GetSkillName(skillId, skillEffectId);
             var targetEntity = currentEncounter.Entities.GetOrAdd(dmgEvent.TargetId);
             var destinationName = targetEntity != null ? targetEntity.VisibleName : dmgEvent.TargetId.ToString("X");
