@@ -8,6 +8,8 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using SharpPcap.LibPcap;
 
 namespace LostArkLogger
 {
@@ -16,15 +18,15 @@ namespace LostArkLogger
 #pragma warning disable CA2101 // Specify marshaling for P/Invoke string arguments
         [DllImport("wpcap.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)] static extern IntPtr pcap_strerror(int err);
 #pragma warning restore CA2101 // Specify marshaling for P/Invoke string arguments
-        Machina.TCPNetworkMonitor tcp;
+        // Machina.TCPNetworkMonitor tcp;
         ILiveDevice pcap;
         public event Action<LogInfo> onCombatEvent;
         public event Action onNewZone;
         public event Action beforeNewZone;
         public event Action<int> onPacketTotalCount;
-        public bool use_npcap = false;
+        public bool use_npcap = true;
         private object lockPacketProcessing = new object(); // needed to synchronize UI swapping devices
-        public Machina.Infrastructure.NetworkMonitorType? monitorType = null;
+        // public Machina.Infrastructure.NetworkMonitorType? monitorType = null;
         public List<Encounter> Encounters = new List<Encounter>();
         public Encounter currentEncounter = new Encounter();
         Byte[] fragmentedPacket = new Byte[0];
@@ -60,44 +62,23 @@ namespace LostArkLogger
                 // We default to using npcap, but the UI can also set this to false.
                 if (use_npcap)
                 {
-                    monitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
+                    // monitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
                     string filter = "ip and tcp port 6040";
                     bool foundAdapter = false;
                     NetworkInterface gameInterface;
                     // listening on every device results in duplicate traffic, unfortunately, so we'll find the adapter used by the game here
-                    try
-                    {
-                        pcap_strerror(1); // verify winpcap works at all
-                        gameInterface = NetworkUtil.GetAdapterUsedByProcess("LostArk");
-                        foreach (var device in CaptureDeviceList.Instance)
-                        {
-                            if (device.MacAddress == null) continue; // SharpPcap.IPCapDevice.MacAddress is null in some cases
-                            if (gameInterface.GetPhysicalAddress().ToString() == device.MacAddress.ToString())
-                            {
-                                try
-                                {
-                                    device.Open(DeviceModes.None, 1000); // todo: 1sec timeout ok?
-                                    device.Filter = filter;
-                                    device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
-                                    device.StartCapture();
-                                    pcap = device;
-                                    foundAdapter = true;
-                                    break;
-                                }
-                                catch (Exception ex)
-                                {
-                                    var exceptionMessage = "Exception while trying to listen to NIC " + device.Name + "\n" + ex.ToString();
-                                    Console.WriteLine(exceptionMessage);
-                                    Logger.AppendLog(254, exceptionMessage);
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        var exceptionMessage = "Sharppcap init failed, using rawsockets instead, exception:\n" + ex.ToString();
-                        Console.WriteLine(exceptionMessage);
-                        Logger.AppendLog(254, exceptionMessage);
+                    OpenFileDialog dialog = new OpenFileDialog();
+                    dialog.Title = "Open pcap File";
+                    dialog.Filter = "PCAP files|*.pcap";
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {                                   
+                        var device = new CaptureFileReaderDevice(dialog.FileName.ToString());
+                        device.Open();
+                        device.Filter = filter;
+                        device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
+                        device.StartCapture();
+                        // pcap = device;
+                        foundAdapter = true;                                
                     }
                     // If we failed to find a pcap device, fall back to rawsockets.
                     if (!foundAdapter)
@@ -105,16 +86,6 @@ namespace LostArkLogger
                         use_npcap = false;
                         pcap = null;
                     }
-                }
-
-                if (use_npcap == false)
-                {
-                    // Always fall back to rawsockets
-                    tcp = new Machina.TCPNetworkMonitor();
-                    tcp.Config.WindowClass = "EFLaunchUnrealUWindowsClient";
-                    monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
-                    tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival_machina(connection, data);
-                    tcp.Start();
                 }
             }
         }
@@ -583,30 +554,9 @@ namespace LostArkLogger
         int loggedPacketCount = 0;
 
 
-        void Device_OnPacketArrival_machina(Machina.Infrastructure.TCPConnection connection, byte[] bytes)
-        {
-            if (tcp == null) return; // To avoid any late delegate calls causing state issues when listener uninstalled
-            lock (lockPacketProcessing)
-            {
-                if (connection.RemotePort != 6040) return;
-                var srcAddr = connection.RemoteIP;
-                if (srcAddr != currentIpAddr)
-                {
-                    if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && GetOpCode(bytes) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
-                    {
-                        beforeNewZone?.Invoke();
-                        onNewZone?.Invoke();
-                        currentIpAddr = srcAddr;
-                    }
-                    else return;
-                }
-                Logger.DoDebugLog(bytes);
-                ProcessPacket(bytes.ToList());
-            }
-        }
+        
         void Device_OnPacketArrival_pcap(object sender, PacketCapture evt)
         {
-            if (pcap == null) return;
             lock (lockPacketProcessing)
             {
                 var rawpkt = evt.GetPacket();
@@ -684,7 +634,6 @@ namespace LostArkLogger
         }
         public void UninstallListeners()
         {
-            if (tcp != null) tcp.Stop();
             if (pcap != null)
             {
                 try
@@ -699,7 +648,6 @@ namespace LostArkLogger
                     Logger.AppendLog(254, exceptionMessage);
                 }
             }
-            tcp = null;
             pcap = null;
         }
 

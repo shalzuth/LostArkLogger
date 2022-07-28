@@ -19,9 +19,9 @@ namespace LostArkLogger
             Bluegrams.Application.PortableSettingsProvider.SettingsFileName = AppDomain.CurrentDomain.FriendlyName + ".ini";
             Bluegrams.Application.PortableSettingsProvider.ApplyProvider(Properties.Settings.Default);
             if(Properties.Settings.Default.Region == Region.Steam) VersionCompatibility();
-            if (!AdminRelauncher()) return;
+            // if (!AdminRelauncher()) return;
             if (!IsConsole) Warning();
-            AttemptFirewallPrompt();
+            // AttemptFirewallPrompt();
 
             if (!IsConsole)
             {
