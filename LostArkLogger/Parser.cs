@@ -35,6 +35,8 @@ namespace LostArkLogger
         public bool WasWipe = false;
         public bool WasKill = false;
         public bool DisplayNames = true;
+        public string directoryPath = "";
+        public HashSet<String> alreadyProcessedFiles = new HashSet<string>();
         public StatusEffectTracker statusEffectTracker;
 
         public Parser()
@@ -67,18 +69,24 @@ namespace LostArkLogger
                     bool foundAdapter = false;
                     NetworkInterface gameInterface;
                     // listening on every device results in duplicate traffic, unfortunately, so we'll find the adapter used by the game here
-                    OpenFileDialog dialog = new OpenFileDialog();
-                    dialog.Title = "Open pcap File";
-                    dialog.Filter = "PCAP files|*.pcap";
+                    FolderBrowserDialog dialog = new FolderBrowserDialog();
+                    // dialog.Title = "Open pcap File";
+                    // dialog.Filter = "PCAP files|*.pcap";
                     if (dialog.ShowDialog() == DialogResult.OK)
-                    {                                   
-                        var device = new CaptureFileReaderDevice(dialog.FileName.ToString());
+                    {
+                        directoryPath = dialog.SelectedPath;
+                        string file = new DirectoryInfo(directoryPath).GetFiles("*.pcap")[0].FullName;
+                        alreadyProcessedFiles.Add(file);
+                        var device = new CaptureFileReaderDevice(file);
                         device.Open();
                         device.Filter = filter;
                         device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
+                        device.OnCaptureStopped += new CaptureStoppedEventHandler(Device_OnCaptureStopped_pcap);
                         device.StartCapture();
                         // pcap = device;
-                        foundAdapter = true;                                
+                        foundAdapter = true;
+                        
+                        
                     }
                     // If we failed to find a pcap device, fall back to rawsockets.
                     if (!foundAdapter)
@@ -88,6 +96,60 @@ namespace LostArkLogger
                     }
                 }
             }
+        }
+
+        private void Device_OnCaptureStopped_pcap(object sender, CaptureStoppedEventStatus status)
+        {
+            // var fileName = (sender as CaptureFileReaderDevice).Name;
+
+            // Try to delete old files
+            HashSet<String> toDelete = new HashSet<string>();
+            foreach (var fileName in alreadyProcessedFiles)
+            {
+                try
+                {
+                    File.Delete(fileName);
+                    toDelete.Add(fileName);
+                }
+                catch (Exception e)
+                {
+                    // Do nothing
+                }    
+            }
+
+            foreach (var fileName in toDelete)
+            {
+                alreadyProcessedFiles.Remove(fileName);
+            }
+            
+            string nextFile = "";
+            while (true)
+            {
+                FileInfo[] fileInfos = new DirectoryInfo(directoryPath).GetFiles("*.pcap");
+                // Skip last file since this should be the current wireshark file
+                for (int i = 0; i < fileInfos.Length - 1; i++)
+                {
+                    // if (fileInfos[i].FullName.Equals(fileName)) continue;
+                    if (alreadyProcessedFiles.Contains(fileInfos[i].FullName)) continue;
+                    nextFile = fileInfos[i].FullName;
+                    alreadyProcessedFiles.Add(nextFile);
+                    break;
+                }
+
+                if (!nextFile.Equals("")) break;
+            }
+            
+            // (new DirectoryInfo(directoryPath).GetFiles("*.pcap"))[0].FullName;
+            
+            
+            var device = new CaptureFileReaderDevice(nextFile);
+            device.Open();
+            device.Filter = "ip and tcp port 6040";
+            device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
+            device.OnCaptureStopped += new CaptureStoppedEventHandler(Device_OnCaptureStopped_pcap);
+            device.StartCapture();
+
+            (sender as CaptureFileReaderDevice).Close();
         }
 
         void ProcessDamageEvent(Entity sourceEntity, UInt32 skillId, UInt32 skillEffectId, SkillDamageEvent dmgEvent)
@@ -553,8 +615,6 @@ namespace LostArkLogger
         UInt32 currentIpAddr = 0xdeadbeef;
         int loggedPacketCount = 0;
 
-
-        
         void Device_OnPacketArrival_pcap(object sender, PacketCapture evt)
         {
             lock (lockPacketProcessing)
