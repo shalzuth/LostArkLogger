@@ -15,12 +15,12 @@ namespace LostArkLogger
         public UInt32 EffectInstanceId;
         public UInt32 StatusEffectId;
         public Byte hasValue;
-        public Byte SkillLevel;
+        public Byte b_2;
         public UInt64 s64_0;
         public List<Byte[]> bytearraylist_0;
         public UInt64 s64_1;
         public UInt32 u32_0;
-        public Byte b_0;
+        public Byte SkillLevel;
         public Byte b_1;
     }
 }
