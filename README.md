@@ -14,9 +14,7 @@
  Please submit an issue on the github repo, or join the discord @ https://discord.gg/MedRDjEwHZ
  
 # Setup
-1. Download the "Lost Ark Logger" packet logger @ https://github.com/shalzuth/LostArkLogger/releases/latest/download/LostArkLogger.exe
-2. Optional - Download Lost Ark ACT plugin @ https://github.com/shalzuth/LostArkLogger/releases/latest/download/LostArk_ACT_Plugin.dll
-3. Optional - Download & install ACT @ https://advancedcombattracker.com/download.php
+1. Download the "Lost Ark Logger" packet logger @ https://github.com/shalzuth/LostArkLogger/releases/latest/download/DpsMeter.exe
 
 # Guide
 1. Before entering a dungeon, launch "Lost Ark Logger".
