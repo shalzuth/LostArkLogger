@@ -6,6 +6,7 @@ namespace LostArkLogger
     {
         Steam,
         Korea,
+        Unknown
        // Russia,
        // Japan,
     }
