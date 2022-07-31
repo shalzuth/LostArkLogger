@@ -11,7 +11,7 @@ namespace LostArkLogger
 {
     public static class VersionCheck
     {
-        [DllImport("kernel32")] static extern bool QueryFullProcessImageName([In] IntPtr hProcess, [In] int dwFlags, [Out] StringBuilder lpExeName, ref int lpdwSize);
+        [DllImport("kernel32")] public static extern bool QueryFullProcessImageName([In] IntPtr hProcess, [In] int dwFlags, [Out] StringBuilder lpExeName, ref int lpdwSize);
 
         public static Version SupportedSteamVersion = new Version("1.32.55.1800897");
         public static Version SupportedKoreaVersion = new Version("1.248.471.1806643");
