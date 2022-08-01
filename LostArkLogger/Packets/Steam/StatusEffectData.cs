@@ -16,11 +16,11 @@ namespace LostArkLogger
             InstanceId = reader.ReadUInt64();
             bytearraylist_0 = reader.ReadList<Byte[]>(7);
             SourceId = reader.ReadUInt64();
-            b_2 = reader.ReadByte();
-            if (b_2 == 1)
-                s64_1 = reader.ReadUInt64();
             b_1 = reader.ReadByte();
+            if (b_1 == 1)
+                s64_1 = reader.ReadUInt64();
             SkillLevel = reader.ReadByte();
+            b_0 = reader.ReadByte();
         }
     }
 }
