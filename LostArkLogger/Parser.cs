@@ -230,36 +230,37 @@ namespace LostArkLogger
             onPacketTotalCount?.Invoke(loggedPacketCount++);
             while (packets.Length > 0)
             {
+                
+                if (fragmentedPacket.Length > 0)
+                {
+                    packets = fragmentedPacket.Concat(packets).ToArray();
+                    fragmentedPacket = new Byte[0];
+                }
+
+                if (6 > packets.Length)
+                {
+                    fragmentedPacket = packets.ToArray();
+                    return;
+                }
+
+                var opcode = GetOpCode(packets);
+                //Console.WriteLine(opcode);
+                var packetSize = BitConverter.ToUInt16(packets.ToArray(), 0);
+                if (packets[5] != 1 || 6 > packets.Length || packetSize < 7)
+                {
+                    // not sure when this happens
+                    fragmentedPacket = new Byte[0];
+                    return;
+                }
+
+                if (packetSize > packets.Length)
+                {
+                    fragmentedPacket = packets;
+                    return;
+                }
+
                 try
                 {
-                    if (fragmentedPacket.Length > 0)
-                    {
-                        packets = fragmentedPacket.Concat(packets).ToArray();
-                        fragmentedPacket = new Byte[0];
-                    }
-
-                    if (6 > packets.Length)
-                    {
-                        fragmentedPacket = packets.ToArray();
-                        return;
-                    }
-
-                    var opcode = GetOpCode(packets);
-                    //Console.WriteLine(opcode);
-                    var packetSize = BitConverter.ToUInt16(packets.ToArray(), 0);
-                    if (packets[5] != 1 || 6 > packets.Length || packetSize < 7)
-                    {
-                        // not sure when this happens
-                        fragmentedPacket = new Byte[0];
-                        return;
-                    }
-
-                    if (packetSize > packets.Length)
-                    {
-                        fragmentedPacket = packets;
-                        return;
-                    }
-
                     var payload = packets.Skip(6).Take(packetSize - 6).ToArray();
                     Xor.Cipher(payload, BitConverter.ToUInt16(packets, 2), XorTable);
                     switch (packets[4])
@@ -650,14 +651,14 @@ namespace LostArkLogger
                         });
                     }
 
-
-                    if (packets.Length < packetSize) throw new Exception("bad packet maybe");
-                    packets = packets.Skip(packetSize).ToArray();
                 }
                 catch (Exception e)
                 {
                     // Do nothing
                 }
+                if (packets.Length < packetSize) throw new Exception("bad packet maybe");
+                packets = packets.Skip(packetSize).ToArray();
+                
             }
         }
 
