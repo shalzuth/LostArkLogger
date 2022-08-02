@@ -1,6 +1,8 @@
 # Lost Ark Logger
  This project enables you to research and analyze combat actions by parsing packets
  
+ This fork supports working in VMs 
+ 
 # In-game Overlay
 ![Imgur Image](https://i.imgur.com/jjXwnOr.gif)
 
