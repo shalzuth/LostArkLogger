@@ -293,7 +293,7 @@ namespace LostArkLogger
                 {
                     var env = new PKTInitEnv(new BitReader(payload));
                     beforeNewZone?.Invoke();
-                    if (currentEncounter.Infos.Count <= 15) Encounters.Remove(currentEncounter);
+                    if (currentEncounter.Infos.Count <= 50) Encounters.Remove(currentEncounter);
                     else currentEncounter.End = DateTime.Now;
 
                     currentEncounter = new Encounter();
@@ -314,38 +314,42 @@ namespace LostArkLogger
                          || opcode == OpCodes.PKTTriggerBossBattleStatus
                          || opcode == OpCodes.PKTRaidResult)
                 {
+                    Console.WriteLine(opcode + " : " + opcode.ToString("X") + " : " + BitConverter.ToString(payload));
                     var Duration = Convert.ToUInt64(DateTime.Now.Subtract(currentEncounter.Start).TotalSeconds);
-
-                    if (WasKill || WasWipe || opcode == OpCodes.PKTRaidBossKillNotify || opcode == OpCodes.PKTRaidResult) // if kill or wipe update the raid time duration 
+                    currentEncounter.End = DateTime.Now;
+                    Task.Run(async() =>
                     {
-                        currentEncounter.RaidTime += Duration;
-                        foreach (var i in currentEncounter.Entities.Where(e => e.Value.Type == Entity.EntityType.Player))
+                        
+                        if (WasKill || WasWipe || opcode == OpCodes.PKTRaidBossKillNotify || opcode == OpCodes.PKTRaidResult) // if kill or wipe update the raid time duration 
                         {
-                            if (!(i.Value.dead)) // if Player not dead on end of kill write fake death logInfo to track their time alive
+                            await Task.Delay(12000);
+                            currentEncounter.RaidTime += Duration;
+                            foreach (var i in currentEncounter.Entities.Where(e => e.Value.Type == Entity.EntityType.Player))
                             {
-                                var log = new LogInfo
+                                if (!(i.Value.dead)) // if Player not dead on end of kill write fake death logInfo to track their time alive
                                 {
-                                    Time = DateTime.Now,
-                                    SourceEntity = i.Value,
-                                    DestinationEntity = i.Value,
-                                    SkillName = "Death",
-                                    TimeAlive = Duration,
-                                    Death = true
-                                };
-                                currentEncounter.RaidInfos.Add(log);
-                                currentEncounter.Infos.Add(log);
+                                    var log = new LogInfo
+                                    {
+                                        Time = DateTime.Now,
+                                        SourceEntity = i.Value,
+                                        DestinationEntity = i.Value,
+                                        SkillName = "Death",
+                                        TimeAlive = Duration,
+                                        Death = true
+                                    };
+                                    currentEncounter.RaidInfos.Add(log);
+                                    currentEncounter.Infos.Add(log);
 
+                                }
+                                else // reset death flag on every wipe or kill
+                                {
+                                    i.Value.dead = false;
+                                }
                             }
-                            else // reset death flag on every wipe or kill
-                            {
-                                i.Value.dead = false;
-                            }
+                            
                         }
-                    }
-                    Task.Run(() =>
-                    {
-                        currentEncounter.End = DateTime.Now;
-                        Task.Delay(1500); // wait 1500ms to capture any final damage packets
+                        
+                        //Task.Delay(100); // wait 4000ms to capture any final damage/status Effect packets
                         currentEncounter = new Encounter();
                         currentEncounter.Entities = Encounters.Last().Entities; // preserve entities
                         if (WasWipe || Encounters.Last().AfterWipe)
@@ -367,7 +371,7 @@ namespace LostArkLogger
                             WasKill = false;
                         }
 
-                        if (Encounters.Last().Infos.Count <= 15)
+                        if (Encounters.Last().Infos.Count <= 50)
                         {
                             Encounters.Remove(Encounters.Last());
                         }
@@ -409,8 +413,13 @@ namespace LostArkLogger
                         Name = DisplayNames ? pc.Name : Npc.GetPcClass(pc.ClassId),
                         ClassName = Npc.GetPcClass(pc.ClassId),
                         Type = Entity.EntityType.Player,
-                        GearLevel = pc.GearLevel
+                        GearLevel = pc.GearLevel,
+                        dead = false
                     };
+                    if (currentEncounter.Entities.ContainsKey(temp.EntityId))
+                    {
+                        temp.dead = currentEncounter.Entities.GetOrAdd(temp.EntityId).dead;
+                    }
                     currentEncounter.Entities.AddOrUpdate(temp);
                     currentEncounter.PartyEntities[temp.PartyId] = temp;
                     Logger.AppendLog(3, pc.PlayerId.ToString("X"), temp.Name, pc.ClassId.ToString(), Npc.GetPcClass(pc.ClassId), pc.Level.ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_HP)].ToString(), pc.statPair.Value[pc.statPair.StatType.IndexOf((Byte)StatType.STAT_TYPE_MAX_HP)].ToString());
