@@ -11,9 +11,9 @@ namespace LostArkLogger
             s64_1 = reader.ReadUInt64();
             b_0 = reader.ReadByte();
             u32_1 = reader.ReadUInt32();
-            subPKTInitEnv5 = reader.Read<subPKTInitEnv5>();
+            subPKTInitEnv8 = reader.Read<subPKTInitEnv8>();
             PlayerId = reader.ReadUInt64();
-            blist_0 = reader.ReadList<Byte>();
+            u16list_0 = reader.ReadList<UInt16>();
         }
     }
 }
