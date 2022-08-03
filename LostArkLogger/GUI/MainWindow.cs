@@ -98,10 +98,10 @@ namespace LostArkLogger
 
         private void regionSelector_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Properties.Settings.Default.Region = (Region)Enum.Parse(typeof(Region), regionSelector.Text);
-            Properties.Settings.Default.Save();
-            System.Diagnostics.Process.Start(AppDomain.CurrentDomain.FriendlyName);
-            Environment.Exit(0);
+            //Properties.Settings.Default.Region = (Region)Enum.Parse(typeof(Region), regionSelector.Text);
+            //Properties.Settings.Default.Save();
+            //System.Diagnostics.Process.Start(AppDomain.CurrentDomain.FriendlyName);
+            //Environment.Exit(0);
         }
 
         private void displayName_CheckedChanged(object sender, EventArgs e)

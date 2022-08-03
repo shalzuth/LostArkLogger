@@ -19,6 +19,8 @@ namespace LostArkLogger
         public UInt64 s64_0;
         public List<Byte[]> bytearraylist_0;
         public UInt64 s64_1;
+        public UInt64 u64_0;
+        public UInt64 u64_1;
         public UInt32 u32_0;
         public Byte b_0;
         public Byte b_1;

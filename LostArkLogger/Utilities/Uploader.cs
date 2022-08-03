@@ -17,7 +17,7 @@ namespace LostArkLogger.Utilities
             try // ignore server failures
             {
                 var request = (HttpWebRequest)WebRequest.Create(baseUrl + "appupload2c");
-                var logHash = string.Concat(Logger.hash.ComputeHash(bytes).Select(x => x.ToString("x2")));
+                var logHash = string.Concat(MD5.Create().ComputeHash(bytes).Select(x => x.ToString("x2")));
                 var compressed = ObjectSerialize.Compress(bytes);
                 request.Method = "POST";
                 request.ContentType = "application/octet-stream";

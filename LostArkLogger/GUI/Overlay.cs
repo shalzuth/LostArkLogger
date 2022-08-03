@@ -243,7 +243,7 @@ namespace LostArkLogger
                         e.Graphics.DrawImage(ClassSymbols, new Rectangle(2, (i + 1) * barHeight + 2, barHeight - 4, barHeight - 4), GetSpriteLocation(Array.IndexOf(ClassIconIndex, className)), GraphicsUnit.Pixel);
                         nameOffset += 16;
                     }
-                    if (scope == Scope.Player)
+                    if (rowText.Contains("(") && scope == Scope.Player)
                     {
                         /*if (Skill.GetSkillIcon(uint.Parse(rowText), out String iconFile, out int iconIndex))
                         {

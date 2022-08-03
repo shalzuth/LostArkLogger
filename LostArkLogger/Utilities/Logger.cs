@@ -25,7 +25,6 @@ namespace LostArkLogger.Utilities
         {
             if (!Directory.Exists(logsPath)) Directory.CreateDirectory(logsPath);
         }
-        public static System.Security.Cryptography.MD5 hash = System.Security.Cryptography.MD5.Create();
         public static void StartNewLogFile()
         {
             fileName = logsPath + "\\LostArk_" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".log";
@@ -40,7 +39,7 @@ namespace LostArkLogger.Utilities
                 AppendLog(253, System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString());
             }
             var log = id + "|" + DateTime.Now.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'") + "|" + String.Join("|", elements);
-            var logHash = string.Concat(hash.ComputeHash(Encoding.Unicode.GetBytes(log)).Select(x => x.ToString("x2")));
+            var logHash = string.Concat(System.Security.Cryptography.MD5.Create().ComputeHash(Encoding.Unicode.GetBytes(log)).Select(x => x.ToString("x2")));
 
             Task.Run(() =>
             {
