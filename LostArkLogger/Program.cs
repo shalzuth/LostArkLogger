@@ -11,14 +11,17 @@ namespace LostArkLogger
 {
     internal static class Program
     {
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        private static extern bool AllocConsole();
         public static bool IsConsole = Console.OpenStandardInput(1) != Stream.Null;
         [STAThread]
         static void Main(string[] args)
         {
+            AllocConsole();
             Properties.Settings.Default.Providers.Clear();
             Bluegrams.Application.PortableSettingsProvider.SettingsFileName = AppDomain.CurrentDomain.FriendlyName + ".ini";
             Bluegrams.Application.PortableSettingsProvider.ApplyProvider(Properties.Settings.Default);
-            VersionCompatibility();
+            //VersionCompatibility();
             if (!AdminRelauncher()) return;
             if (!IsConsole) Warning();
             AttemptFirewallPrompt();

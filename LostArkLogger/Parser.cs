@@ -58,63 +58,50 @@ namespace LostArkLogger
                 fragmentedPacket = new Byte[0];
 
                 // We default to using npcap, but the UI can also set this to false.
-                if (use_npcap)
+                monitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
+                string filter = "ip and tcp port 6040";
+                bool foundAdapter = false;
+                NetworkInterface gameInterface;
+                // listening on every device results in duplicate traffic, unfortunately, so we'll find the adapter used by the game here
+                try
                 {
-                    monitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
-                    string filter = "ip and tcp port 6040";
-                    bool foundAdapter = false;
-                    NetworkInterface gameInterface;
-                    // listening on every device results in duplicate traffic, unfortunately, so we'll find the adapter used by the game here
+                    pcap_strerror(1); // verify winpcap works at all
+                    //gameInterface = NetworkUtil.GetAdapterUsedByProcess("LostArk");
+                    foreach (var device in CaptureDeviceList.Instance)
+                    {                 
+                        
+                    if (device.MacAddress == null) continue; // SharpPcap.IPCapDevice.MacAddress is null in some cases
+                        
                     try
                     {
-                        pcap_strerror(1); // verify winpcap works at all
-                        gameInterface = NetworkUtil.GetAdapterUsedByProcess("LostArk");
-                        foreach (var device in CaptureDeviceList.Instance)
-                        {
-                            if (device.MacAddress == null) continue; // SharpPcap.IPCapDevice.MacAddress is null in some cases
-                            if (gameInterface.GetPhysicalAddress().ToString() == device.MacAddress.ToString())
-                            {
-                                try
-                                {
-                                    device.Open(DeviceModes.None, 1000); // todo: 1sec timeout ok?
-                                    device.Filter = filter;
-                                    device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
-                                    device.StartCapture();
-                                    pcap = device;
-                                    foundAdapter = true;
-                                    break;
-                                }
-                                catch (Exception ex)
-                                {
-                                    var exceptionMessage = "Exception while trying to listen to NIC " + device.Name + "\n" + ex.ToString();
-                                    Console.WriteLine(exceptionMessage);
-                                    Logger.AppendLog(254, exceptionMessage);
-                                }
-                            }
-                        }
+                        device.Open(DeviceModes.None, 1000); // todo: 1sec timeout ok?
+                        device.Filter = filter;
+                        device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
+                        device.StartCapture();
+                        pcap = device;
+                        foundAdapter = true;
+                        break;
                     }
                     catch (Exception ex)
                     {
-                        var exceptionMessage = "Sharppcap init failed, using rawsockets instead, exception:\n" + ex.ToString();
+                        var exceptionMessage = "Exception while trying to listen to NIC " + device.Name + "\n" + ex.ToString();
                         Console.WriteLine(exceptionMessage);
                         Logger.AppendLog(254, exceptionMessage);
                     }
-                    // If we failed to find a pcap device, fall back to rawsockets.
-                    if (!foundAdapter)
-                    {
-                        use_npcap = false;
-                        pcap = null;
+                        
                     }
                 }
-
-                if (use_npcap == false)
+                catch (Exception ex)
                 {
-                    // Always fall back to rawsockets
-                    tcp = new Machina.TCPNetworkMonitor();
-                    tcp.Config.WindowClass = "EFLaunchUnrealUWindowsClient";
-                    monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
-                    tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival_machina(connection, data);
-                    tcp.Start();
+                    var exceptionMessage = "Sharppcap init failed, using rawsockets instead, exception:\n" + ex.ToString();
+                    Console.WriteLine(exceptionMessage);
+                    Logger.AppendLog(254, exceptionMessage);
+                }
+                // If we failed to find a pcap device, fall back to rawsockets.
+                if (!foundAdapter)
+                {
+                    use_npcap = false;
+                    pcap = null;
                 }
             }
         }
