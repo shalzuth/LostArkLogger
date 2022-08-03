@@ -314,7 +314,6 @@ namespace LostArkLogger
                          || opcode == OpCodes.PKTTriggerBossBattleStatus
                          || opcode == OpCodes.PKTRaidResult)
                 {
-                    Console.WriteLine(opcode + " : " + opcode.ToString("X") + " : " + BitConverter.ToString(payload));
                     var Duration = Convert.ToUInt64(DateTime.Now.Subtract(currentEncounter.Start).TotalSeconds);
                     currentEncounter.End = DateTime.Now;
                     Task.Run(async() =>
