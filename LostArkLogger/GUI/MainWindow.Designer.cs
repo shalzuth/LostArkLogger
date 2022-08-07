@@ -39,6 +39,7 @@
             this.regionSelector = new System.Windows.Forms.ComboBox();
             this.autoUpload = new System.Windows.Forms.CheckBox();
             this.displayName = new System.Windows.Forms.CheckBox();
+            this.ReadPCapButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // loggedPacketCountLabel
@@ -68,7 +69,7 @@
             this.overlayEnabled.AutoSize = true;
             this.overlayEnabled.Checked = true;
             this.overlayEnabled.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.overlayEnabled.Location = new System.Drawing.Point(11, 26);
+            this.overlayEnabled.Location = new System.Drawing.Point(11, 36);
             this.overlayEnabled.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.overlayEnabled.Name = "overlayEnabled";
             this.overlayEnabled.Size = new System.Drawing.Size(62, 17);
@@ -92,7 +93,7 @@
             // versionLabel
             // 
             this.versionLabel.AutoSize = true;
-            this.versionLabel.Location = new System.Drawing.Point(195, 97);
+            this.versionLabel.Location = new System.Drawing.Point(197, 115);
             this.versionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.versionLabel.Name = "versionLabel";
             this.versionLabel.Size = new System.Drawing.Size(46, 13);
@@ -101,10 +102,10 @@
             // 
             // checkUpdate
             // 
-            this.checkUpdate.Location = new System.Drawing.Point(73, 90);
+            this.checkUpdate.Location = new System.Drawing.Point(151, 85);
             this.checkUpdate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.checkUpdate.Name = "checkUpdate";
-            this.checkUpdate.Size = new System.Drawing.Size(114, 27);
+            this.checkUpdate.Size = new System.Drawing.Size(85, 27);
             this.checkUpdate.TabIndex = 11;
             this.checkUpdate.Text = "Check Update";
             this.checkUpdate.UseVisualStyleBackColor = true;
@@ -155,11 +156,23 @@
             this.displayName.Text = "Names";
             this.displayName.UseVisualStyleBackColor = true;
             // 
+            // ReadPCapButton
+            // 
+            this.ReadPCapButton.Location = new System.Drawing.Point(78, 85);
+            this.ReadPCapButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.ReadPCapButton.Name = "ReadPCapButton";
+            this.ReadPCapButton.Size = new System.Drawing.Size(65, 27);
+            this.ReadPCapButton.TabIndex = 15;
+            this.ReadPCapButton.Text = "read pcap";
+            this.ReadPCapButton.UseVisualStyleBackColor = true;
+            this.ReadPCapButton.Click += new System.EventHandler(this.ReadPCapButton_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(243, 123);
+            this.ClientSize = new System.Drawing.Size(243, 131);
+            this.Controls.Add(this.ReadPCapButton);
             this.Controls.Add(this.displayName);
             this.Controls.Add(this.autoUpload);
             this.Controls.Add(this.regionSelector);
@@ -192,5 +205,6 @@
         private System.Windows.Forms.ComboBox regionSelector;
         private System.Windows.Forms.CheckBox autoUpload;
         private System.Windows.Forms.CheckBox displayName;
+        private System.Windows.Forms.Button ReadPCapButton;
     }
 }

@@ -1,13 +1,16 @@
 ﻿using K4os.Compression.LZ4;
 using LostArkLogger.Utilities;
 using SharpPcap;
+using SharpPcap.LibPcap;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace LostArkLogger
 {
@@ -22,7 +25,7 @@ namespace LostArkLogger
         public event Action onNewZone;
         public event Action beforeNewZone;
         public event Action<int> onPacketTotalCount;
-        public bool use_npcap = false;
+        public bool use_npcap = false;        
         private object lockPacketProcessing = new object(); // needed to synchronize UI swapping devices
         public Machina.Infrastructure.NetworkMonitorType? monitorType = null;
         public List<Encounter> Encounters = new List<Encounter>();
@@ -34,7 +37,7 @@ namespace LostArkLogger
         public bool WasKill = false;
         public bool DisplayNames = true;
         public StatusEffectTracker statusEffectTracker;
-
+        public string fileName = "";
         public Parser()
         {
             Encounters.Add(currentEncounter);
@@ -47,7 +50,7 @@ namespace LostArkLogger
         }
 
         // UI needs to be able to ask us to reload our listener based on the current user settings
-        public void InstallListener()
+        /*public void InstallListener()
         {
             lock (lockPacketProcessing)
             {
@@ -104,6 +107,109 @@ namespace LostArkLogger
                     {
                         use_npcap = false;
                         pcap = null;
+                    }
+                }
+
+                if (use_npcap == false)
+                {
+                    // Always fall back to rawsockets
+                    tcp = new Machina.TCPNetworkMonitor();
+                    tcp.Config.WindowClass = "EFLaunchUnrealUWindowsClient";
+                    monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
+                    tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival_machina(connection, data);
+                    tcp.Start();
+                }
+            }
+        }*/
+        public void InstallListener()
+        {
+            lock (lockPacketProcessing)
+            {
+                // If we have an installed listener, that needs to go away or we duplicate traffic
+                UninstallListeners();
+
+                // Reset all state related to current packet processing here that won't be valid when creating a new listener.
+                fragmentedPacket = new Byte[0];
+
+                // We default to using npcap and online mode, but the UI can also set this to false.
+                if (use_npcap)
+                {
+                    monitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
+                    string filter = "ip and tcp port 6040";
+                    bool foundAdapter = false;
+                    NetworkInterface gameInterface;
+                    if (fileName != "")
+                    {
+                        try
+                        {
+
+                            var device = new CaptureFileReaderDevice(fileName);
+                            foundAdapter = true;
+                            device.Open();
+                            //device.Filter = filter;
+                            // Register our handler function to the 'packet arrival' event
+                            device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
+                            // Start capture 'INFINTE' number of packets
+                            // This method will return when EOF reached.
+                            device.Capture();
+
+                            // Close the pcap device
+                            device.Close();
+                            
+                        }
+                        catch (Exception ex)
+                        {
+                            var exceptionMessage = $"Exception while trying to read file {fileName} \n{ex}";
+                            Console.WriteLine(exceptionMessage);
+                            Logger.AppendLog(0, exceptionMessage);
+                        }
+                    }
+                    else
+                    {
+                        // listening on every device results in duplicate traffic, unfortunately, so we'll find the adapter used by the game here
+                        try
+                        {
+                            pcap_strerror(1); // verify winpcap works at all
+                            if (Process.GetProcessesByName("LostArk").Count() > 0) Application.Exit();
+
+                            gameInterface = NetworkUtil.GetAdapterUsedByProcess("LostArk");
+
+                            foreach (var device in CaptureDeviceList.Instance)
+                            {
+                                if (device.MacAddress == null) continue; // SharpPcap.IPCapDevice.MacAddress is null in some cases
+                                if (gameInterface.GetPhysicalAddress().ToString() == device.MacAddress.ToString())
+                                {
+                                    try
+                                    {
+                                        device.Open(DeviceModes.None, 1000); // todo: 1sec timeout ok?
+                                        device.Filter = filter;
+                                        device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
+                                        device.StartCapture();
+                                        pcap = device;
+                                        foundAdapter = true;
+                                        break;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        var exceptionMessage = "Exception while trying to listen to NIC " + device.Name + "\n" + ex.ToString();
+                                        Console.WriteLine(exceptionMessage);
+                                        Logger.AppendLog(0, exceptionMessage);
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            var exceptionMessage = "Sharppcap init failed, using rawsockets instead, exception:\n" + ex.ToString();
+                            Console.WriteLine(exceptionMessage);
+                            Logger.AppendLog(0, exceptionMessage);
+                        }
+                        // If we failed to find a pcap device, fall back to rawsockets.
+                        if (!foundAdapter)
+                        {
+                            use_npcap = false;
+                            pcap = null;
+                        }
                     }
                 }
 
@@ -621,7 +727,7 @@ namespace LostArkLogger
         }
         void Device_OnPacketArrival_pcap(object sender, PacketCapture evt)
         {
-            if (pcap == null) return;
+            if (pcap == null && fileName != "") return;
             lock (lockPacketProcessing)
             {
                 var rawpkt = evt.GetPacket();

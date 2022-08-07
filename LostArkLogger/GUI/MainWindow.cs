@@ -115,7 +115,19 @@ namespace LostArkLogger
         {
             Properties.Settings.Default.AutoUpload = autoUpload.Checked;
             Properties.Settings.Default.Save();
+        }
 
+        private void ReadPCapButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Title = "Open pcap File";
+            dialog.Filter = "PCAP files|*.pcap";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                this.sniffer.fileName = dialog.FileName.ToString();
+                this.sniffer.use_npcap = true;
+                this.sniffer.InstallListener();
+            }
         }
     }
 }
