@@ -727,7 +727,7 @@ namespace LostArkLogger
         }
         void Device_OnPacketArrival_pcap(object sender, PacketCapture evt)
         {
-            if (pcap == null && fileName != "") return;
+            if (pcap == null && fileName == "") return;
             lock (lockPacketProcessing)
             {
                 var rawpkt = evt.GetPacket();

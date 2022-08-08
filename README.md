@@ -1,5 +1,6 @@
-# Lost Ark Logger
+# Lost Ark Logger offline version.
  This project enables you to research and analyze combat actions by parsing packets
+ This can be done by reading a pcap or live
  
 # In-game Overlay
 ![Imgur Image](https://i.imgur.com/jjXwnOr.gif)
@@ -15,6 +16,7 @@
  
 # Setup
 1. Download the "Lost Ark Logger" packet logger @ https://github.com/shalzuth/LostArkLogger/releases/latest/download/DpsMeter.exe
+2. To record the pcap for offline mode download and extract Capture.rar
 
 # Guide
 1. Before entering a dungeon, launch "Lost Ark Logger".
