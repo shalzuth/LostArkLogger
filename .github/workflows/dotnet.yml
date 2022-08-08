@@ -1,0 +1,65 @@
+name: Build App
+ 
+on:
+  push:
+    tags:
+      - '*'
+ 
+jobs:
+  build:
+ 
+    runs-on: windows-latest
+ 
+    steps:
+    - uses: actions/checkout@v1
+      name: Checkout Code
+      with:
+        submodules: recursive
+            
+    - name: Set Version
+      run: echo ::set-env name=RELEASE_VERSION::$(echo ${{ github.ref }})
+            
+    - name: Update Assembly version
+      shell: powershell
+      run: (Get-Content LostArkLogger\Properties\AssemblyInfo.cs).replace('1.0.0.0', '${{ github.ref }}').replace("refs/tags/v", "") | Set-Content LostArkLogger\Properties\AssemblyInfo.cs
+      
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+       
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.6
+     
+    - name: Restore NuGet Packages
+      run: nuget restore LostArkLogger.sln
+        
+    - name: Build
+      run: msbuild LostArkLogger.sln /p:Configuration=Release
+      
+    - name: Import PFX
+      shell: powershell
+      run: |
+        $pfxCertFilePath = Join-Path -Path $PSScriptRoot -ChildPath "CodeSigningCertificate.pfx"
+        Set-Content -Value $([System.Convert]::FromBase64String($env:BASE64_PFX)) -Path $pfxCertFilePath -Encoding Byte
+        $codeSigningCert = Import-PfxCertificate -FilePath $pfxCertFilePath -Password $($env:PFX_PASSWORD | ConvertTo-SecureString -AsPlainText -Force) -CertStoreLocation Cert:\CurrentUser\My
+      env:
+        BASE64_PFX: ${{ secrets.CERTIFICATE }}
+        PFX_PASSWORD: ${{ secrets.PASSWORD }}
+
+    - name: Sign exe
+      shell: powershell
+      run: |
+        $codeSigningCert = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert | Select-Object -First 1
+        Set-AuthenticodeSignature -Certificate $codeSigningCert -FilePath "bin\Release\DpsMeter.exe" -TimestampServer "http://timestamp.digicert.com"
+        
+    - name: Upload dll Artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: DpsMeter.exe
+        path: bin\Release\DpsMeter.exe
+
+    - name: Add to releases
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          bin\Release\DpsMeter.exe
