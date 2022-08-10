@@ -15,6 +15,7 @@ namespace LostArkLogger
         public List<StatusEffectData> statusEffectDatas;
         public List<subPKTInitPC29> subPKTInitPC29s;
         public List<UInt64> u64list_0;
+        public List<Byte> blist_0;
         public List<Byte[]> bytearraylist_0;
         public StatPair statPair;
         public UInt64 u64_0;
