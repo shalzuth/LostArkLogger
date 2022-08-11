@@ -16,6 +16,7 @@ namespace LostArkLogger
         public Byte[] Tripods;
         public Byte SkillLevel;
         public List<UInt64> u64list_0;
+        public List<Byte> blist_0;
         public UInt64 u64_0;
         public UInt64 u64_1;
         public UInt64 u64_2;
