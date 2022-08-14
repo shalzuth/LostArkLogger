@@ -302,7 +302,7 @@ namespace LostArkLogger
                             BattleItem = battleitem
                         };
                         currentEncounter.Infos.Add(log);
-                        Logger.AppendLog(15, projectile.OwnerId.ToString("X"), entity.Name, projectile.SkillId.ToString(), Skill.GetSkillName(projectile.SkillId));
+                        Logger.AppendLog(15, projectile.OwnerId.ToString("X"), entity.Name, projectile.SkillId.ToString(), BattleItem.GetBattleItemName(projectile.SkillId));
                     }
                 }
                 else if (opcode == OpCodes.PKTInitEnv)
@@ -552,7 +552,7 @@ namespace LostArkLogger
                             BattleItem = battleItem
                         };
                         currentEncounter.Infos.Add(log);
-                        Logger.AppendLog(15, statusEffect.statusEffectData.SourceId.ToString("X"), currentEncounter.Entities.GetOrAdd(statusEffect.statusEffectData.SourceId).Name, statusEffect.statusEffectData.StatusEffectId.ToString(), SkillBuff.GetSkillBuffName(statusEffect.statusEffectData.StatusEffectId));
+                        Logger.AppendLog(15, statusEffect.statusEffectData.SourceId.ToString("X"), currentEncounter.Entities.GetOrAdd(statusEffect.statusEffectData.SourceId).Name, statusEffect.statusEffectData.StatusEffectId.ToString(), BattleItem.GetBattleItemName(statusEffect.statusEffectData.StatusEffectId));
                     }
                     statusEffectTracker.Add(statusEffect);
                     var amount = statusEffect.statusEffectData.hasValue == 1 ? BitConverter.ToUInt32(statusEffect.statusEffectData.Value, 0) : 0;
