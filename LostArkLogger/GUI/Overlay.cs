@@ -22,6 +22,7 @@ namespace LostArkLogger
             TimeAlive,
             RaidTimeAlive,
             RaidDamage,
+            BattleItems,
             Max
         }
         enum Scope // need better state, suboverlay type/etc.
@@ -197,6 +198,7 @@ namespace LostArkLogger
                 else if (level == Level.Counterattacks) rows = encounter.Counterattacks.ToDictionary(x => x.Key, x => Tuple.Create(x.Value, 0u, 0u, 0ul));
                 else if (level == Level.Stagger) rows = encounter.Stagger.ToDictionary(x => x.Key, x => Tuple.Create(x.Value, 0u, 0u, 0ul));
                 else if (level == Level.TimeAlive) rows = encounter.TimeAlive.ToDictionary(x => x.Key, x => Tuple.Create(x.Value, 0u, 0u, 0ul));
+                else if (level == Level.BattleItems) rows = encounter.GetBattleItems((i => i.BattleItem ? 1 : 0), SubEntity);
                 else if (level == Level.RaidTimeAlive)
                 {
                     rows = encounter.RaidTimeAlive.ToDictionary(x => x.Key, x => Tuple.Create(x.Value, 0u, 0u, 0ul));

@@ -324,6 +324,22 @@ namespace LostArkLogger
                         EntityId = projectile.ProjectileId,
                         Type = Entity.EntityType.Projectile
                     });
+                    var battleitem = BattleItem.IsBattleItem(projectile.SkillId, "projectile");
+                    if (battleitem)
+                    {
+                        Entity entity = currentEncounter.Entities.GetOrAdd(projectile.OwnerId);
+                        var log = new LogInfo
+                        {
+                            Time = DateTime.Now,
+                            SourceEntity = entity,
+                            DestinationEntity = entity, //projectiles don't have destination, but can't be null causes exception getting encounter name
+                            SkillName = BattleItem.GetBattleItemName(projectile.SkillId),
+                            SkillId = projectile.SkillId,
+                            BattleItem = battleitem
+                        };
+                        currentEncounter.Infos.Add(log);
+                        Logger.AppendLog(15, projectile.OwnerId.ToString("X"), entity.Name, projectile.SkillId.ToString(), BattleItem.GetBattleItemName(projectile.SkillId));
+                    }
                 }
                 else if (opcode == OpCodes.PKTInitEnv)
                 {
@@ -556,6 +572,21 @@ namespace LostArkLogger
                 else if (opcode == OpCodes.PKTStatusEffectAddNotify) // shields included
                 {
                     var statusEffect = new PKTStatusEffectAddNotify(new BitReader(payload));
+                    var battleItem = BattleItem.IsBattleItem(statusEffect.statusEffectData.StatusEffectId, "buff");
+                    if (battleItem)
+                    {
+                        var log = new LogInfo
+                        {
+                            Time = DateTime.Now,
+                            SourceEntity = currentEncounter.Entities.GetOrAdd(statusEffect.statusEffectData.SourceId),
+                            DestinationEntity = currentEncounter.Entities.GetOrAdd(statusEffect.ObjectId),
+                            SkillId = statusEffect.statusEffectData.StatusEffectId,
+                            SkillName = BattleItem.GetBattleItemName(statusEffect.statusEffectData.StatusEffectId),
+                            BattleItem = battleItem
+                        };
+                        currentEncounter.Infos.Add(log);
+                        Logger.AppendLog(15, statusEffect.statusEffectData.SourceId.ToString("X"), currentEncounter.Entities.GetOrAdd(statusEffect.statusEffectData.SourceId).Name, statusEffect.statusEffectData.StatusEffectId.ToString(), BattleItem.GetBattleItemName(statusEffect.statusEffectData.StatusEffectId));
+                    }
                     statusEffectTracker.Add(statusEffect);
                     var amount = statusEffect.statusEffectData.hasValue == 1 ? BitConverter.ToUInt32(statusEffect.statusEffectData.Value, 0) : 0;
                 }
