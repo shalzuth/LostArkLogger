@@ -10,8 +10,8 @@ namespace LostArkLogger
             b_1 = reader.ReadByte();
             if (b_1 == 1)
                 u32_0 = reader.ReadUInt32();
-            ObjectId = reader.ReadUInt64();
             StatPairList = reader.Read<StatPair>();
+            ObjectId = reader.ReadUInt64();
             StatPairChangedList = reader.Read<StatPair>();
         }
     }
