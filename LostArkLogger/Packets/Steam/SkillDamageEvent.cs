@@ -6,15 +6,15 @@ namespace LostArkLogger
     {
         public void SteamDecode(BitReader reader)
         {
-            u16_0 = reader.ReadUInt16();
-            MaxHp = reader.ReadPackedInt();
-            Damage = reader.ReadPackedInt();
-            Modifier = reader.ReadByte();
             b_0 = reader.ReadByte();
+            if (b_0 == 1)
+                b_1 = reader.ReadByte();
+            u16_0 = reader.ReadUInt16();
+            Modifier = reader.ReadByte();
+            b_2 = reader.ReadByte();
             CurHp = reader.ReadPackedInt();
-            b_1 = reader.ReadByte();
-            if (b_1 == 1)
-                b_2 = reader.ReadByte();
+            Damage = reader.ReadPackedInt();
+            MaxHp = reader.ReadPackedInt();
             TargetId = reader.ReadUInt64();
         }
     }
