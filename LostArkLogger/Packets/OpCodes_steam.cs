@@ -3,7 +3,7 @@ namespace LostArkLogger
 {
     public enum OpCodes_Steam : UInt16
     {
-        PKTAuthTokenResult = 0x0,
+        PKTAuthTokenResult = 0x8936,
         PKTCounterAttackNotify = 0xB931,
         PKTDeathNotify = 0x1CCE,
         PKTInitEnv = 0xE05,
