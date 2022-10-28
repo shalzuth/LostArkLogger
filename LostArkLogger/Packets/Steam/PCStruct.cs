@@ -28,7 +28,7 @@ namespace LostArkLogger
             if (b_3 == 1)
                 bytearray_1 = reader.ReadBytes(12);
             b_4 = reader.ReadByte();
-            PartyId = reader.ReadUInt64();
+            u64_0 = reader.ReadUInt64();
             str_0 = reader.ReadString();
             PlayerId = reader.ReadUInt64();
             subPKTInitPC29s = reader.ReadList<subPKTInitPC29>();
@@ -51,7 +51,7 @@ namespace LostArkLogger
             u16_3 = reader.ReadUInt16();
             Name = reader.ReadString();
             bytearray_0 = reader.ReadBytes(25);
-            u64_0 = reader.ReadUInt64();
+            PartyId = reader.ReadUInt64();
         }
     }
 }
