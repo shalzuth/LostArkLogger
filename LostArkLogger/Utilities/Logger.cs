@@ -43,12 +43,11 @@ namespace LostArkLogger.Utilities
 
             Task.Run(() =>
             {
+                onLogAppend?.Invoke(log + "\n");
                 lock (LogFileLock)
                 {
                     File.AppendAllText(fileName, log + "|" + logHash + "\n");
                 }
-
-                onLogAppend?.Invoke(log + "\n");
             });
         }
         public static void DoDebugLog(byte[] bytes)
