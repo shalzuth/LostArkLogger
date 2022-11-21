@@ -37,7 +37,7 @@ namespace LostArkLogger
             u32_5 = reader.ReadUInt32();
             bytearray_2 = reader.ReadBytes(35);
             b_7 = reader.ReadByte();
-            skillRunes = reader.Read<SkillRunes>();
+            statPair = reader.Read<StatPair>();
             u64_2 = reader.ReadUInt64();
             b_9 = reader.ReadByte();
             b_10 = reader.ReadByte();

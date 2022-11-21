@@ -63,7 +63,7 @@ namespace LostArkLogger
             b_16 = reader.ReadByte();
             if (b_16 == 1)
                 b_17 = reader.ReadByte();
-            skillRunes = reader.Read<SkillRunes>();
+            statPair = reader.Read<StatPair>();
             b_18 = reader.ReadByte();
             if (b_18 == 1)
                 u64_0 = reader.ReadUInt64();
