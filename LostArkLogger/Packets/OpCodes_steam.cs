@@ -21,6 +21,7 @@ namespace LostArkLogger
         PKTSkillDamageNotify = 0xE1A6,
         PKTSkillStageNotify = 0x835,
         PKTSkillStartNotify = 0xE9FF,
+        PKTStatChangeOriginNotify = 0x1F13,
         PKTStatusEffectAddNotify = 0xA209,
         PKTStatusEffectRemoveNotify = 0xA8B3,
         PKTTriggerBossBattleStatus = 0xE5F7,

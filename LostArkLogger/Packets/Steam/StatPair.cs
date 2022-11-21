@@ -9,9 +9,8 @@ namespace LostArkLogger
             num = reader.ReadUInt16();
             for(var i = 0; i < num; i++)
             {
+                Value.Add(reader.ReadPackedInt());
                 StatType.Add(reader.ReadByte());
-                // FIXME: Produces incorrect values but Name is now correct
-                Value.Add(reader.ReadUInt16());
             }
         }
     }
