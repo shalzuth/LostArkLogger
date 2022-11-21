@@ -10,7 +10,8 @@ namespace LostArkLogger
             for(var i = 0; i < num; i++)
             {
                 StatType.Add(reader.ReadByte());
-                Value.Add(reader.ReadPackedInt());
+                // FIXME: Produces incorrect values but Name is now correct
+                Value.Add(reader.ReadUInt16());
             }
         }
     }
