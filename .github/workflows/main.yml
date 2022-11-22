@@ -1,5 +1,5 @@
 name: Build App
- 
+
 on:
   push:
     tags:
@@ -36,6 +36,7 @@ jobs:
       run: msbuild LostArkLogger.sln /p:Configuration=Release
       
     - name: Import PFX
+      continue-on-error: true
       shell: powershell
       run: |
         $pfxCertFilePath = Join-Path -Path $PSScriptRoot -ChildPath "CodeSigningCertificate.pfx"
@@ -46,6 +47,7 @@ jobs:
         PFX_PASSWORD: ${{ secrets.PASSWORD }}
 
     - name: Sign exe
+      continue-on-error: true
       shell: powershell
       run: |
         $codeSigningCert = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert | Select-Object -First 1
