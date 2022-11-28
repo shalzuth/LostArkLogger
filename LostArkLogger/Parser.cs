@@ -8,6 +8,8 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using SharpPcap.LibPcap;
 
 namespace LostArkLogger
 {
@@ -16,15 +18,15 @@ namespace LostArkLogger
 #pragma warning disable CA2101 // Specify marshaling for P/Invoke string arguments
         [DllImport("wpcap.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)] static extern IntPtr pcap_strerror(int err);
 #pragma warning restore CA2101 // Specify marshaling for P/Invoke string arguments
-        Machina.TCPNetworkMonitor tcp;
+        // Machina.TCPNetworkMonitor tcp;
         ILiveDevice pcap;
         public event Action<LogInfo> onCombatEvent;
         public event Action onNewZone;
         public event Action beforeNewZone;
         public event Action<int> onPacketTotalCount;
-        public bool use_npcap = false;
+        public bool use_npcap = true;
         private object lockPacketProcessing = new object(); // needed to synchronize UI swapping devices
-        public Machina.Infrastructure.NetworkMonitorType? monitorType = null;
+        // public Machina.Infrastructure.NetworkMonitorType? monitorType = null;
         public List<Encounter> Encounters = new List<Encounter>();
         public Encounter currentEncounter = new Encounter();
         Byte[] fragmentedPacket = new Byte[0];
@@ -33,6 +35,8 @@ namespace LostArkLogger
         public bool WasWipe = false;
         public bool WasKill = false;
         public bool DisplayNames = true;
+        public string directoryPath = "";
+        public HashSet<String> alreadyProcessedFiles = new HashSet<string>();
         public StatusEffectTracker statusEffectTracker;
 
         public Parser()
@@ -60,44 +64,29 @@ namespace LostArkLogger
                 // We default to using npcap, but the UI can also set this to false.
                 if (use_npcap)
                 {
-                    monitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
+                    // monitorType = Machina.Infrastructure.NetworkMonitorType.WinPCap;
                     string filter = "ip and tcp port 6040";
                     bool foundAdapter = false;
                     NetworkInterface gameInterface;
                     // listening on every device results in duplicate traffic, unfortunately, so we'll find the adapter used by the game here
-                    try
+                    FolderBrowserDialog dialog = new FolderBrowserDialog();
+                    // dialog.Title = "Open pcap File";
+                    // dialog.Filter = "PCAP files|*.pcap";
+                    if (dialog.ShowDialog() == DialogResult.OK)
                     {
-                        pcap_strerror(1); // verify winpcap works at all
-                        gameInterface = NetworkUtil.GetAdapterUsedByProcess("LostArk");
-                        foreach (var device in CaptureDeviceList.Instance)
-                        {
-                            if (device.MacAddress == null) continue; // SharpPcap.IPCapDevice.MacAddress is null in some cases
-                            if (gameInterface.GetPhysicalAddress().ToString() == device.MacAddress.ToString())
-                            {
-                                try
-                                {
-                                    device.Open(DeviceModes.None, 1000); // todo: 1sec timeout ok?
-                                    device.Filter = filter;
-                                    device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
-                                    device.StartCapture();
-                                    pcap = device;
-                                    foundAdapter = true;
-                                    break;
-                                }
-                                catch (Exception ex)
-                                {
-                                    var exceptionMessage = "Exception while trying to listen to NIC " + device.Name + "\n" + ex.ToString();
-                                    Console.WriteLine(exceptionMessage);
-                                    Logger.AppendLog(254, exceptionMessage);
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        var exceptionMessage = "Sharppcap init failed, using rawsockets instead, exception:\n" + ex.ToString();
-                        Console.WriteLine(exceptionMessage);
-                        Logger.AppendLog(254, exceptionMessage);
+                        directoryPath = dialog.SelectedPath;
+                        string file = new DirectoryInfo(directoryPath).GetFiles("*.pcap")[0].FullName;
+                        alreadyProcessedFiles.Add(file);
+                        var device = new CaptureFileReaderDevice(file);
+                        device.Open();
+                        device.Filter = filter;
+                        device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
+                        device.OnCaptureStopped += new CaptureStoppedEventHandler(Device_OnCaptureStopped_pcap);
+                        device.StartCapture();
+                        // pcap = device;
+                        foundAdapter = true;
+                        
+                        
                     }
                     // If we failed to find a pcap device, fall back to rawsockets.
                     if (!foundAdapter)
@@ -106,17 +95,61 @@ namespace LostArkLogger
                         pcap = null;
                     }
                 }
-
-                if (use_npcap == false)
-                {
-                    // Always fall back to rawsockets
-                    tcp = new Machina.TCPNetworkMonitor();
-                    tcp.Config.WindowClass = "EFLaunchUnrealUWindowsClient";
-                    monitorType = tcp.Config.MonitorType = Machina.Infrastructure.NetworkMonitorType.RawSocket;
-                    tcp.DataReceivedEventHandler += (Machina.Infrastructure.TCPConnection connection, byte[] data) => Device_OnPacketArrival_machina(connection, data);
-                    tcp.Start();
-                }
             }
+        }
+
+        private void Device_OnCaptureStopped_pcap(object sender, CaptureStoppedEventStatus status)
+        {
+            // var fileName = (sender as CaptureFileReaderDevice).Name;
+
+            // Try to delete old files
+            HashSet<String> toDelete = new HashSet<string>();
+            foreach (var fileName in alreadyProcessedFiles)
+            {
+                try
+                {
+                    File.Delete(fileName);
+                    toDelete.Add(fileName);
+                }
+                catch (Exception e)
+                {
+                    // Do nothing
+                }    
+            }
+
+            foreach (var fileName in toDelete)
+            {
+                alreadyProcessedFiles.Remove(fileName);
+            }
+            
+            string nextFile = "";
+            while (true)
+            {
+                FileInfo[] fileInfos = new DirectoryInfo(directoryPath).GetFiles("*.pcap");
+                // Skip last file since this should be the current wireshark file
+                for (int i = 0; i < fileInfos.Length - 1; i++)
+                {
+                    // if (fileInfos[i].FullName.Equals(fileName)) continue;
+                    if (alreadyProcessedFiles.Contains(fileInfos[i].FullName)) continue;
+                    nextFile = fileInfos[i].FullName;
+                    alreadyProcessedFiles.Add(nextFile);
+                    break;
+                }
+
+                if (!nextFile.Equals("")) break;
+            }
+            
+            // (new DirectoryInfo(directoryPath).GetFiles("*.pcap"))[0].FullName;
+            
+            
+            var device = new CaptureFileReaderDevice(nextFile);
+            device.Open();
+            device.Filter = "ip and tcp port 6040";
+            device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival_pcap);
+            device.OnCaptureStopped += new CaptureStoppedEventHandler(Device_OnCaptureStopped_pcap);
+            device.StartCapture();
+
+            (sender as CaptureFileReaderDevice).Close();
         }
 
         void ProcessDamageEvent(Entity sourceEntity, UInt32 skillId, UInt32 skillEffectId, SkillDamageEvent dmgEvent)
@@ -220,35 +253,38 @@ namespace LostArkLogger
                     fragmentedPacket = packets;
                     return;
                 }
-                var payload = packets.Skip(6).Take(packetSize - 6).ToArray();
-                Xor.Cipher(payload, BitConverter.ToUInt16(packets, 2), XorTable);
-                switch (packets[4])
-                {
-                    case 0: //None
-                        payload = payload.Skip(16).ToArray();
-                        break;
-                    case 1: //LZ4
-                        var buffer = new byte[0x11ff2];
-                        var result = LZ4Codec.Decode(payload, 0, payload.Length, buffer, 0, 0x11ff2);
-                        if (result < 1) throw new Exception("LZ4 output buffer too small");
-                        payload = buffer.Take(result).Skip(16).ToArray();
-                        break;
-                    case 2: //Snappy
-                        //https://github.com/robertvazan/snappy.net
-                        payload = Snappy.SnappyCodec.Uncompress(payload.ToArray()).Skip(16).ToArray();
-                        //payload = SnappyCodec.Uncompress(payload.Skip(Properties.Settings.Default.Region == Region.Russia ? 4 : 0).ToArray()).Skip(16).ToArray();
-                        break;
-                    case 3: //Oodle
-                        payload = Oodle.Decompress(payload).Skip(16).ToArray();
-                        break;
-                    default:
-                        payload = payload.Skip(16).ToArray();
-                        break;
-                }
 
-                // write packets for analyzing, bypass common, useless packets
-                // if (opcode != OpCodes.PKTMoveError && opcode != OpCodes.PKTMoveNotify && opcode != OpCodes.PKTMoveNotifyList && opcode != OpCodes.PKTTransitStateNotify && opcode != OpCodes.PKTPing && opcode != OpCodes.PKTPong)
-                //    Console.WriteLine(opcode + " : " + opcode.ToString("X") + " : " + BitConverter.ToString(payload));
+                try
+                {
+                    var payload = packets.Skip(6).Take(packetSize - 6).ToArray();
+                    Xor.Cipher(payload, BitConverter.ToUInt16(packets, 2), XorTable);
+                    switch (packets[4])
+                    {
+                        case 0: //None
+                            payload = payload.Skip(16).ToArray();
+                            break;
+                        case 1: //LZ4
+                            var buffer = new byte[0x11ff2];
+                            var result = LZ4Codec.Decode(payload, 0, payload.Length, buffer, 0, 0x11ff2);
+                            if (result < 1) throw new Exception("LZ4 output buffer too small");
+                            payload = buffer.Take(result).Skip(16).ToArray();
+                            break;
+                        case 2: //Snappy
+                            //https://github.com/robertvazan/snappy.net
+                            payload = Snappy.SnappyCodec.Uncompress(payload.ToArray()).Skip(16).ToArray();
+                            //payload = SnappyCodec.Uncompress(payload.Skip(Properties.Settings.Default.Region == Region.Russia ? 4 : 0).ToArray()).Skip(16).ToArray();
+                            break;
+                        case 3: //Oodle
+                            payload = Oodle.Decompress(payload).Skip(16).ToArray();
+                            break;
+                        default:
+                            payload = payload.Skip(16).ToArray();
+                            break;
+                    }
+
+                    // write packets for analyzing, bypass common, useless packets
+                    // if (opcode != OpCodes.PKTMoveError && opcode != OpCodes.PKTMoveNotify && opcode != OpCodes.PKTMoveNotifyList && opcode != OpCodes.PKTTransitStateNotify && opcode != OpCodes.PKTPing && opcode != OpCodes.PKTPong)
+                    //    Console.WriteLine(opcode + " : " + opcode.ToString("X") + " : " + BitConverter.ToString(payload));
 
                 /* Uncomment for auction house accessory sniffing
                 if (opcode == OpCodes.PKTAuctionSearchResult)
@@ -331,40 +367,37 @@ namespace LostArkLogger
                          || opcode == OpCodes.PKTRaidResult)
                 {
                     var Duration = Convert.ToUInt64(DateTime.Now.Subtract(currentEncounter.Start).TotalSeconds);
-                    currentEncounter.End = DateTime.Now;
-                    Task.Run(async() =>
-                    {
-                        
-                        if (WasKill || WasWipe || opcode == OpCodes.PKTRaidBossKillNotify || opcode == OpCodes.PKTRaidResult) // if kill or wipe update the raid time duration 
-                        {
-                            await Task.Delay(12000);
-                            currentEncounter.RaidTime += Duration;
-                            foreach (var i in currentEncounter.Entities.Where(e => e.Value.Type == Entity.EntityType.Player))
-                            {
-                                if (!(i.Value.dead)) // if Player not dead on end of kill write fake death logInfo to track their time alive
-                                {
-                                    var log = new LogInfo
-                                    {
-                                        Time = DateTime.Now,
-                                        SourceEntity = i.Value,
-                                        DestinationEntity = i.Value,
-                                        SkillName = "Death",
-                                        TimeAlive = Duration,
-                                        Death = true
-                                    };
-                                    currentEncounter.RaidInfos.Add(log);
-                                    currentEncounter.Infos.Add(log);
 
-                                }
-                                else // reset death flag on every wipe or kill
+                    if (WasKill || WasWipe || opcode == OpCodes.PKTRaidBossKillNotify || opcode == OpCodes.PKTRaidResult) // if kill or wipe update the raid time duration 
+                    {
+                        currentEncounter.RaidTime += Duration;
+                        foreach (var i in currentEncounter.Entities.Where(e => e.Value.Type == Entity.EntityType.Player))
+                        {
+                            if (!(i.Value.dead)) // if Player not dead on end of kill write fake death logInfo to track their time alive
+                            {
+                                var log = new LogInfo
                                 {
-                                    i.Value.dead = false;
-                                }
+                                    Time = DateTime.Now,
+                                    SourceEntity = i.Value,
+                                    DestinationEntity = i.Value,
+                                    SkillName = "Death",
+                                    TimeAlive = Duration,
+                                    Death = true
+                                };
+                                currentEncounter.RaidInfos.Add(log);
+                                currentEncounter.Infos.Add(log);
+
                             }
-                            
+                            else // reset death flag on every wipe or kill
+                            {
+                                i.Value.dead = false;
+                            }
                         }
-                        
-                        //Task.Delay(100); // wait 4000ms to capture any final damage/status Effect packets
+                    }
+                    Task.Run(() =>
+                    {
+                        currentEncounter.End = DateTime.Now;
+                        Task.Delay(1500); // wait 1500ms to capture any final damage packets
                         currentEncounter = new Encounter();
                         currentEncounter.Entities = Encounters.Last().Entities; // preserve entities
                         if (WasWipe || Encounters.Last().AfterWipe)
@@ -567,58 +600,65 @@ namespace LostArkLogger
                     var statusEffectRemove = new PKTStatusEffectRemoveNotify(new BitReader(payload));
                     statusEffectTracker.Remove(statusEffectRemove);
 
-                }
-                else if (opcode == OpCodes.PKTPartyStatusEffectRemoveNotify)
-                {
-                    var partyStatusEffectRemove = new PKTPartyStatusEffectRemoveNotify(new BitReader(payload));
-                    statusEffectTracker.PartyRemove(partyStatusEffectRemove);
-                }
-                /*else if (opcode == OpCodes.PKTParalyzationStateNotify)
-                {
-                    var stagger = new PKTParalyzationStateNotify(new BitReader(payload));
-                    var enemy = currentEncounter.Entities.GetOrAdd(stagger.TargetId);
-                    var lastInfo = currentEncounter.Infos.LastOrDefault(); // hope this works
-                    if (lastInfo != null) // there's no way to tell what is the source, so drop it for now
+                    }
+                    else if (opcode == OpCodes.PKTPartyStatusEffectRemoveNotify)
                     {
-                        var player = lastInfo.SourceEntity;
-                        var staggerAmount = stagger.ParalyzationPoint - enemy.Stagger;
-                        if (stagger.ParalyzationPoint == 0)
-                            staggerAmount = stagger.ParalyzationPointMax - enemy.Stagger;
-                        enemy.Stagger = stagger.ParalyzationPoint;
+                        var partyStatusEffectRemove = new PKTPartyStatusEffectRemoveNotify(new BitReader(payload));
+                        statusEffectTracker.PartyRemove(partyStatusEffectRemove);
+                    }
+                    /*else if (opcode == OpCodes.PKTParalyzationStateNotify)
+                    {
+                        var stagger = new PKTParalyzationStateNotify(new BitReader(payload));
+                        var enemy = currentEncounter.Entities.GetOrAdd(stagger.TargetId);
+                        var lastInfo = currentEncounter.Infos.LastOrDefault(); // hope this works
+                        if (lastInfo != null) // there's no way to tell what is the source, so drop it for now
+                        {
+                            var player = lastInfo.SourceEntity;
+                            var staggerAmount = stagger.ParalyzationPoint - enemy.Stagger;
+                            if (stagger.ParalyzationPoint == 0)
+                                staggerAmount = stagger.ParalyzationPointMax - enemy.Stagger;
+                            enemy.Stagger = stagger.ParalyzationPoint;
+                            var log = new LogInfo
+                            {
+                                Time = DateTime.Now, SourceEntity = player, DestinationEntity = enemy,
+                                SkillName = lastInfo?.SkillName, Stagger = staggerAmount
+                            };
+                            onCombatEvent?.Invoke(log);
+                        }
+                    }*/
+                    else if (opcode == OpCodes.PKTCounterAttackNotify)
+                    {
+                        var counter = new PKTCounterAttackNotify(new BitReader(payload));
+                        var source = currentEncounter.Entities.GetOrAdd(counter.SourceId);
+                        var target = currentEncounter.Entities.GetOrAdd(counter.TargetId);
                         var log = new LogInfo
                         {
-                            Time = DateTime.Now, SourceEntity = player, DestinationEntity = enemy,
-                            SkillName = lastInfo?.SkillName, Stagger = staggerAmount
+                            Time = DateTime.Now,
+                            SourceEntity = currentEncounter.Entities.GetOrAdd(counter.SourceId),
+                            DestinationEntity = currentEncounter.Entities.GetOrAdd(counter.TargetId),
+                            SkillName = "Counter",
+                            Damage = 0,
+                            Counter = true
                         };
                         onCombatEvent?.Invoke(log);
+                        Logger.AppendLog(12, source.EntityId.ToString("X"), source.Name, target.EntityId.ToString("X"),
+                            target.Name);
                     }
-                }*/
-                else if (opcode == OpCodes.PKTCounterAttackNotify)
-                {
-                    var counter = new PKTCounterAttackNotify(new BitReader(payload));
-                    var source = currentEncounter.Entities.GetOrAdd(counter.SourceId);
-                    var target = currentEncounter.Entities.GetOrAdd(counter.TargetId);
-                    var log = new LogInfo
+                    else if (opcode == OpCodes.PKTNewNpcSummon)
                     {
-                        Time = DateTime.Now,
-                        SourceEntity = currentEncounter.Entities.GetOrAdd(counter.SourceId),
-                        DestinationEntity = currentEncounter.Entities.GetOrAdd(counter.TargetId),
-                        SkillName = "Counter",
-                        Damage = 0,
-                        Counter = true
-                    };
-                    onCombatEvent?.Invoke(log);
-                    Logger.AppendLog(12, source.EntityId.ToString("X"), source.Name, target.EntityId.ToString("X"), target.Name);
+                        var npc = new PKTNewNpcSummon(new BitReader(payload));
+                        currentEncounter.Entities.AddOrUpdate(new Entity
+                        {
+                            EntityId = npc.npcStruct.NpcId,
+                            OwnerId = npc.OwnerId,
+                            Type = Entity.EntityType.Summon
+                        });
+                    }
+
                 }
-                else if (opcode == OpCodes.PKTNewNpcSummon)
+                catch (Exception e)
                 {
-                    var npc = new PKTNewNpcSummon(new BitReader(payload));
-                    currentEncounter.Entities.AddOrUpdate(new Entity
-                    {
-                        EntityId = npc.npcStruct.NpcId,
-                        OwnerId = npc.OwnerId,
-                        Type = Entity.EntityType.Summon
-                    });
+                    // Do nothing
                 }
                 if (packets.Length < packetSize) throw new Exception("bad packet maybe");
                 packets = packets.Skip(packetSize).ToArray();
@@ -628,35 +668,8 @@ namespace LostArkLogger
         UInt32 currentIpAddr = 0xdeadbeef;
         int loggedPacketCount = 0;
 
-
-        void Device_OnPacketArrival_machina(Machina.Infrastructure.TCPConnection connection, byte[] bytes)
-        {
-            if (tcp == null) return; // To avoid any late delegate calls causing state issues when listener uninstalled
-            lock (lockPacketProcessing)
-            {
-                if (connection.RemotePort != 6040) return;
-                var srcAddr = connection.RemoteIP;
-                if (srcAddr != currentIpAddr)
-                {
-                    if (currentIpAddr == 0xdeadbeef || (bytes.Length > 4 && GetOpCode(bytes) == OpCodes.PKTAuthTokenResult && bytes[0] == 0x1e))
-                    {
-                        beforeNewZone?.Invoke();
-                        onNewZone?.Invoke();
-                        currentIpAddr = srcAddr;
-                    }
-                    else return;
-                }
-                Logger.DoDebugLog(bytes);
-                try {
-                    ProcessPacket(bytes.ToList());
-                } catch (Exception e) {
-                    // Console.WriteLine("Failure during processing of packet: " + e);
-                }
-            }
-        }
         void Device_OnPacketArrival_pcap(object sender, PacketCapture evt)
         {
-            if (pcap == null) return;
             lock (lockPacketProcessing)
             {
                 var rawpkt = evt.GetPacket();
@@ -738,7 +751,6 @@ namespace LostArkLogger
         }
         public void UninstallListeners()
         {
-            if (tcp != null) tcp.Stop();
             if (pcap != null)
             {
                 try
@@ -753,7 +765,6 @@ namespace LostArkLogger
                     Logger.AppendLog(254, exceptionMessage);
                 }
             }
-            tcp = null;
             pcap = null;
         }
 
