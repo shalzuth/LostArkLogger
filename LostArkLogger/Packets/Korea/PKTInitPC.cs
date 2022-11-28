@@ -48,7 +48,7 @@ namespace LostArkLogger
             b_9 = reader.ReadByte();
             u64_2 = reader.ReadUInt64();
             b_10 = reader.ReadByte();
-            u64_3 = reader.ReadUInt64();
+            CharacterId = reader.ReadUInt64();
             GearLevel = reader.ReadUInt32();
             b_12 = reader.ReadByte();
             if (b_12 == 1)
