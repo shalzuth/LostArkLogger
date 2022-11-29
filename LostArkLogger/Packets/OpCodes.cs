@@ -1447,5 +1447,6 @@ namespace LostArkLogger
         PKTAdvRewardRequestResult = 59918,
         PKTFallDownPredictNotify = 59982,
         PKTInitAchievementActive = 59992,
+        PKTPartyUnknown = 55319,
     }
 }
